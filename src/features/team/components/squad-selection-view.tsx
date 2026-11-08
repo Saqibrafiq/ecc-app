@@ -11,7 +11,7 @@ import { Button } from '@/shared/ui/button'
 import { countRole, getNextRole, isPickable, togglePick } from '../domain/selection'
 import type { SquadOutcome, SquadSelection, SquadStatus, SubmitSquad } from '../types'
 import { CandidateRow } from './candidate-row'
-import { TeamHeader } from './team-header'
+import { ScreenHeader } from '@/shared/ui/screen-header'
 import { TwelfthSheet } from './twelfth-sheet'
 
 export type SquadSelectionViewProps = {
@@ -112,7 +112,7 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
 
   return (
     <div className="flex flex-col gap-5">
-      <TeamHeader
+      <ScreenHeader
         eyebrow={t('squad.eyebrow', {
           date: format.dateTime(date, { weekday: 'short', day: 'numeric', month: 'short' }),
         })}
@@ -129,7 +129,7 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
             awaiting: selection.awaiting,
           })}
         </p>
-      </TeamHeader>
+      </ScreenHeader>
 
       <StatusBanner status={status} note={selection.note} />
 

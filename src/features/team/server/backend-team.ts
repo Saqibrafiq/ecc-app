@@ -3,6 +3,8 @@ import 'server-only'
 import { z } from 'zod'
 
 import {
+  type DeadlineDay,
+  DEFAULT_DEADLINE_DAY,
   getCarryOvers,
   getLocalDate,
   type LocalDate,
@@ -27,9 +29,7 @@ import { listOf, relationIdSchema } from '@/shared/backend/schemas'
 import type { AttendanceRecord } from '../domain/check-in'
 import { buildCandidates, isFirstTeam } from '../domain/selection'
 import type { CheckIn, SquadSelection, SquadStatus, TeamWeek } from '../types'
-
-/** The signed-in captain: the team they lead and their session. */
-export type CaptainRef = { teamId: number; token: string }
+import { canManageTeam, type TeamActor } from './team-access'
 
 const NOT_FOUND = 404
 /** A season of a team's attendance: about 40 practices for up to 25 players. */
@@ -46,6 +46,7 @@ const squadDocSchema = z.object({
   noShows: z.array(relationIdSchema).nullish(),
   exceptions: z.array(relationIdSchema).nullish(),
   note: z.string().nullish(),
+  deadlineDay: z.enum(['tuesday', 'wednesday', 'thursday']).nullish(),
 })
 type SquadDoc = z.infer<typeof squadDocSchema>
 
@@ -55,7 +56,8 @@ const playerDocSchema = z.object({
   isEcc1Eligible: z.boolean().nullish(),
 })
 
-const authOf = (captain: CaptainRef): BackendAuth => ({ as: 'member', token: captain.token })
+const authOf = (actor: TeamActor): BackendAuth => ({ as: 'member', token: actor.token })
+const unnamedTeam = (teamId: number) => ({ id: String(teamId), name: '' })
 const fixtureNumber = (eventId: string) => Number(eventId.replace('fixture-', ''))
 const ids = (values: readonly number[] | null | undefined) => (values ?? []).map(String)
 
@@ -215,12 +217,27 @@ async function getSquadStatuses(auth: BackendAuth, fixtureIds: readonly number[]
   return new Map(docs.map((doc) => [doc.fixture, doc.status]))
 }
 
-/** The captain's team this week: its practices with their check-in, its matches with their squad. */
-export async function getBackendTeamWeek(captain: CaptainRef, now: Date): Promise<TeamWeek> {
-  const auth = authOf(captain)
+/**
+ * A team's week: its practices with their check-in, its matches with their squad. A captain gets
+ * their own team; an admin the team they asked for (the first club team by default) and the list
+ * of teams to switch between.
+ */
+export async function getBackendTeamWeek(
+  actor: TeamActor,
+  requestedTeamId: number | null,
+  now: Date,
+): Promise<TeamWeek> {
+  const auth = authOf(actor)
   const today = getLocalDate(now)
   const schedule = await getClubSchedule(auth, startOfWeek(today))
-  const team = schedule.teams.get(captain.teamId) ?? { id: String(captain.teamId), name: '' }
+  // ECC I, ECC II, ECC III: the order members name them in.
+  const teams = [...schedule.teams.values()].sort((a, b) => a.name.localeCompare(b.name))
+  const teamId =
+    actor.teamId ??
+    (requestedTeamId !== null && schedule.teams.has(requestedTeamId)
+      ? requestedTeamId
+      : Number(teams[0]?.id ?? 0))
+  const team = schedule.teams.get(teamId) ?? unnamedTeam(teamId)
   const matches = schedule.matches.filter((match) => match.team.id === team.id)
   const statuses = await getSquadStatuses(
     auth,
@@ -229,8 +246,9 @@ export async function getBackendTeamWeek(captain: CaptainRef, now: Date): Promis
 
   return {
     team,
+    choices: actor.isAdmin ? teams : [],
     practices: schedule.practices
-      .filter((doc) => doc.team === captain.teamId)
+      .filter((doc) => doc.team === teamId)
       .sort((a, b) => a.date.localeCompare(b.date))
       .map((doc) => ({
         event: toPracticeEvent(doc, team),
@@ -249,17 +267,18 @@ export async function getBackendTeamWeek(captain: CaptainRef, now: Date): Promis
 
 export type CheckInData = {
   checkIn: CheckIn
+  teamId: number
   records: AttendanceRecord[]
   answers: Map<string, Answer>
 }
 
-/** A practice of the captain's team with who said Going and who is marked present, or `null`. */
+/** A practice the actor may check in, with who said Going and who is marked present, or `null`. */
 export async function loadCheckIn(
-  captain: CaptainRef,
+  actor: TeamActor,
   practiceId: number,
   now: Date,
 ): Promise<CheckInData | null> {
-  const auth = authOf(captain)
+  const auth = authOf(actor)
   const practice = await findById(() =>
     backendRequest({
       path: `/practice-sessions/${String(practiceId)}?depth=0`,
@@ -267,7 +286,8 @@ export async function loadCheckIn(
       schema: practiceDocSchema,
     }),
   )
-  if (practice?.team !== captain.teamId) return null
+  if (!practice || !canManageTeam(actor, practice.team)) return null
+  const teamId = practice.team
 
   const [teams, answers, records] = await Promise.all([
     getClubTeams(auth),
@@ -276,10 +296,10 @@ export async function loadCheckIn(
   ])
   const players = await getPlayers(
     auth,
-    captain.teamId,
+    teamId,
     records.map((record) => record.playerId),
   )
-  const team = teams.get(captain.teamId) ?? { id: String(captain.teamId), name: '' }
+  const team = teams.get(teamId) ?? unnamedTeam(teamId)
   const isRecorded = practice.isRecorded === true
   const isCancelled = practice.isCancelled === true
   const recordByPlayer = new Map(records.map((record) => [record.playerId, record]))
@@ -304,20 +324,28 @@ export async function loadCheckIn(
         })
         .sort((a, b) => saidGoing(a.id) - saidGoing(b.id)),
     },
+    teamId,
     records,
     answers,
   }
 }
 
-export type SelectionData = { selection: SquadSelection; squadId: number }
+export type SelectionData = {
+  selection: SquadSelection
+  squadId: number
+  deadlineDay: DeadlineDay
+  exceptionIds: string[]
+  /** Names of every player the screen may show, picked players who changed their answer included. */
+  names: Record<string, string>
+}
 
-/** A match of the captain's team with everyone they may pick and the squad so far, or `null`. */
+/** A match the actor may select for, with everyone they may pick and the squad so far, or `null`. */
 export async function loadSelection(
-  captain: CaptainRef,
+  actor: TeamActor,
   fixtureId: number,
   now: Date,
 ): Promise<SelectionData | null> {
-  const auth = authOf(captain)
+  const auth = authOf(actor)
   const fixture = await findById(() =>
     backendRequest({
       path: `/fixtures/${String(fixtureId)}?depth=1`,
@@ -326,20 +354,22 @@ export async function loadSelection(
     }),
   )
   const match = fixture ? toMatchEvent(fixture) : null
-  if (match?.team.id !== String(captain.teamId)) return null
+  const teamId = Number(match?.team.id)
+  if (!match || !canManageTeam(actor, teamId)) return null
 
   const today = getLocalDate(now)
   const seasonStart = `${today.slice(0, 4)}-01-01` as LocalDate
   const [squad, previous, answers, practices, attendedByPlayer] = await Promise.all([
     ensureSquad(auth, fixtureId),
-    getPreviousSquad(auth, captain.teamId, match.date),
+    getPreviousSquad(auth, teamId, match.date),
     getEventAnswers(auth, 'fixture', fixtureId),
-    getTeamSeasonPractices(auth, captain.teamId, seasonStart),
-    getTeamAttendance(auth, captain.teamId),
+    getTeamSeasonPractices(auth, teamId, seasonStart),
+    getTeamAttendance(auth, teamId),
   ])
   const carryOvers = previous ? getCarryOvers(toPicks(previous)) : []
+  const exceptionIds = ids(squad.exceptions)
   const saved = toPicks(squad)
-  const players = await getPlayers(auth, captain.teamId, [
+  const players = await getPlayers(auth, teamId, [
     ...new Set([...carryOvers, ...saved.map((pick) => pick.playerId)]),
   ])
   const candidates = buildCandidates({
@@ -350,7 +380,7 @@ export async function loadSelection(
     attendedByPlayer,
     carryOvers,
     noShows: new Set(ids(previous?.noShows)),
-    exceptions: new Set(ids(squad.exceptions)),
+    exceptions: new Set(exceptionIds),
     matchDate: match.date,
     today,
     seasonStart,
@@ -369,5 +399,8 @@ export async function loadSelection(
       awaiting: players.filter((player) => !answers.has(player.id)).length,
     },
     squadId: squad.id,
+    deadlineDay: squad.deadlineDay ?? DEFAULT_DEADLINE_DAY,
+    exceptionIds,
+    names: Object.fromEntries(players.map((player) => [player.id, player.name])),
   }
 }

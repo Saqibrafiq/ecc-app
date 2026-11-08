@@ -3,6 +3,9 @@ export { SquadSelectionView, type SquadSelectionViewProps } from './components/s
 export { TeamAccessState, type TeamAccessStateProps } from './components/team-access-state'
 export { TeamWeekView, type TeamWeekViewProps } from './components/team-week-view'
 export { saveCheckInAction, submitSquadAction } from './server/actions'
+export { loadSelection, type SelectionData } from './server/backend-team'
+export { getSampleSelection, getTeamPreviewNow, SAMPLE_FIXTURE_ID } from './server/sample-team'
+export { getTeamAccess, type TeamActor } from './server/team-access'
 export {
   type CheckInResult,
   getCheckIn,
@@ -12,4 +15,4 @@ export {
   type SelectionResult,
   type TeamWeekResult,
 } from './server/queries'
-export type { CheckIn, SquadSelection, TeamWeek } from './types'
+export type { Candidate, CheckIn, SquadSelection, SquadStatus, TeamWeek } from './types'

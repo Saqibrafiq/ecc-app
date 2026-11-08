@@ -5,7 +5,7 @@ import { redirectToSignIn } from '@/features/auth'
 import { CheckInView, getCheckIn, saveCheckInAction, TeamAccessState } from '@/features/team'
 import { PageMain } from '@/shared/ui/page-main'
 
-import { parseRouteId } from '../../route-id'
+import { parseRouteId } from '../../../route-id'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata')

@@ -13,7 +13,8 @@ import type * as BackendClient from '@/shared/backend/client'
 const { BackendError } = await import('@/shared/backend/client')
 const { getBackendTeamWeek, loadCheckIn, loadSelection } = await import('./backend-team')
 
-const CAPTAIN = { teamId: 1, token: 'jwt' }
+const CAPTAIN = { teamId: 1, token: 'jwt', isAdmin: false }
+const ADMIN = { teamId: null, token: 'jwt', isAdmin: true }
 // Wednesday 11 November 2026, 21:00 in Erlangen.
 const NOW = new Date('2026-11-11T20:00:00Z')
 
@@ -146,9 +147,10 @@ describe('getBackendTeamWeek', () => {
   it("lists the captain's practices with their check-in and matches with their squad", async () => {
     backend()
 
-    const week = await getBackendTeamWeek(CAPTAIN, NOW)
+    const week = await getBackendTeamWeek(CAPTAIN, null, NOW)
 
     expect(week.team).toEqual({ id: '1', name: 'ECC I' })
+    expect(week.choices).toEqual([])
     expect(week.practices).toEqual([
       expect.objectContaining({
         practiceId: 6,
@@ -166,17 +168,37 @@ describe('getBackendTeamWeek', () => {
     backend()
     request.mockImplementationOnce(() => Promise.resolve({ docs: [] }))
 
-    const week = await getBackendTeamWeek(CAPTAIN, new Date('2026-11-10T09:00:00Z'))
+    const week = await getBackendTeamWeek(CAPTAIN, null, new Date('2026-11-10T09:00:00Z'))
 
     expect(week.practices[0]?.canCheckIn).toBe(false)
   })
 
   it('names a team it does not know by its id, and reads no squads without matches', async () => {
     backend()
-    const week = await getBackendTeamWeek({ ...CAPTAIN, teamId: 72 }, NOW)
+    const week = await getBackendTeamWeek({ ...CAPTAIN, teamId: 72 }, null, NOW)
 
     expect(week).toMatchObject({ team: { id: '72', name: '' }, practices: [], matches: [] })
     expect(calls().some((call) => call.path.includes('fixture%5D%5Bin'))).toBe(false)
+  })
+})
+
+describe('getBackendTeamWeek for an admin', () => {
+  it('shows the requested team, with every team to switch to', async () => {
+    backend()
+
+    const week = await getBackendTeamWeek(ADMIN, 14, NOW)
+
+    expect(week.team).toEqual({ id: '14', name: 'ECC II' })
+    expect(week.choices.map((team) => team.name)).toEqual(['ECC I', 'ECC II'])
+    expect(week.practices).toEqual([expect.objectContaining({ practiceId: 7, isCancelled: true })])
+  })
+
+  it('falls back to the first team for an unknown or missing choice', async () => {
+    backend()
+    await expect(getBackendTeamWeek(ADMIN, 99, NOW)).resolves.toMatchObject({ team: { id: '1' } })
+
+    backend()
+    await expect(getBackendTeamWeek(ADMIN, null, NOW)).resolves.toMatchObject({ team: { id: '1' } })
   })
 })
 
@@ -213,6 +235,12 @@ describe('loadCheckIn', () => {
     expect(calls().find((call) => call.path.startsWith('/players'))?.path).toContain(
       'id%5D%5Bin%5D=90',
     )
+  })
+
+  it("lets an admin check in any team's practice", async () => {
+    backend({ practice: { ...PRACTICE, team: 14 } })
+
+    await expect(loadCheckIn(ADMIN, 6, NOW)).resolves.toMatchObject({ teamId: 14 })
   })
 
   it("has nothing for another team's practice or a missing one", async () => {
@@ -329,6 +357,18 @@ describe('loadSelection', () => {
     expect(error).toBeInstanceOf(Error)
     expect((error as Error).message).toContain('could not be created or read')
     expect((error as Error).cause).toBeInstanceOf(BackendError)
+  })
+
+  it("lets an admin select for any team's match, with the squad's deadline and exceptions", async () => {
+    backend({
+      fixture: { ...FIXTURE, team2: team(14, 'ECC-II', true) },
+      squads: [[{ ...SQUAD, deadlineDay: 'thursday' }]],
+    })
+
+    await expect(loadSelection(ADMIN, 60, NOW)).resolves.toMatchObject({
+      deadlineDay: 'thursday',
+      exceptionIds: ['55'],
+    })
   })
 
   it("has nothing for another team's match, a fixture without the club, or a missing one", async () => {

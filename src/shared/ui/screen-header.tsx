@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 import { Link } from '@/i18n/navigation'
 
-export type TeamHeaderProps = {
+export type ScreenHeaderProps = {
   eyebrow: string
   title: string
   /** A way back up, e.g. from a check-in to the team. */
@@ -13,8 +13,8 @@ export type TeamHeaderProps = {
   children?: ReactNode
 }
 
-/** The heading of a captain's screen: where it belongs, what it is, and the way back. */
-export function TeamHeader({ eyebrow, title, back, previewNote, children }: TeamHeaderProps) {
+/** A screen's heading: where it belongs, what it is, and the way back up. */
+export function ScreenHeader({ eyebrow, title, back, previewNote, children }: ScreenHeaderProps) {
   return (
     <header className="flex flex-col gap-3">
       {back && (

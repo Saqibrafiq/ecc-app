@@ -10,9 +10,9 @@ import { DateTile } from '@/shared/ui/date-tile'
 import { StateCard } from '@/shared/ui/state-card'
 
 import type { TeamWeekResult } from '../server/queries'
-import type { SquadStatus, TeamWeekMatch, TeamWeekPractice } from '../types'
+import type { SquadStatus, TeamWeek, TeamWeekMatch, TeamWeekPractice } from '../types'
 import { TeamAccessState } from './team-access-state'
-import { TeamHeader } from './team-header'
+import { ScreenHeader } from '@/shared/ui/screen-header'
 
 export type TeamWeekViewProps = {
   result: Exclude<TeamWeekResult, { kind: 'signed-out' }>
@@ -133,7 +133,37 @@ function MatchItem({ match }: { match: TeamWeekMatch }) {
   )
 }
 
-/** The captain's team this week: practices to check in, matches to select a squad for. */
+/** An admin standing in for a captain picks the team to work on. */
+function TeamSwitcher({ teamWeek }: { teamWeek: TeamWeek }) {
+  const t = useTranslations('team')
+  return (
+    <nav aria-label={t('switcher')} className="-mx-4 overflow-x-auto px-4">
+      <ul className="flex gap-2">
+        {teamWeek.choices.map((choice) => {
+          const isCurrent = choice.id === teamWeek.team.id
+          return (
+            <li key={choice.id}>
+              <Link
+                href={`/team?team=${choice.id}`}
+                aria-current={isCurrent ? 'page' : undefined}
+                className={cn(
+                  'inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors duration-150',
+                  isCurrent
+                    ? 'border-accent-match bg-accent-match text-text-on-accent'
+                    : 'border-border-default text-text-muted hover:bg-surface-raised hover:text-text-default',
+                )}
+              >
+                {choice.name}
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
+  )
+}
+
+/** A team's week: practices to check in, matches to select a squad for. */
 export function TeamWeekView({ result }: TeamWeekViewProps) {
   const t = useTranslations('team')
   const format = useFormatter()
@@ -146,8 +176,12 @@ export function TeamWeekView({ result }: TeamWeekViewProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <TeamHeader
-        eyebrow={t('eyebrow', { team: teamWeek.team.name })}
+      <ScreenHeader
+        eyebrow={
+          teamWeek.choices.length > 0
+            ? t('eyebrowStandIn', { team: teamWeek.team.name })
+            : t('eyebrow', { team: teamWeek.team.name })
+        }
         title={t('title')}
         previewNote={
           isPreview && firstEvent
@@ -160,7 +194,9 @@ export function TeamWeekView({ result }: TeamWeekViewProps) {
               })
             : undefined
         }
-      />
+      >
+        {teamWeek.choices.length > 1 && <TeamSwitcher teamWeek={teamWeek} />}
+      </ScreenHeader>
       {isQuiet && (
         <StateCard
           icon={<CalendarOff aria-hidden="true" className="size-5" />}

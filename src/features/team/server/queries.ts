@@ -5,7 +5,7 @@ import { getNow } from '@/shared/lib/clock'
 
 import type { CheckIn, SquadSelection, TeamWeek } from '../types'
 import { getBackendTeamWeek, loadCheckIn, loadSelection } from './backend-team'
-import { getCaptainAccess } from './captain'
+import { getTeamAccess } from './team-access'
 import {
   getSampleCheckIn,
   getSampleSelection,
@@ -29,14 +29,20 @@ export type SelectionResult =
   | NoAccess
   | { kind: 'not-found' }
 
-/** Whether the signed-in member gets the team screens; the preview shows them. */
+/** Whether the signed-in member gets the team screens (a captain or an admin); the preview does. */
 export async function isTeamCaptain(): Promise<boolean> {
   if (!isBackendConfigured()) return true
-  return (await getCaptainAccess()).kind === 'captain'
+  return (await getTeamAccess()).kind === 'allowed'
 }
 
-/** The captain's team this week (UC-6, UC-9), or sample data in the preview. */
-export async function getTeamWeek(realNow: Date = getNow()): Promise<TeamWeekResult> {
+/**
+ * A team's week (UC-6, UC-9): the captain's own, or for an admin the requested team (a stand-in);
+ * sample data in the preview.
+ */
+export async function getTeamWeek(
+  requestedTeamId: number | null = null,
+  realNow: Date = getNow(),
+): Promise<TeamWeekResult> {
   if (!isBackendConfigured()) {
     return {
       kind: 'team-week',
@@ -44,16 +50,16 @@ export async function getTeamWeek(realNow: Date = getNow()): Promise<TeamWeekRes
       isPreview: true,
     }
   }
-  const access = await getCaptainAccess()
-  if (access.kind !== 'captain') return access
+  const access = await getTeamAccess()
+  if (access.kind !== 'allowed') return access
   return {
     kind: 'team-week',
-    teamWeek: await getBackendTeamWeek(access.captain, realNow),
+    teamWeek: await getBackendTeamWeek(access.actor, requestedTeamId, realNow),
     isPreview: false,
   }
 }
 
-/** A practice's check-in for its captain (UC-6). */
+/** A practice's check-in for its captain or an admin (UC-6). */
 export async function getCheckIn(
   practiceId: number,
   realNow: Date = getNow(),
@@ -63,15 +69,15 @@ export async function getCheckIn(
       ? { kind: 'check-in', checkIn: getSampleCheckIn(getTeamPreviewNow(realNow)), isPreview: true }
       : { kind: 'not-found' }
   }
-  const access = await getCaptainAccess()
-  if (access.kind !== 'captain') return access
-  const data = await loadCheckIn(access.captain, practiceId, realNow)
+  const access = await getTeamAccess()
+  if (access.kind !== 'allowed') return access
+  const data = await loadCheckIn(access.actor, practiceId, realNow)
   return data
     ? { kind: 'check-in', checkIn: data.checkIn, isPreview: false }
     : { kind: 'not-found' }
 }
 
-/** A match's squad selection for its captain (UC-9). */
+/** A match's squad selection for its captain or an admin (UC-9). */
 export async function getSquadSelection(
   fixtureId: number,
   realNow: Date = getNow(),
@@ -85,9 +91,9 @@ export async function getSquadSelection(
         }
       : { kind: 'not-found' }
   }
-  const access = await getCaptainAccess()
-  if (access.kind !== 'captain') return access
-  const data = await loadSelection(access.captain, fixtureId, realNow)
+  const access = await getTeamAccess()
+  if (access.kind !== 'allowed') return access
+  const data = await loadSelection(access.actor, fixtureId, realNow)
   return data
     ? { kind: 'selection', selection: data.selection, isPreview: false }
     : { kind: 'not-found' }

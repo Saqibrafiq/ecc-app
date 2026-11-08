@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 
 import type { Candidate } from '../types'
-import type { CaptainAccess } from './captain'
+import type { TeamAccess } from './team-access'
 
 type Mocks = {
-  access: CaptainAccess
+  access: TeamAccess
   checkIn: Mock
   selection: Mock
   request: Mock
@@ -12,7 +12,7 @@ type Mocks = {
 }
 
 const mocks = vi.hoisted<Mocks>(() => ({
-  access: { kind: 'captain', captain: { teamId: 1, token: 'jwt' } },
+  access: { kind: 'allowed', actor: { teamId: 1, token: 'jwt', isAdmin: false } },
   checkIn: vi.fn(),
   selection: vi.fn(),
   request: vi.fn(),
@@ -31,7 +31,7 @@ vi.mock('@/shared/backend/client', async () => {
     backendRequest: mocks.request,
   }
 })
-vi.mock('./captain', () => ({ getCaptainAccess: () => Promise.resolve(mocks.access) }))
+vi.mock('./team-access', () => ({ getTeamAccess: () => Promise.resolve(mocks.access) }))
 vi.mock('./backend-team', () => ({ loadCheckIn: mocks.checkIn, loadSelection: mocks.selection }))
 
 import type * as BackendClient from '@/shared/backend/client'
@@ -39,7 +39,7 @@ import type * as BackendClient from '@/shared/backend/client'
 const { BackendError } = await import('@/shared/backend/client')
 const { saveCheckInAction, submitSquadAction } = await import('./actions')
 
-const CAPTAIN = { teamId: 1, token: 'jwt' }
+const CAPTAIN = { teamId: 1, token: 'jwt', isAdmin: false }
 
 function checkInData(overrides: { canCheckIn?: boolean; isRecorded?: boolean } = {}) {
   return {
@@ -50,6 +50,7 @@ function checkInData(overrides: { canCheckIn?: boolean; isRecorded?: boolean } =
       players: ['1', '2', '3'].map((id) => ({ id })),
       ...overrides,
     },
+    teamId: 1,
     records: [{ id: 40, playerId: '2', attended: true }],
     answers: new Map([['1', 'going']]),
   }
@@ -84,7 +85,7 @@ function selectionData(overrides: { status?: string; candidates?: Candidate[] } 
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mocks.access = { kind: 'captain', captain: CAPTAIN }
+  mocks.access = { kind: 'allowed', actor: CAPTAIN }
   mocks.request.mockResolvedValue({})
 })
 
@@ -259,7 +260,7 @@ describe('submitSquadAction', () => {
       status: 'unauthorized',
     })
 
-    mocks.access = { kind: 'captain', captain: CAPTAIN }
+    mocks.access = { kind: 'allowed', actor: CAPTAIN }
     mocks.selection.mockRejectedValue(new Error('down'))
     await expect(submitSquadAction({ fixtureId: 60, picks: SQUAD_PICKS })).resolves.toEqual({
       status: 'error',

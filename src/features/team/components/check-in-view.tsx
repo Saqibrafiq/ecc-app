@@ -11,7 +11,7 @@ import { Button } from '@/shared/ui/button'
 import { StateCard } from '@/shared/ui/state-card'
 
 import type { CheckIn, CheckInOutcome, CheckInPlayer, SaveCheckIn } from '../types'
-import { TeamHeader } from './team-header'
+import { ScreenHeader } from '@/shared/ui/screen-header'
 
 export type CheckInViewProps = {
   checkIn: CheckIn
@@ -122,7 +122,7 @@ export function CheckInView({ checkIn, isPreview, saveCheckIn }: CheckInViewProp
   const date = toDisplayDate(checkIn.practice.date)
   const dayName = format.dateTime(date, { weekday: 'long' })
   const header = (
-    <TeamHeader
+    <ScreenHeader
       eyebrow={t('checkIn.eyebrow', {
         date: format.dateTime(date, { weekday: 'short', day: 'numeric', month: 'short' }),
       })}

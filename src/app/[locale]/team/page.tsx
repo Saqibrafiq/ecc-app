@@ -6,6 +6,7 @@ import { getTeamWeek, TeamWeekView } from '@/features/team'
 import { PageMain } from '@/shared/ui/page-main'
 
 import { AppNav } from '../app-nav'
+import { parseRouteId } from '../route-id'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata')
@@ -15,8 +16,9 @@ export async function generateMetadata(): Promise<Metadata> {
 // Today's practices and the captain's squads: rendered per request.
 export const dynamic = 'force-dynamic'
 
-export default async function TeamPage() {
-  const result = await getTeamWeek()
+export default async function TeamPage({ searchParams }: PageProps<'/[locale]/team'>) {
+  const { team } = await searchParams
+  const result = await getTeamWeek(typeof team === 'string' ? parseRouteId(team) : null)
   if (result.kind === 'signed-out') return redirectToSignIn()
 
   return (

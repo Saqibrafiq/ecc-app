@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 
-import type { CaptainAccess } from './captain'
+import type { TeamAccess } from './team-access'
 
 type Mocks = {
   isConfigured: boolean
-  access: CaptainAccess
+  access: TeamAccess
   teamWeek: Mock
   checkIn: Mock
   selection: Mock
@@ -21,7 +21,7 @@ const mocks = vi.hoisted<Mocks>(() => ({
 vi.mock('server-only', () => ({}))
 vi.mock('@/shared/lib/clock', () => ({ getNow: () => new Date('2026-11-09T09:00:00Z') }))
 vi.mock('@/shared/backend/client', () => ({ isBackendConfigured: () => mocks.isConfigured }))
-vi.mock('./captain', () => ({ getCaptainAccess: () => Promise.resolve(mocks.access) }))
+vi.mock('./team-access', () => ({ getTeamAccess: () => Promise.resolve(mocks.access) }))
 vi.mock('./backend-team', () => ({
   getBackendTeamWeek: mocks.teamWeek,
   loadCheckIn: mocks.checkIn,
@@ -30,7 +30,7 @@ vi.mock('./backend-team', () => ({
 
 const { getCheckIn, getSquadSelection, getTeamWeek, isTeamCaptain } = await import('./queries')
 
-const CAPTAIN: CaptainAccess = { kind: 'captain', captain: { teamId: 1, token: 'jwt' } }
+const CAPTAIN: TeamAccess = { kind: 'allowed', actor: { teamId: 1, token: 'jwt', isAdmin: false } }
 
 beforeEach(() => {
   mocks.isConfigured = true
@@ -93,8 +93,13 @@ describe('with the backend', () => {
       selection: { fixtureId: 60 },
       isPreview: false,
     })
+    expect(mocks.teamWeek).toHaveBeenCalledWith(
+      { teamId: 1, token: 'jwt', isAdmin: false },
+      null,
+      new Date('2026-11-09T09:00:00Z'),
+    )
     expect(mocks.checkIn).toHaveBeenCalledWith(
-      { teamId: 1, token: 'jwt' },
+      { teamId: 1, token: 'jwt', isAdmin: false },
       6,
       new Date('2026-11-09T09:00:00Z'),
     )
