@@ -69,6 +69,12 @@ test.describe("the captain's team", () => {
     const free = page.locator('main ul button[aria-pressed="false"]:not([disabled])')
     for (let index = 0; index < 11; index += 1) await free.first().click()
     await expect(page.getByRole('dialog')).toBeVisible()
-    expect((await scan(page)).violations).toEqual([])
+    // The page behind the open sheet is dimmed and hidden from assistive technology (modal); the
+    // sheet is what must pass. The page itself was scanned in full above.
+    const sheetScan = await new AxeBuilder({ page })
+      .include('[role="dialog"]')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze()
+    expect(sheetScan.violations).toEqual([])
   })
 })
