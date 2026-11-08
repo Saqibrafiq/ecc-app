@@ -32,19 +32,19 @@ C4Container
 
 ## 5.2 Level 2: feature slices of the ECC App server
 
-| Building block            | Responsibility                                                                                                          |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `features/auth`           | Sign-in against Payload, session cookie, current member and role, route guards.                                         |
-| `features/events`         | The week's events per team: fixtures from the website and generated practices; "recommended" (own team) first.          |
-| `features/availability`   | Going / Not going with reason; change until the deadline; captain and admin views of who answered what.                 |
-| `features/practice`       | Practice attendance: the captain's check list at 21:00, walk-ins, the player's attendance history and countdown.        |
-| `features/selection`      | Squad selection from available players with eligibility shown; submission, admin approval or return, selection notices. |
-| `features/spielerpass`    | Upload and view Spielerpasses; shown to a captain only for their approved squad.                                        |
-| `features/notifications`  | Push subscriptions per device, sending, the scheduled jobs and their send log.                                          |
-| `features/admin`          | Members (team, role, ECC I flag), deadline extensions, exceptions, overview.                                            |
-| `domain/club-rules`       | Pure rules: practice day for a fixture, attendance window and countdown, deadlines, eligibility. No framework imports.  |
-| `shared/backend`          | Typed, `server-only` client for the Payload REST API; responses validated with Zod.                                     |
-| `shared/ui`, `shared/lib` | Design system; dates in Europe/Berlin; formatting.                                                                      |
+| Building block            | Responsibility                                                                                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `features/auth`           | Sign-in against Payload, session cookie, current member and role, route guards.                                                                                                             |
+| `features/events`         | The week's events per team: fixtures from the website and generated practices; "recommended" (own team) first.                                                                              |
+| `features/availability`   | Going / Not going with reason; change until the deadline; captain and admin views of who answered what.                                                                                     |
+| `features/practice`       | Practice attendance: the captain's check list at 21:00, walk-ins, the player's attendance history and countdown.                                                                            |
+| `features/selection`      | Squad selection from available players with eligibility shown; submission, admin approval or return, selection notices.                                                                     |
+| `features/spielerpass`    | Spielerpasses (image, name as registered, Pass Nr.); the match day pack and the filled DCB match report sheet for an approved squad (ADR-0007); upload of the signed sheet after the match. |
+| `features/notifications`  | Push subscriptions per device, sending, the scheduled jobs and their send log.                                                                                                              |
+| `features/admin`          | Members (team, role, ECC I flag), deadline extensions, exceptions, overview.                                                                                                                |
+| `domain/club-rules`       | Pure rules: practice day for a fixture, attendance window and countdown, deadlines, eligibility. No framework imports.                                                                      |
+| `shared/backend`          | Typed, `server-only` client for the Payload REST API; responses validated with Zod.                                                                                                         |
+| `shared/ui`, `shared/lib` | Design system; dates in Europe/Berlin; formatting.                                                                                                                                          |
 
 ## 5.3 Domain model
 
@@ -100,8 +100,14 @@ classDiagram
     decidedBy
   }
   class Spielerpass {
+    registeredName
+    passNumber
     image (private)
     validUntil
+  }
+  class MatchReport {
+    sheetPhoto (private)
+    uploadedBy, uploadedAt
   }
   class PushSubscription {
     endpoint, keys
@@ -129,6 +135,7 @@ classDiagram
   SquadMember "0..*" --> "1" Player
   AttendanceCorrection "0..*" --> "1" Attendance : asks to change
   Spielerpass "0..1" --> "1" Player
+  MatchReport "0..1" --> "1" Squad : signed sheet for
   PushSubscription "0..*" --> "1" User
   NotificationLog "0..*" --> "1" User
 ```

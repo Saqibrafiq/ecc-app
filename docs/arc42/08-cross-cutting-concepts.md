@@ -16,7 +16,7 @@
 
 - Data minimisation: only what the club rules need.
 - Who is going or not going for each match and practice is visible to all members: the app is the squad availability sheet of motion 2026/06. The **reasons** for not going are visible only to the player, their captain and admins.
-- Spielerpasses: private storage, served through an access-checked route, visible to admins and to the captain of an approved squad the player is in. Never cached by the service worker.
+- Spielerpasses and match report sheets: private storage, served through an access-checked route. Spielerpasses are visible to admins and to the captain of an approved squad the player is in; the filled sheet and the uploaded signed sheet to admins and that team's captain. Never cached by the service worker, never in notifications or logs.
 - Notifications contain no personal data beyond what the recipient may see.
 
 ## 8.4 Offline and installability
