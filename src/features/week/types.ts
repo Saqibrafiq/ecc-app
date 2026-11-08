@@ -9,7 +9,6 @@ import type {
 
 export type Answer = 'going' | 'not-going'
 export type EventKind = 'match' | 'practice'
-export type MatchFormat = 't20' | 'fifty-over'
 
 export type Team = {
   id: string
@@ -22,12 +21,14 @@ export type ScheduledEvent = {
   kind: EventKind
   team: Team
   date: LocalDate
-  startTime: LocalTime
+  /** Club-local start; a match may not have one yet. */
+  startTime: LocalTime | null
   ground: string
   /** Matches only. */
   opponent?: string
   competition?: string
-  format?: MatchFormat
+  /** Scheduled overs per innings, e.g. 20 for T20. */
+  overs?: number
   isHome?: boolean
   /** Matches only: when availability closes; Tuesday unless the admin extended it. */
   deadlineDay?: DeadlineDay
@@ -76,3 +77,8 @@ export type MyWeek = {
   /** For the member's next match, or `null` without one this week. */
   attendance: AttendanceSummary | null
 }
+
+export type AnswerInput = { eventId: string; answer: Answer; reason: string | null }
+export type AnswerOutcome = 'saved' | 'invalid' | 'closed' | 'unauthorized' | 'error'
+/** Saves an answer on the server; the preview has none and keeps answers in the page. */
+export type SaveAnswer = (input: AnswerInput) => Promise<{ status: AnswerOutcome }>

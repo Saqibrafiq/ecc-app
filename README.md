@@ -4,7 +4,7 @@ Squad availability and practice attendance for **Erlangen Cricket Club**: an ins
 
 Members answer **Going / Not going** from a notification. Practices are created automatically. Captains mark attendance at the ground and pick the squad from eligible players. The board approves it, and the captain gets the squad's Spielerpasses for the umpire.
 
-> **Status:** the player's week is built (preview with sample data): week strip, answers banner, match and practice cards with Going / Not going and a reason sheet, attendance, the other team's events. Connecting it to the club's backend and sign-in comes next. See the [architecture documentation](docs/arc42/README.md).
+> **Status:** sign-in with the club account and the player's week on real data: fixtures from the club website, practices created from them, answers saved, attendance from the captain's records. Without a backend the app shows a preview with sample data. Next: the captain's practice check-in and squad selection.
 
 ## What it does
 
@@ -44,6 +44,8 @@ Requires Node.js 24 and pnpm (`corepack enable`).
 pnpm install
 pnpm dev            # http://localhost:3000 (German: /de)
 ```
+
+Without a backend the app runs as a **preview with sample data**. To work with real data, run the [club website](https://github.com/Saqibrafiq/erlangen-cricket-club) locally on another port (`pnpm dev --port 3001`) and set `BACKEND_URL`, `BACKEND_SERVICE_API_KEY` (an admin account with an API key) and optionally `APP_NOW` in `.env.local` (see `.env.example`).
 
 | Command                        | What it does                                                      |
 | ------------------------------ | ----------------------------------------------------------------- |

@@ -7,8 +7,7 @@ import { type SubmitEvent, useId, useState } from 'react'
 import { BottomSheet } from '@/shared/ui/bottom-sheet'
 import { Button } from '@/shared/ui/button'
 
-/** Kept short (data minimisation), the same limit the backend enforces. */
-export const REASON_MAX_LENGTH = 300
+import { REASON_MAX_LENGTH } from '../domain/reason'
 
 export type ReasonSheetProps = {
   open: boolean

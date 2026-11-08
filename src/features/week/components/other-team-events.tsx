@@ -3,16 +3,18 @@
 import { HandHelping } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useFormatter, useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 import { cn } from '@/shared/lib/cn'
 
-import type { WeekEvent } from '../types'
+import type { SaveAnswer, WeekEvent } from '../types'
 import { toDisplayDate } from './dates'
 
 export type OtherTeamEventsProps = {
   teamName: string
   events: readonly WeekEvent[]
+  /** Saves on the server; without it (the preview) the offer stays in the page. */
+  saveAnswer?: SaveAnswer
 }
 
 const SWAP = { duration: 0.15 } as const
@@ -21,21 +23,41 @@ const SWAP = { duration: 0.15 } as const
  * The other team's events, smaller: the member can offer to help (UC-3). Whether they are picked
  * follows the borrowing rule (R-16, motion 2026/02).
  */
-export function OtherTeamEvents({ teamName, events }: OtherTeamEventsProps) {
+export function OtherTeamEvents({ teamName, events, saveAnswer }: OtherTeamEventsProps) {
   const t = useTranslations('week')
   const format = useFormatter()
+  const [, startSaving] = useTransition()
+  const [failed, setFailed] = useState<string | null>(null)
   const [helping, setHelping] = useState<ReadonlySet<string>>(
     () => new Set(events.filter((event) => event.answer === 'going').map((event) => event.id)),
   )
 
   if (events.length === 0) return null
 
-  const toggle = (id: string) => {
+  const flip = (id: string) => {
     setHelping((current) => {
       const next = new Set(current)
       if (next.has(id)) next.delete(id)
       else next.add(id)
       return next
+    })
+  }
+
+  // Offering to help is Going; withdrawing the offer is Not going, with that as the reason.
+  const toggle = (id: string) => {
+    const isOffering = !helping.has(id)
+    flip(id)
+    setFailed(null)
+    if (!saveAnswer) return
+    startSaving(async () => {
+      const { status } = await saveAnswer({
+        eventId: id,
+        answer: isOffering ? 'going' : 'not-going',
+        reason: isOffering ? null : t('other.undoReason'),
+      })
+      if (status === 'saved') return
+      flip(id)
+      setFailed(status === 'closed' ? t('closed') : t('saveFailed'))
     })
   }
 
@@ -47,6 +69,11 @@ export function OtherTeamEvents({ teamName, events }: OtherTeamEventsProps) {
       >
         {t('other.title', { team: teamName })}
       </h2>
+      {failed && (
+        <p role="alert" className="px-1 text-sm font-medium text-status-missed-text">
+          {failed}
+        </p>
+      )}
       <ul className="flex flex-col gap-2">
         {events.map((event) => {
           const date = toDisplayDate(event.date)

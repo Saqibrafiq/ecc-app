@@ -1,5 +1,5 @@
 import { Check, Clock, HelpCircle, X } from 'lucide-react'
-import { getFormatter, getTranslations } from 'next-intl/server'
+import { useFormatter, useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 
 import type { PracticeOutcome } from '@/domain/club-rules'
@@ -29,9 +29,9 @@ const SLOT_ICON: Record<PracticeOutcome, ReactNode> = {
 }
 
 /** The practices that count for the next match, and what the member still needs (R-2, R-3). */
-export async function AttendanceCard({ attendance, matchDay }: AttendanceCardProps) {
-  const t = await getTranslations('week.attendance')
-  const format = await getFormatter()
+export function AttendanceCard({ attendance, matchDay }: AttendanceCardProps) {
+  const t = useTranslations('week.attendance')
+  const format = useFormatter()
   const { countdown } = attendance
 
   let message: string

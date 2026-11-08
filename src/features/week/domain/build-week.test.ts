@@ -17,7 +17,7 @@ const MATCH: ScheduledEvent = {
   ground: 'Nürnberg',
   opponent: 'Nürnberg CC',
   competition: 'BCV Regionalliga',
-  format: 't20',
+  overs: 20,
   isHome: false,
 }
 const PRACTICE: ScheduledEvent = {

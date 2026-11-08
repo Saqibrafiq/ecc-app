@@ -1,9 +1,9 @@
 'use client'
 
 import { useFormatter, useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
-import type { Answer, MemberAnswer, WeekEvent } from '../types'
+import type { Answer, MemberAnswer, SaveAnswer, WeekEvent } from '../types'
 import { AnswersBanner } from './answers-banner'
 import { toDisplayDate } from './dates'
 import { EventCard } from './event-card'
@@ -11,8 +11,8 @@ import { ReasonSheet } from './reason-sheet'
 
 export type OwnWeekProps = {
   events: readonly WeekEvent[]
-  /** Saves an answer; the preview keeps it in the page only. */
-  onAnswer?: (eventId: string, answer: MemberAnswer) => void
+  /** Saves on the server; without it (the preview) answers stay in the page. */
+  saveAnswer?: SaveAnswer
 }
 
 function initialAnswers(events: readonly WeekEvent[]): Record<string, MemberAnswer> {
@@ -25,18 +25,35 @@ function initialAnswers(events: readonly WeekEvent[]): Record<string, MemberAnsw
 
 /**
  * The member's own team's events with their answers, and the banner counting what is still
- * open. Answering updates the banner at once; "Not going" asks for the reason first.
+ * open. An answer shows at once; if the server refuses it, the card returns to the earlier answer
+ * and says why. "Not going" asks for the reason first.
  */
-export function OwnWeek({ events, onAnswer }: OwnWeekProps) {
+export function OwnWeek({ events, saveAnswer }: OwnWeekProps) {
   const t = useTranslations('week.banner')
+  const tState = useTranslations('weekState')
   const format = useFormatter()
   const [answers, setAnswers] = useState(() => initialAnswers(events))
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [reasonFor, setReasonFor] = useState<WeekEvent | null>(null)
+  const [, startSaving] = useTransition()
 
   const save = (eventId: string, answer: Answer, reason: string | null) => {
-    const value = { answer, reason }
-    setAnswers((current) => ({ ...current, [eventId]: value }))
-    onAnswer?.(eventId, value)
+    const previous = answers[eventId]
+    setAnswers((current) => ({ ...current, [eventId]: { answer, reason } }))
+    setErrors(({ [eventId]: _cleared, ...rest }) => rest)
+    if (!saveAnswer) return
+
+    startSaving(async () => {
+      const { status } = await saveAnswer({ eventId, answer, reason })
+      if (status === 'saved') return
+      setAnswers(({ [eventId]: _failed, ...rest }) =>
+        previous ? { ...rest, [eventId]: previous } : rest,
+      )
+      setErrors((current) => ({
+        ...current,
+        [eventId]: status === 'closed' ? tState('closed') : tState('saveFailed'),
+      }))
+    })
   }
 
   const weekday = (event: WeekEvent) =>
@@ -58,6 +75,7 @@ export function OwnWeek({ events, onAnswer }: OwnWeekProps) {
           event={event}
           answer={answers[event.id]?.answer ?? null}
           reason={answers[event.id]?.reason ?? null}
+          error={errors[event.id]}
           forMatchDay={
             event.kind === 'practice' && match && match.date > event.date
               ? weekday(match)

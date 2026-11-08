@@ -51,6 +51,8 @@ Decided by the club president on 2026-11-08.
 
 ## 11.4 Technical debt
 
-| ID   | Debt                                                                                               | Plan                                            |
-| ---- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| TD-1 | App icons are scaled up from the only crest file available (256 px), so the 512 px icons are soft. | Replace with a high-resolution or vector crest. |
+| ID   | Debt                                                                                                                                                                                                        | Plan                                                                                       |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| TD-1 | App icons are scaled up from the only crest file available (256 px), so the 512 px icons are soft.                                                                                                          | Replace with a high-resolution or vector crest.                                            |
+| TD-2 | Players cannot read a match's squad until it is approved, so an admin's deadline extension (stored on the squad) is not shown on their cards; the server still accepts answers until the extended deadline. | Website: make `deadlineDay` of open squads readable by members, keeping the picks private. |
+| TD-3 | Practices are created when a member opens the week (idempotent); the scheduled Monday job will take this over (ADR-0004).                                                                                   | Notifications slice.                                                                       |
