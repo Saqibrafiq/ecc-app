@@ -4,7 +4,7 @@ Squad availability and practice attendance for **Erlangen Cricket Club**: an ins
 
 Members answer **Going / Not going** from a notification. Practices are created automatically. Captains mark attendance at the ground and pick the squad from eligible players. The board approves it, and the captain gets the squad's Spielerpasses for the umpire.
 
-> **Status:** project set up, with the design chosen (navy and gold "Scoreboard" theme) and CI in place. Features are built next, one slice at a time. See the [architecture documentation](docs/arc42/README.md).
+> **Status:** the player's week is built (preview with sample data): week strip, answers banner, match and practice cards with Going / Not going and a reason sheet, attendance, the other team's events. Connecting it to the club's backend and sign-in comes next. See the [architecture documentation](docs/arc42/README.md).
 
 ## What it does
 

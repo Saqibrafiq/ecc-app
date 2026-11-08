@@ -1,15 +1,85 @@
 {
   "metadata": {
     "appName": "ECC App",
-    "description": "Die Mitglieder-App des Erlangen Cricket Club: Zusagen für Spiele und Training, Anwesenheit und Kaderauswahl."
-  },
-  "home": {
-    "eyebrow": "Erlangen Cricket Club",
-    "title": "Deine Woche",
-    "intro": "Spiele, Training und deine Anwesenheit an einem Ort. Ab der Saison 2027."
+    "description": "Die Mitglieder-App des Erlangen Cricket Club: Zusagen für Spiele und Training, Anwesenheit und Kaderauswahl.",
+    "weekTitle": "Deine Woche"
   },
   "button": {
     "going": "Dabei",
     "notGoing": "Nicht dabei"
+  },
+  "nav": {
+    "label": "Hauptmenü",
+    "week": "Woche",
+    "attendance": "Anwesenheit",
+    "profile": "Profil",
+    "comingSoon": "kommt bald"
+  },
+  "week": {
+    "preview": "Vorschau mit Beispieldaten, gezeigt als {date}",
+    "greeting": "Hallo {name}",
+    "teamWeek": "{team} · {from} – {to}",
+    "days": "Diese Woche",
+    "today": "Heute",
+    "marker": {
+      "match": "Spiel",
+      "practice": "Train."
+    },
+    "banner": {
+      "needed": "{count, plural, one {Antwort fehlt} other {Antworten fehlen}}",
+      "allDone": "Alles beantwortet",
+      "allDoneText": "Du hast für diese Woche alles beantwortet.",
+      "which": "{events}",
+      "matchOn": "Spiel am {day}",
+      "practiceOn": "Training am {day}"
+    },
+    "event": {
+      "match": "Spiel",
+      "practice": "Training",
+      "forMatch": "vor {day}",
+      "practiceTitle": "Training {team}",
+      "versus": "gegen {opponent}",
+      "home": "Heim",
+      "away": "Auswärts",
+      "answerBy": "Antwort bis {when}",
+      "closed": "Antworten geschlossen",
+      "format": {
+        "t20": "T20",
+        "fifty-over": "50 Overs"
+      },
+      "yourAnswer": "Deine Antwort",
+      "change": "Ändern"
+    },
+    "reason": {
+      "title": "Nicht dabei?",
+      "description": "Sag deinem Kapitän, warum. Nur du, dein Kapitän und der Vorstand sehen es.",
+      "label": "Grund",
+      "placeholder": "z. B. lange Arbeit",
+      "required": "Bitte gib einen Grund an.",
+      "tooLong": "Bitte unter {max} Zeichen.",
+      "motion": "ECC-Ligaspiele gehen vor: Absagen, um Tennis- oder Tape-Ball-Cricket zu spielen, sind nicht erlaubt (Antrag 2026/03).",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "close": "Schließen"
+    },
+    "attendance": {
+      "title": "Trainingsbeteiligung",
+      "count": "{attended} / {total}",
+      "outcome": {
+        "attended": "Dabei",
+        "missed": "Gefehlt",
+        "upcoming": "Steht an",
+        "unrecorded": "Noch nicht eingetragen"
+      },
+      "met": "Du kannst aufgestellt werden. Diese Trainings zählen für das Spiel am {day}.",
+      "needs": "Komm zu {needed} der nächsten {of, plural, one {Trainingseinheit} other {# Trainings}}, um aufgestellt zu werden.",
+      "out": "Für dieses Spiel kannst du nicht aufgestellt werden: Nötig sind 2 der letzten 4 Trainings (Antrag 2023/01).",
+      "notActive": "Die 2-aus-4-Regel gilt, sobald 4 Trainings stattgefunden haben."
+    },
+    "other": {
+      "title": "{team} diese Woche",
+      "help": "Ich kann helfen",
+      "helping": "Du hast Hilfe angeboten"
+    }
   }
 }
