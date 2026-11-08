@@ -5,7 +5,9 @@
     "weekTitle": "Deine Woche",
     "teamTitle": "Dein Team",
     "checkInTitle": "Trainings-Check-in",
-    "squadTitle": "Kaderauswahl"
+    "squadTitle": "Kaderauswahl",
+    "boardTitle": "Vorstand",
+    "boardSquadTitle": "Kader prüfen"
   },
   "button": {
     "going": "Dabei",
@@ -17,7 +19,8 @@
     "attendance": "Anwesenheit",
     "profile": "Profil",
     "comingSoon": "kommt bald",
-    "team": "Team"
+    "team": "Team",
+    "board": "Vorstand"
   },
   "week": {
     "preview": "Vorschau mit Beispieldaten, gezeigt als {date}",
@@ -237,11 +240,96 @@
         "unauthorized": "Nur der Kapitän des Teams kann den Kader einreichen.",
         "error": "Der Kader konnte nicht eingereicht werden. Bitte versuche es noch einmal."
       }
-    }
+    },
+    "switcher": "Teams",
+    "eyebrowStandIn": "{team} · Vorstand, als Vertretung"
   },
   "errorPage": {
     "title": "Etwas ist schiefgelaufen",
     "text": "Diese Seite konnte nicht geladen werden. Bitte versuche es noch einmal.",
     "retry": "Erneut versuchen"
+  },
+  "board": {
+    "eyebrow": "Vorstand",
+    "title": "Kader",
+    "preview": "Vorschau mit Beispieldaten, Stand {date}",
+    "back": "Vorstand",
+    "loading": "Wird geladen…",
+    "quiet": {
+      "title": "Eine ruhige Woche",
+      "text": "Kein Team des Vereins hat diese Woche ein Spiel."
+    },
+    "notBoard": {
+      "title": "Nur für den Vorstand",
+      "text": "Kader freigeben, Fristen und Ausnahmen sind Sache des Vorstands.",
+      "back": "Zurück zu deiner Woche"
+    },
+    "notFound": {
+      "title": "Nicht gefunden",
+      "text": "Das ist kein Spiel eines Teams des Vereins.",
+      "back": "Zurück zum Vorstand"
+    },
+    "match": {
+      "title": "{team} gegen {opponent}",
+      "review": "Kader prüfen",
+      "closes": "Antworten bis {when}"
+    },
+    "status": {
+      "open": "Noch nicht eingereicht",
+      "submitted": "Wartet auf deine Freigabe",
+      "returned": "An den Kapitän zurückgegeben",
+      "approved": "Freigegeben und bekannt gegeben"
+    },
+    "squad": {
+      "eyebrow": "{team} · {date}",
+      "summary": "{going} dabei · {notGoing} nicht dabei · {awaiting} ohne Antwort",
+      "title": "Kader",
+      "empty": "Der Kapitän hat noch keinen Kader gewählt.",
+      "twelfth": "12. Mann",
+      "reserve": "Reserve",
+      "returnedNote": "Deine Notiz: {note}"
+    },
+    "decide": {
+      "approve": "Freigeben und bekannt geben",
+      "approving": "Wird freigegeben…",
+      "sendBack": "An den Kapitän zurückgeben",
+      "reopen": "Für den Kapitän wieder öffnen"
+    },
+    "sendBackSheet": {
+      "title": "Zurückgeben",
+      "description": "Der Kader öffnet sich wieder für den Kapitän, der deine Notiz sieht.",
+      "label": "Notiz an den Kapitän",
+      "placeholder": "z. B. einen Wicketkeeper aufstellen",
+      "required": "Bitte schreib eine Notiz an den Kapitän.",
+      "tooLong": "Bitte unter {max} Zeichen bleiben.",
+      "send": "Zurückgeben",
+      "cancel": "Abbrechen",
+      "close": "Schließen"
+    },
+    "deadline": {
+      "title": "Antworten bis",
+      "hint": "Derzeit {when}. Verlängere, wenn die Spieler mehr Zeit brauchen.",
+      "tuesday": "Dienstag",
+      "wednesday": "Mittwoch",
+      "thursday": "Donnerstag"
+    },
+    "exceptions": {
+      "title": "Ausnahmen",
+      "hint": "Zugesagte Spieler, gegen die eine Vereinsregel spricht. Erlaube einen, damit er nur für dieses Spiel wählbar ist.",
+      "allow": "Erlauben",
+      "allowed": "Erlaubt"
+    },
+    "saved": {
+      "approve": "Freigegeben und bekannt gegeben.",
+      "sendBack": "An den Kapitän zurückgegeben.",
+      "deadline": "Frist geändert.",
+      "exception": "Ausnahmen aktualisiert."
+    },
+    "errors": {
+      "invalid": "Das hat nicht geklappt. Lade die Seite neu und versuche es noch einmal.",
+      "not-allowed": "Der Kader hat sich inzwischen geändert. Lade die Seite neu.",
+      "unauthorized": "Das kann nur der Vorstand.",
+      "error": "Das konnte nicht gespeichert werden. Bitte versuche es noch einmal."
+    }
   }
 }

@@ -95,6 +95,7 @@ export function getSampleTeamWeek(now: Date): TeamWeek {
   const { practice, match } = weekOf(now)
   return {
     team: ECC_I,
+    choices: [],
     practices: [
       {
         event: practice,

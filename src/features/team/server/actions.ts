@@ -10,8 +10,8 @@ import { logError } from '@/shared/lib/log'
 import { planCheckIn } from '../domain/check-in'
 import { isPickable } from '../domain/selection'
 import type { CheckInOutcome, SquadOutcome, SquadStatus } from '../types'
-import { type CaptainRef, loadCheckIn, loadSelection } from './backend-team'
-import { getCaptainAccess } from './captain'
+import { loadCheckIn, loadSelection } from './backend-team'
+import { getTeamAccess, type TeamActor } from './team-access'
 
 /** A captain changes a squad only before handing it in, or after the Board returned it. */
 const EDITABLE_STATUSES: readonly SquadStatus[] = ['open', 'returned']
@@ -31,9 +31,9 @@ const squadSchema = z.object({
     .max(MAX_PLAYERS),
 })
 
-async function getCaptain(): Promise<CaptainRef | null> {
-  const access = await getCaptainAccess()
-  return access.kind === 'captain' ? access.captain : null
+async function getActor(): Promise<TeamActor | null> {
+  const access = await getTeamAccess()
+  return access.kind === 'allowed' ? access.actor : null
 }
 
 function failure(message: string, error: unknown): { status: 'unauthorized' | 'error' } {
@@ -43,24 +43,24 @@ function failure(message: string, error: unknown): { status: 'unauthorized' | 'e
 }
 
 /**
- * Records who came to a practice and closes its check-in (UC-6), as the captain: the backend
- * checks the practice is their team's (ADR-0024 in the website). Opens on the practice day.
+ * Records who came to a practice and closes its check-in (UC-6), as the captain or an admin: the
+ * backend checks the practice is theirs to record (ADR-0024 in the website). Opens on the practice day.
  */
 export async function saveCheckInAction(input: unknown): Promise<{ status: CheckInOutcome }> {
   const parsed = checkInSchema.safeParse(input)
   if (!parsed.success) return { status: 'invalid' }
-  const captain = await getCaptain()
-  if (!captain) return { status: 'unauthorized' }
+  const actor = await getActor()
+  if (!actor) return { status: 'unauthorized' }
   const { practiceId, presentIds } = parsed.data
 
   try {
-    const data = await loadCheckIn(captain, practiceId, getNow())
+    const data = await loadCheckIn(actor, practiceId, getNow())
     if (!data) return { status: 'invalid' }
     if (!data.checkIn.canCheckIn) return { status: 'not-yet' }
     const playerIds = data.checkIn.players.map((player) => player.id)
     if (presentIds.some((id) => !playerIds.includes(id))) return { status: 'invalid' }
 
-    const auth = { as: 'member', token: captain.token } as const
+    const auth = { as: 'member', token: actor.token } as const
     const changes = planCheckIn({
       records: data.records,
       presentIds: new Set(presentIds),
@@ -77,7 +77,7 @@ export async function saveCheckInAction(input: unknown): Promise<{ status: Check
               body: {
                 practice: practiceId,
                 player: Number(change.playerId),
-                team: captain.teamId,
+                team: data.teamId,
                 attended: true,
                 isWalkIn: change.isWalkIn,
               },
@@ -114,12 +114,12 @@ export async function saveCheckInAction(input: unknown): Promise<{ status: Check
 export async function submitSquadAction(input: unknown): Promise<{ status: SquadOutcome }> {
   const parsed = squadSchema.safeParse(input)
   if (!parsed.success) return { status: 'invalid' }
-  const captain = await getCaptain()
-  if (!captain) return { status: 'unauthorized' }
+  const actor = await getActor()
+  if (!actor) return { status: 'unauthorized' }
   const { fixtureId, picks } = parsed.data
 
   try {
-    const data = await loadSelection(captain, fixtureId, getNow())
+    const data = await loadSelection(actor, fixtureId, getNow())
     if (!data) return { status: 'invalid' }
     // Once submitted, only the Board reopens a squad (status returned or open).
     if (!EDITABLE_STATUSES.includes(data.selection.status)) return { status: 'locked' }
@@ -136,7 +136,7 @@ export async function submitSquadAction(input: unknown): Promise<{ status: Squad
     await backendRequest({
       method: 'PATCH',
       path: `/squads/${String(data.squadId)}`,
-      auth: { as: 'member', token: captain.token },
+      auth: { as: 'member', token: actor.token },
       body: {
         status: 'submitted',
         picks: picks.map((pick) => ({

@@ -89,6 +89,27 @@ describe('TeamWeekView', () => {
     )
   })
 
+  it("lets an admin standing in switch between the club's teams", () => {
+    const teams = [
+      { id: '1', name: 'ECC I' },
+      { id: '14', name: 'ECC II' },
+    ]
+    renderWithIntl(
+      <TeamWeekView
+        result={{
+          kind: 'team-week',
+          isPreview: false,
+          teamWeek: week({ team: { id: '14', name: 'ECC II' }, choices: teams }),
+        }}
+      />,
+    )
+
+    expect(screen.getByText('ECC II · Board, standing in')).toBeInTheDocument()
+    const switcher = within(screen.getByRole('navigation', { name: 'Teams' }))
+    expect(switcher.getByRole('link', { name: 'ECC II' })).toHaveAttribute('aria-current', 'page')
+    expect(switcher.getByRole('link', { name: 'ECC I' })).toHaveAttribute('href', '/team?team=1')
+  })
+
   it('says when the team has a quiet week', () => {
     renderWithIntl(
       <TeamWeekView

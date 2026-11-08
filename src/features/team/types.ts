@@ -22,6 +22,8 @@ export type TeamWeekMatch = {
 /** The captain's team this week: practices to check in, matches to select for. */
 export type TeamWeek = {
   team: Team
+  /** The teams an admin can switch between; empty for a captain, who has one team. */
+  choices: Team[]
   practices: TeamWeekPractice[]
   matches: TeamWeekMatch[]
 }

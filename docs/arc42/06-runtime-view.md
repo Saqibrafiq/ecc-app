@@ -72,6 +72,35 @@ sequenceDiagram
   App->>CMS: Save the picks, status submitted: locked until the Board reopens it
 ```
 
-## 6.3 Further scenarios
+## 6.3 The Board reviews a squad
 
-Added with their slices: first-run install guide; answering from a notification; admin approves or returns a squad; admin extends a deadline; admin makes an exception; captain records no-shows; captain opens Spielerpasses on match day.
+The Board approves or sends back; it never changes the captain's picks. Each decision is checked against the squad's current status on the server, so two admins working at once cannot approve a squad that was just sent back.
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor B as Board member
+  participant App as ECC App (server)
+  participant CMS as Website (Payload)
+
+  B->>App: Open the Board
+  App->>CMS: The week's fixtures, their squads' status and deadline (as the admin)
+  App-->>B: Squads waiting for approval first
+  B->>App: Open a squad
+  App-->>B: The picks in order, the deadline, players a rule blocks
+  opt Before the announcement
+    B->>App: Extend the deadline / allow an exception
+    App->>CMS: Update the squad's deadline or exceptions
+  end
+  alt Approve
+    B->>App: Approve and announce
+    App->>CMS: status approved, approvedAt
+  else Send back
+    B->>App: Send back with a note
+    App->>CMS: status returned, note: the captain can change the squad again
+  end
+```
+
+## 6.4 Further scenarios
+
+Added with their slices: first-run install guide; answering from a notification; selection notices after approval; captain records no-shows; captain opens Spielerpasses on match day.

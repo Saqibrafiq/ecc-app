@@ -1,18 +1,28 @@
-import { CalendarDays, ChartNoAxesColumn, Shield, UserRound } from 'lucide-react'
+import { CalendarDays, ChartNoAxesColumn, ClipboardCheck, Shield, UserRound } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
+import { isBoardMember } from '@/features/board'
 import { isTeamCaptain } from '@/features/team'
 import { BottomNav, type BottomNavItem } from '@/shared/ui/bottom-nav'
 
 const ICON_CLASS = 'size-5'
 
-/** The app's navigation: the week for everyone, the team for its captain. */
+/** The app's navigation: the week for everyone, the team for captains and admins, the Board for admins. */
 export async function AppNav() {
-  const [t, showTeam] = await Promise.all([getTranslations('nav'), isTeamCaptain()])
+  const [t, showTeam, showBoard] = await Promise.all([
+    getTranslations('nav'),
+    isTeamCaptain(),
+    isBoardMember(),
+  ])
   const team: BottomNavItem = {
     href: '/team',
     label: t('team'),
     icon: <Shield aria-hidden="true" className={ICON_CLASS} />,
+  }
+  const board: BottomNavItem = {
+    href: '/board',
+    label: t('board'),
+    icon: <ClipboardCheck aria-hidden="true" className={ICON_CLASS} />,
   }
   const items: BottomNavItem[] = [
     {
@@ -21,6 +31,7 @@ export async function AppNav() {
       icon: <CalendarDays aria-hidden="true" className={ICON_CLASS} />,
     },
     ...(showTeam ? [team] : []),
+    ...(showBoard ? [board] : []),
     {
       href: '/attendance',
       label: t('attendance'),

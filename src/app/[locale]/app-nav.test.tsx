@@ -3,9 +3,10 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { renderWithIntl } from '@/shared/testing/render-with-intl'
 
-const mocks = vi.hoisted(() => ({ isCaptain: true }))
+const mocks = vi.hoisted(() => ({ isCaptain: true, isBoard: true }))
 
 vi.mock('@/features/team', () => ({ isTeamCaptain: () => Promise.resolve(mocks.isCaptain) }))
+vi.mock('@/features/board', () => ({ isBoardMember: () => Promise.resolve(mocks.isBoard) }))
 vi.mock('next-intl/server', async () => {
   const messages = (await import('@/i18n/messages/en.json')).default
   return {
@@ -25,17 +26,20 @@ vi.mock('@/i18n/navigation', () => ({
 const { AppNav } = await import('./app-nav')
 
 describe('AppNav', () => {
-  it('gives a captain the team tab', async () => {
+  it('gives an admin the team and Board tabs', async () => {
     renderWithIntl(await AppNav())
 
     expect(screen.getByRole('link', { name: 'Team' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: 'Week' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Board' })).toHaveAttribute('href', '/board')
   })
 
-  it('leaves it out for everyone else', async () => {
+  it('leaves them out for players', async () => {
     mocks.isCaptain = false
+    mocks.isBoard = false
     renderWithIntl(await AppNav())
 
     expect(screen.queryByRole('link', { name: 'Team' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Board' })).not.toBeInTheDocument()
   })
 })

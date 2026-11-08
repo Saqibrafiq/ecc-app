@@ -5,7 +5,9 @@
     "weekTitle": "Your week",
     "teamTitle": "Your team",
     "checkInTitle": "Practice check-in",
-    "squadTitle": "Squad selection"
+    "squadTitle": "Squad selection",
+    "boardTitle": "Board",
+    "boardSquadTitle": "Squad review"
   },
   "button": {
     "going": "Going",
@@ -17,7 +19,8 @@
     "attendance": "Attendance",
     "profile": "Profile",
     "comingSoon": "coming soon",
-    "team": "Team"
+    "team": "Team",
+    "board": "Board"
   },
   "week": {
     "preview": "Preview with sample data, shown as {date}",
@@ -237,11 +240,96 @@
         "unauthorized": "Only the team's captain can submit its squad.",
         "error": "The squad could not be submitted. Please try again."
       }
-    }
+    },
+    "switcher": "Teams",
+    "eyebrowStandIn": "{team} · Board, standing in"
   },
   "errorPage": {
     "title": "Something went wrong",
     "text": "This page could not be loaded. Please try again.",
     "retry": "Try again"
+  },
+  "board": {
+    "eyebrow": "Board",
+    "title": "Squads",
+    "preview": "Preview with sample data, shown as {date}",
+    "back": "Board",
+    "loading": "Loading…",
+    "quiet": {
+      "title": "A quiet week",
+      "text": "No club team has a match this week."
+    },
+    "notBoard": {
+      "title": "Board only",
+      "text": "Approving squads, deadlines and exceptions are for the Board.",
+      "back": "Back to your week"
+    },
+    "notFound": {
+      "title": "Not found",
+      "text": "This is not a match of one of the club's teams.",
+      "back": "Back to the Board"
+    },
+    "match": {
+      "title": "{team} vs {opponent}",
+      "review": "Review squad",
+      "closes": "Answers close {when}"
+    },
+    "status": {
+      "open": "Not submitted yet",
+      "submitted": "Waiting for your approval",
+      "returned": "Sent back to the captain",
+      "approved": "Approved and announced"
+    },
+    "squad": {
+      "eyebrow": "{team} · {date}",
+      "summary": "{going} going · {notGoing} not going · {awaiting} no answer",
+      "title": "Squad",
+      "empty": "The captain has not picked a squad yet.",
+      "twelfth": "12th man",
+      "reserve": "Reserve",
+      "returnedNote": "Your note: {note}"
+    },
+    "decide": {
+      "approve": "Approve and announce",
+      "approving": "Approving…",
+      "sendBack": "Send back to the captain",
+      "reopen": "Reopen for the captain"
+    },
+    "sendBackSheet": {
+      "title": "Send back",
+      "description": "The squad opens again for the captain, who sees your note.",
+      "label": "Note to the captain",
+      "placeholder": "e.g. pick a wicket-keeper",
+      "required": "Please write a note for the captain.",
+      "tooLong": "Keep it under {max} characters.",
+      "send": "Send back",
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "deadline": {
+      "title": "Availability closes",
+      "hint": "Currently {when}. Extend it if players need longer to answer.",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday"
+    },
+    "exceptions": {
+      "title": "Exceptions",
+      "hint": "Going players a club rule is against. Allow one to make them selectable for this match only.",
+      "allow": "Allow",
+      "allowed": "Allowed"
+    },
+    "saved": {
+      "approve": "Approved and announced.",
+      "sendBack": "Sent back to the captain.",
+      "deadline": "Deadline changed.",
+      "exception": "Exceptions updated."
+    },
+    "errors": {
+      "invalid": "That did not work. Reload the page and try again.",
+      "not-allowed": "The squad has changed in the meantime. Reload the page.",
+      "unauthorized": "Only the Board can do this.",
+      "error": "That could not be saved. Please try again."
+    }
   }
 }
