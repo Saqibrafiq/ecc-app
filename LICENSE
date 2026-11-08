@@ -1,0 +1,23 @@
+Copyright (c) 2026 Saqib Rafiq. All rights reserved.
+
+This repository contains the source code, design and documentation of the Erlangen Cricket Club
+members' app ("the Software"), created by Saqib Rafiq.
+
+The Software is proprietary. It is published for viewing only. Without the prior written
+permission of Saqib Rafiq, no one may copy, modify, merge, publish, distribute, sublicense, sell,
+host or otherwise use the Software or any part of it, in source or compiled form.
+
+Erlangen Cricket Club may use the Software to run its own members' app, as agreed with Saqib Rafiq.
+
+Club content is not covered by this licence and is not the property of Saqib Rafiq: the name
+"Erlangen Cricket Club", the club crest, members' data, photographs, Spielerpasses, match data
+and other texts belong to Erlangen Cricket Club e.V. and the people shown or quoted.
+
+Third-party components keep their own licences: npm dependencies (see package.json) and fonts
+(see their licence files).
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN NO EVENT
+SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE USE OF THE
+SOFTWARE.
+
+For permission requests: https://github.com/Saqibrafiq
