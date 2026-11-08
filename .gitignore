@@ -32,3 +32,6 @@ Thumbs.db
 # Local assistant instructions (not published)
 CLAUDE.md
 .claude/
+
+# TypeScript build cache
+*.tsbuildinfo

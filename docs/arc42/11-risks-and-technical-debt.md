@@ -26,11 +26,15 @@ Decided by the club president on 2026-11-08.
 
 ## 11.3 Open questions
 
-| ID  | Question                                           | Status                                                                                                 |
-| --- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Q-7 | How many players does a captain pick for a match?  | Assumed: the playing XI plus optional reserves, at least 11; no upper limit enforced. To be confirmed. |
-| Q-8 | At what time of day do the daily reminders go out? | Assumed: Monday 09:00, then daily at 18:00 until answered or the event's deadline passes.              |
+| ID   | Question                                           | Status                                                                                                                               |
+| ---- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Q-7  | How many players does a captain pick for a match?  | Assumed: the playing XI plus optional reserves, at least 11; no upper limit enforced. To be confirmed.                               |
+| Q-8  | At what time of day do the daily reminders go out? | Assumed: Monday 09:00, then daily at 18:00 until answered or the event's deadline passes.                                            |
+| Q-9  | Which 4 practices count for a match?               | Assumed (design approved 2026-11-08): the 4 up to and including the practice before the match; the upcoming one shows as "upcoming". |
+| Q-10 | When do practice answers close?                    | Assumed: when the practice starts.                                                                                                   |
 
 ## 11.4 Technical debt
 
-None yet.
+| ID   | Debt                                                                                               | Plan                                            |
+| ---- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| TD-1 | App icons are scaled up from the only crest file available (256 px), so the 512 px icons are soft. | Replace with a high-resolution or vector crest. |

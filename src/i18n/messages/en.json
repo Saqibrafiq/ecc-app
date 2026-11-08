@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "appName": "ECC App",
+    "description": "Erlangen Cricket Club members' app: match and practice availability, attendance and squad selection."
+  },
+  "home": {
+    "eyebrow": "Erlangen Cricket Club",
+    "title": "Your week",
+    "intro": "Matches, practices and your attendance, in one place. Coming for the 2027 season."
+  },
+  "button": {
+    "going": "Going",
+    "notGoing": "Not going"
+  }
+}

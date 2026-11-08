@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens: the "Scoreboard" direction chosen on 2026-11-08 (arc42 §8.5). Night navy with the
+ * club kit's gold for matches and a light blue for practices. No pure white anywhere.
+ */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow-condensed), ui-sans-serif, system-ui, sans-serif;
+
+  --color-surface-page: oklch(0.25 0.07 268);
+  --color-surface-card: oklch(0.19 0.06 268);
+  --color-surface-raised: oklch(0.31 0.08 268);
+  --color-border-default: oklch(0.38 0.09 268);
+  --color-border-strong: oklch(0.45 0.1 268);
+
+  --color-text-default: oklch(0.95 0.02 85);
+  --color-text-muted: oklch(0.95 0.02 85 / 0.78);
+  --color-text-on-accent: oklch(0.25 0.07 268);
+
+  --color-accent-match: oklch(0.8 0.15 75);
+  --color-accent-match-hover: oklch(0.85 0.13 80);
+  --color-accent-practice: oklch(0.82 0.08 255);
+
+  --color-status-attended: oklch(0.8 0.15 75);
+  --color-status-missed-surface: oklch(0.33 0.1 15);
+  --color-status-missed-text: oklch(0.88 0.06 15);
+  --color-status-going-surface: oklch(0.35 0.06 160);
+  --color-status-going-text: oklch(0.9 0.06 160);
+
+  --color-focus-ring: oklch(0.85 0.13 80);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-surface-page);
+    color: var(--color-text-default);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}

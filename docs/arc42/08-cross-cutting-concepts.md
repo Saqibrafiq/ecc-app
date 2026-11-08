@@ -25,7 +25,12 @@
 
 ## 8.5 Design system, motion, i18n, accessibility
 
-Same approach as the website: tokens from the club crest, light and dark, no pure white; shadcn/ui primitives with `cva` variants; Motion for every interactive element, off under reduced motion; next-intl in English and German; WCAG 2.2 AA with axe in CI. Details follow with the first screens.
+- **Direction "Scoreboard"**, chosen by the club on 2026-11-08 from three explored directions (Scoreboard, Team sheet, Clubhouse) and refined into one combined screen. Night navy like a ground scoreboard, the club kit's gold for matches and a light blue for practices, so the two are never confused. Condensed display type (Barlow Condensed) for dates and headings, Inter for text. Tokens in `src/app/globals.css` (`--color-accent-match`, `--color-accent-practice`, …); no pure white anywhere.
+- **A player's week, top to bottom:** the week strip (today highlighted, practice and match days marked); a banner with the number of answers needed; the match card (heading with competition and format, answer deadline, team-sheet body with the big date, Going / Not going); the practice card (the same, in practice blue); the last 4 practices as attended / missed / upcoming; the other team's match and practice below, smaller.
+- **Building blocks:** shadcn/ui-style primitives with `cva` variants; `Button` in `shared/ui` (primary in match gold, outline). Motion for every interactive element (press feedback on every button), turned into instant changes under reduced motion by `MotionProvider`.
+- **i18n:** next-intl in English (default, no prefix) and German (`/de`); the locale comes from the root `[locale]` segment via `next/root-params`.
+- **Accessibility:** WCAG 2.2 AA; axe runs in the Playwright tests on iPhone and Android profiles; touch targets at least 44 px (answer buttons 52 px).
+- **Installability:** `app/manifest.ts` (standalone, portrait, navy theme), icons in `public/icons` including a maskable one and an Apple touch icon.
 
 ## 8.6 Error handling
 

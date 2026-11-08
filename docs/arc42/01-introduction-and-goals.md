@@ -30,18 +30,18 @@ The ECC App replaces this with one app on every member's phone. Fixtures come fr
 
 ### Club rules
 
-| ID   | Rule                                                                                                                                                                       |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R-1  | **Practice day.** A team with a Saturday match practises on the Wednesday before; with a Sunday match, on the Thursday before.                                             |
-| R-2  | **Attendance rule.** A player must have attended at least **2 of their team's last 4 practices** to be selectable. Cancelled practices do not count.                       |
-| R-3  | **Countdown.** After each practice the player is told what they still need within the current window (e.g. "attend 2 of the next 3").                                      |
-| R-4  | **ECC I eligibility.** Only players the admin has flagged as ECC I eligible can be selected for ECC I (new members typically are not, e.g. those who joined in 2027).      |
-| R-5  | **Deadline.** Availability for a match closes at the end of Tuesday (Europe/Berlin) unless the admin extends it to Wednesday or Thursday.                                  |
-| R-6  | **Reason required.** "Not going" always needs a reason.                                                                                                                    |
-| R-7  | **Priority.** A player's own team has priority; answering for the other team is allowed but shown to captains as such.                                                     |
-| R-8  | **Exceptions.** Only an admin can make an ineligible player selectable, per match.                                                                                         |
-| R-9  | **Team squads.** Each player belongs to one team's squad (roster), assigned by the admin. Squads have been about 15 players and may grow to 17–18; there is no fixed size. |
-| R-10 | **Daily reminders.** A member who has not answered for a practice or match is reminded every day, starting Monday, until they answer or the event closes.                  |
+| ID   | Rule                                                                                                                                                                                                                                       |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| R-1  | **Practice day.** A team with a Saturday match practises on the Wednesday before; with a Sunday match, on the Thursday before.                                                                                                             |
+| R-2  | **Attendance rule.** A player must have attended at least **2 of their team's last 4 practices** to be selectable for a match: the 4 practices up to and including the practice before that match (Q-9). Cancelled practices do not count. |
+| R-3  | **Countdown.** After each practice the player is told what they still need within the current window (e.g. "attend 2 of the next 3").                                                                                                      |
+| R-4  | **ECC I eligibility.** Only players the admin has flagged as ECC I eligible can be selected for ECC I (new members typically are not, e.g. those who joined in 2027).                                                                      |
+| R-5  | **Deadline.** Availability for a match closes at the end of Tuesday (Europe/Berlin) unless the admin extends it to Wednesday or Thursday.                                                                                                  |
+| R-6  | **Reason required.** "Not going" always needs a reason.                                                                                                                                                                                    |
+| R-7  | **Priority.** A player's own team has priority; answering for the other team is allowed but shown to captains as such.                                                                                                                     |
+| R-8  | **Exceptions.** Only an admin can make an ineligible player selectable, per match.                                                                                                                                                         |
+| R-9  | **Team squads.** Each player belongs to one team's squad (roster), assigned by the admin. Squads have been about 15 players and may grow to 17–18; there is no fixed size.                                                                 |
+| R-10 | **Daily reminders.** A member who has not answered for a practice or match is reminded every day, starting Monday, until they answer or the event closes.                                                                                  |
 
 ### Roles
 
