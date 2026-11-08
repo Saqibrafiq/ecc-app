@@ -10,6 +10,7 @@
 | R-4 | Spielerpass images leak (personal data)                                       | Low         | High   | Private storage, access-checked route, no caching, audit log; ADR before the Spielerpass slice.                |
 | R-5 | Changing the website's backend breaks the website                             | Low         | High   | Additive migrations only; the website's CI and E2E tests run on every backend change.                          |
 | R-6 | Members find the rules unfair because data was entered late or wrong          | Medium      | Medium | Captains can correct attendance until the next practice; every change is logged with who and when.             |
+| R-7 | The DCB changes the match report sheet, so filled fields no longer fit        | Low         | Medium | Template and field positions in one place; a test checks every field lands inside its box (ADR-0007).          |
 
 ## 11.2 Questions decided with the club
 
@@ -29,6 +30,7 @@ Decided by the club president on 2026-11-08.
 | Q-12 | What if a player came to practice but was not marked?                     | The captain marks everyone, themselves included; anyone not marked present counts as absent. The player sees it in the app and asks the captain or an admin to correct it (UC-18). |
 | Q-8  | When do reminders go out?                                                 | Monday at 11:00, then every day at 11:00 until the member has answered (R-10).                                                                                                     |
 | Q-10 | When do practice answers close?                                           | 12 hours before the practice starts (R-5).                                                                                                                                         |
+| Q-15 | What goes in rows A1, A2, B1 and B2 of the DCB match report sheet?        | A1 the 12th man, A2 the first reserve; B1 and B2 (team officials) are left for the captain to fill by hand (R-17).                                                                 |
 | Q-9  | Which 4 practices count when the captain selects for a match?             | The team's 4 most recent practices up to and including the one in the match's week, e.g. for Saturday 8 May: 14, 21 and 28 April and 5 May.                                        |
 | Q-14 | Last match's 12th man (or reserve) answers Not going for the next match.  | He forfeits the automatic place for that match, is notified that he gave up a place the motion guaranteed him, and is selected normally from then on.                              |
 
