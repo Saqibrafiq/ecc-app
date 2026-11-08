@@ -2,7 +2,7 @@
 
 ## 8.1 Time
 
-- All club rules are defined in **Europe/Berlin** local time and stored as UTC instants. One module (`shared/lib/dates`) converts; nothing else touches time zones.
+- All club rules are defined in **Europe/Berlin** local time and stored as UTC instants. One module (`domain/club-rules/local-time.ts`) converts, using only the platform's `Intl` API; nothing else touches time zones. Local days are `LocalDate` (`YYYY-MM-DD`) and times `LocalTime` (`HH:mm`), branded types validated once at the boundary.
 - Domain functions take `now` as an argument; tests pin it, including the DST weeks.
 
 ## 8.2 Security and roles
@@ -14,7 +14,8 @@
 
 ## 8.3 Privacy
 
-- Data minimisation: only what the club rules need. Absence reasons visible to the player, their captain and admins only.
+- Data minimisation: only what the club rules need.
+- Who is going or not going for each match and practice is visible to all members: the app is the squad availability sheet of motion 2026/06. The **reasons** for not going are visible only to the player, their captain and admins.
 - Spielerpasses: private storage, served through an access-checked route, visible to admins and to the captain of an approved squad the player is in. Never cached by the service worker.
 - Notifications contain no personal data beyond what the recipient may see.
 

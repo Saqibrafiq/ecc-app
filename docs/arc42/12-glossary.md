@@ -14,6 +14,9 @@
 | Team squad        | Mannschaftskader          | The players assigned to a team by the admin (about 15, may grow to 17–18).                   |
 | Match squad       | Spielkader                | The players a captain selects for one match, from the team squad and helpers.                |
 | Playing XI        | Startelf                  | The eleven players who take the field.                                                       |
+| 12th man          | 12. Mann                  | The substitute fielder of a match squad; plays the team's next match automatically.          |
+| Reserve           | Ersatzspieler             | An extra player in a match squad, e.g. for two games on one day; plays the next match too.   |
+| Carry-over        | Übernahme                 | A 12th man or reserve moving into the team's next playing XI without selection.              |
 | Approval          | Freigabe                  | The admin's confirmation of a captain's squad.                                               |
 | Deadline          | Meldeschluss              | When availability for a match closes: end of Tuesday unless extended.                        |
 | Exception         | Ausnahme                  | An admin making an ineligible player selectable for one match.                               |
