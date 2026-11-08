@@ -10,8 +10,7 @@ import {
 } from '@/domain/club-rules'
 import { type Answer, getPreviewNow, type ScheduledEvent, type Team } from '@/features/week'
 
-import { isInitiallyPresent } from '../domain/check-in'
-import { buildCandidates, getInitialPicks } from '../domain/selection'
+import { buildCandidates } from '../domain/selection'
 import type { CheckIn, SquadSelection, TeamWeek } from '../types'
 
 /**
@@ -30,7 +29,7 @@ const SEASON_LENGTH_SHOWN_DAYS = 60
 
 const PLAYERS = [
   { id: '1', name: 'Saqib Rafiq', answer: 'going', attended: [3, 1] },
-  { id: '2', name: 'Ali Shaan', answer: null, attended: [2, 1] },
+  { id: '2', name: 'Ali Shaan', answer: 'going', attended: [2, 1] },
   { id: '3', name: 'Bilal Mir', answer: 'going', attended: [2] },
   { id: '4', name: 'Omar Farooq', answer: 'going', attended: [3, 2] },
   { id: '5', name: 'Usman Khan', answer: 'going', attended: [3, 2, 1], isNew: true },
@@ -46,6 +45,7 @@ const PLAYERS = [
   { id: '15', name: 'Waqas Ahmed', answer: 'going', attended: [3, 2] },
   { id: '16', name: 'Lukas Braun', answer: 'not-going', attended: [1] },
   { id: '17', name: 'Danish Ali', answer: null, attended: [] },
+  { id: '19', name: 'Noah Fischer', answer: null, attended: [1] },
   { id: '18', name: 'Zain Malik', answer: 'not-going', attended: [3] },
 ] as const satisfies readonly {
   id: string
@@ -122,7 +122,7 @@ export function getSampleCheckIn(now: Date): CheckIn {
         id: player.id,
         name: player.name,
         answer: player.answer,
-        isPresent: isInitiallyPresent(undefined, player.answer, false),
+        isPresent: false,
       })),
   }
 }
@@ -169,8 +169,7 @@ export function getSampleSelection(now: Date): SquadSelection {
     status: 'open',
     note: null,
     candidates,
-    picks: getInitialPicks([], candidates),
-    forfeited: [{ id: '18', name: 'Zain Malik' }],
+    picks: [],
     notGoing: PLAYERS.filter((player) => player.answer === 'not-going').length,
     awaiting: PLAYERS.filter((player) => player.answer === null).length,
   }

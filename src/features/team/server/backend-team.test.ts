@@ -181,7 +181,7 @@ describe('getBackendTeamWeek', () => {
 })
 
 describe('loadCheckIn', () => {
-  it('ticks who said Going before the first check-in, Going players first', async () => {
+  it('lists Going players first, with nobody ticked before the check-in', async () => {
     backend({
       answers: [
         { player: 54, response: 'going' },
@@ -193,7 +193,7 @@ describe('loadCheckIn', () => {
 
     expect(data?.checkIn).toMatchObject({ practiceId: 6, canCheckIn: true, isRecorded: false })
     expect(data?.checkIn.players.map((p) => [p.name, p.isPresent])).toEqual([
-      ['Bilal Mir', true],
+      ['Bilal Mir', false],
       ['Saqib Rafiq', false],
       ['Ali Shaan', false],
       ['Omar Farooq', false],
@@ -250,7 +250,6 @@ describe('loadSelection', () => {
       notGoing: 1,
       awaiting: 0,
       picks: [],
-      forfeited: [],
     })
     const verdicts = data?.selection.candidates.map((c) => [c.name, c.eligibility.verdict])
     expect(verdicts).toEqual([
@@ -261,7 +260,7 @@ describe('loadSelection', () => {
     expect(data?.selection.candidates[0]?.eligibility.override).toBe('exception')
   })
 
-  it("carries over the last announced squad's 12th man and reserves, and its no-shows sit out", async () => {
+  it("marks the last announced squad's 12th man and reserves, and its no-shows sit out", async () => {
     backend({
       previousFixtures: [{ id: 59 }],
       previousSquad: {
@@ -279,14 +278,14 @@ describe('loadSelection', () => {
       squads: [[{ ...SQUAD, note: 'Check the openers', picks: [{ player: 55, role: 'playing' }] }]],
       answers: [
         { player: 52, response: 'going' },
+        { player: 53, response: 'going' },
         { player: 54, response: 'not-going' },
       ],
     })
 
     const data = await loadSelection(CAPTAIN, 60, NOW)
 
-    expect(data?.carryOvers).toEqual(['53', '54'])
-    expect(data?.selection.forfeited).toEqual([{ id: '54', name: 'Bilal Mir' }])
+    expect(data?.selection.candidates.map((c) => c.name)).not.toContain('Bilal Mir')
     expect(data?.selection.note).toBe('Check the openers')
     expect(data?.selection.picks).toEqual([{ playerId: '55', role: 'playing' }])
     const byName = new Map(data?.selection.candidates.map((c) => [c.name, c]))
@@ -298,9 +297,14 @@ describe('loadSelection', () => {
     backend({
       previousFixtures: [{ id: 59 }],
       previousSquad: { ...SQUAD, fixture: 59, picks: [{ player: 53, role: 'twelfth' }] },
+      answers: [{ player: 53, response: 'going' }],
     })
 
-    await expect(loadSelection(CAPTAIN, 60, NOW)).resolves.toMatchObject({ carryOvers: [] })
+    const data = await loadSelection(CAPTAIN, 60, NOW)
+
+    expect(data?.selection.candidates).toEqual([
+      expect.objectContaining({ name: 'Ali Shaan', isCarriedOver: false }),
+    ])
   })
 
   it('creates a missing squad as the service account and reads it back', async () => {

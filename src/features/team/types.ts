@@ -30,7 +30,7 @@ export type CheckInPlayer = {
   id: string
   name: string
   answer: Answer | null
-  /** Marked present: as recorded, or, before the first check-in, everyone who said Going. */
+  /** Marked present as recorded; nobody is ticked before the captain does it. */
   isPresent: boolean
 }
 
@@ -48,14 +48,14 @@ export type CheckInOutcome = 'saved' | 'invalid' | 'not-yet' | 'unauthorized' | 
 /** Saves the check-in on the server; the preview has none and keeps it in the page. */
 export type SaveCheckIn = (input: CheckInInput) => Promise<{ status: CheckInOutcome }>
 
-/** A player the captain may see in the selection: going, or carried over from the last match. */
+/** A player the captain may pick from: everyone who said Going. */
 export type Candidate = {
   id: string
   name: string
   answer: Answer | null
   eligibility: Eligibility
   attendance: { attended: number; required: number; isRuleActive: boolean }
-  /** Last match's 12th man or reserve: in the XI without selection (R-13). */
+  /** Last match's 12th man or reserve: selectable despite the attendance rule (R-13). */
   isCarriedOver: boolean
 }
 
@@ -66,10 +66,8 @@ export type SquadSelection = {
   /** Why the Board returned the squad, if it did. */
   note: string | null
   candidates: Candidate[]
-  /** The squad as stored, or, before the first submission, the carried-over players. */
+  /** The squad as saved; empty until the captain picks it: nothing is preselected. */
   picks: SquadPick[]
-  /** Carried-over players who said Not going: they give up the automatic place (Q-14). */
-  forfeited: { id: string; name: string }[]
   notGoing: number
   awaiting: number
 }

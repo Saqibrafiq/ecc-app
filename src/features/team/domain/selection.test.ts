@@ -8,7 +8,6 @@ import {
   buildCandidates,
   type CandidateInput,
   countRole,
-  getInitialPicks,
   getNextRole,
   isFirstTeam,
   isPickable,
@@ -68,6 +67,7 @@ function input(overrides: Partial<CandidateInput> = {}): CandidateInput {
     ],
     answers: new Map<string, Answer>([
       ['1', 'going'],
+      ['2', 'going'],
       ['3', 'going'],
       ['4', 'going'],
       ['5', 'going'],
@@ -93,7 +93,7 @@ function input(overrides: Partial<CandidateInput> = {}): CandidateInput {
 }
 
 describe('buildCandidates', () => {
-  it('shows who said Going and the carried-over players who did not say Not going', () => {
+  it('shows only who said Going, selectable first', () => {
     const candidates = buildCandidates(input())
 
     expect(candidates.map((candidate) => candidate.name)).toEqual([
@@ -109,7 +109,7 @@ describe('buildCandidates', () => {
     const byName = new Map(buildCandidates(input()).map((c) => [c.name, c]))
 
     expect(byName.get('Ali Shaan')).toMatchObject({
-      answer: null,
+      answer: 'going',
       isCarriedOver: true,
       eligibility: { verdict: 'selectable', override: 'carry-over' },
     })
@@ -161,7 +161,7 @@ const candidate = (overrides: Partial<Candidate>): Candidate => ({
 })
 
 describe('isPickable', () => {
-  it('lets the captain tap selectable and possible players only', () => {
+  it('lets the captain tap selectable and possible players, carried over or not', () => {
     expect(isPickable(candidate({}))).toBe(true)
     expect(
       isPickable(
@@ -175,21 +175,7 @@ describe('isPickable', () => {
         }),
       ),
     ).toBe(false)
-    expect(isPickable(candidate({ isCarriedOver: true }))).toBe(false)
-  })
-})
-
-describe('getInitialPicks', () => {
-  it('starts from the saved squad', () => {
-    const saved: SquadPick[] = [{ playerId: '3', role: 'twelfth' }]
-
-    expect(getInitialPicks(saved, [candidate({ isCarriedOver: true })])).toEqual(saved)
-  })
-
-  it('puts the carried-over players in the XI of a new squad', () => {
-    expect(
-      getInitialPicks([], [candidate({ id: '2', isCarriedOver: true }), candidate({ id: '3' })]),
-    ).toEqual([{ playerId: '2', role: 'playing' }])
+    expect(isPickable(candidate({ isCarriedOver: true }))).toBe(true)
   })
 })
 

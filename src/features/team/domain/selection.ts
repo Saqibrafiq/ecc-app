@@ -31,15 +31,14 @@ export function togglePick(picks: readonly SquadPick[], playerId: string): Squad
   return [...picks, { playerId, role: getNextRole(picks) }]
 }
 
-/** Whether the captain can tap a candidate: carried-over players are fixed (R-13). */
+/** Whether the captain can tap a candidate: anyone the rules allow; nothing is picked for them. */
 export function isPickable(candidate: Candidate): boolean {
-  return !candidate.isCarriedOver && candidate.eligibility.verdict !== 'not-selectable'
+  return candidate.eligibility.verdict !== 'not-selectable'
 }
 
 const VERDICT_ORDER = { selectable: 0, conditional: 1, 'not-selectable': 2 } as const
 
 function compareCandidates(a: Candidate, b: Candidate): number {
-  if (a.isCarriedOver !== b.isCarriedOver) return a.isCarriedOver ? -1 : 1
   const byVerdict = VERDICT_ORDER[a.eligibility.verdict] - VERDICT_ORDER[b.eligibility.verdict]
   return byVerdict === 0 ? a.name.localeCompare(b.name) : byVerdict
 }
@@ -59,17 +58,13 @@ export type CandidateInput = {
 }
 
 /**
- * The players the captain chooses from: everyone who said Going, plus carried-over players who
- * did not say Not going (R-13, Q-14), each with their eligibility (R-2, R-4, R-8, R-14). Carried
- * over first, then selectable, possible and not selectable, each by name.
+ * The players the captain chooses from: everyone who said Going, each with their eligibility
+ * (R-2, R-4, R-8, R-13, R-14). Selectable first, then possible and not selectable, each by name.
  */
 export function buildCandidates(input: CandidateInput): Candidate[] {
   const carryOvers = new Set(input.carryOvers)
   return input.players
-    .filter((player) => {
-      const answer = input.answers.get(player.id)
-      return answer === 'going' || (carryOvers.has(player.id) && answer !== 'not-going')
-    })
+    .filter((player) => input.answers.get(player.id) === 'going')
     .map((player) => {
       const status = getAttendanceStatus({
         practices: input.practices,
@@ -100,20 +95,6 @@ export function buildCandidates(input: CandidateInput): Candidate[] {
       }
     })
     .sort(compareCandidates)
-}
-
-/**
- * Where the captain starts: the squad as last saved, or, for a new one, every carried-over
- * candidate in the XI (R-13).
- */
-export function getInitialPicks(
-  saved: readonly SquadPick[],
-  candidates: readonly Candidate[],
-): SquadPick[] {
-  if (saved.length > 0) return [...saved]
-  return candidates
-    .filter((candidate) => candidate.isCarriedOver)
-    .map((candidate) => ({ playerId: candidate.id, role: 'playing' as const }))
 }
 
 /** The club's first team ("ECC I"), where only ECC I eligible players play (R-4, motion 2024/06). */

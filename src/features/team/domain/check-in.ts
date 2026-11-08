@@ -40,13 +40,3 @@ export function planCheckIn({
   }
   return changes
 }
-
-/** Who starts ticked: the recorded attendance, or, before the first check-in, who said Going. */
-export function isInitiallyPresent(
-  record: AttendanceRecord | undefined,
-  answer: Answer | null,
-  isRecorded: boolean,
-): boolean {
-  if (record) return record.attended
-  return !isRecorded && answer === 'going'
-}

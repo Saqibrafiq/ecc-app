@@ -208,8 +208,7 @@
         "twelfth": "12. Mann",
         "reserve": "Reserve"
       },
-      "carriedOver": "Übernommen",
-      "carriedOverHint": "12. Mann und Reservisten des letzten Spiels spielen dieses Spiel (Antrag 2023/10).",
+      "carriedOver": "Übernommen (Antrag 2023/10)",
       "conditional": "Braucht das Training dieser Woche",
       "practices": "Trainings {attended}/{required}",
       "reason": {
@@ -217,7 +216,6 @@
         "not-ecc1-eligible": "Nicht für ECC I freigegeben (Antrag 2024/06)",
         "no-show": "Setzt aus: beim letzten Spiel nicht erschienen (Antrag 2023/10)"
       },
-      "forfeited": "{names} hat abgesagt und verliert den übernommenen Platz.",
       "twelfthSheet": {
         "title": "11 ausgewählt",
         "description": "Wähle jetzt den 12. Mann.",
@@ -225,12 +223,10 @@
         "none": "Niemand sonst ist wählbar. Bitte den Vorstand um Hilfe."
       },
       "submit": "Zur Freigabe einreichen",
-      "resubmit": "Änderungen einreichen",
       "submitting": "Wird eingereicht…",
-      "submitted": "An den Vorstand zur Freigabe geschickt.",
       "incomplete": "Wähle 11 Spieler und einen 12. Mann, um einzureichen.",
       "banner": {
-        "submitted": "Wartet auf die Freigabe des Vorstands. Du kannst ihn noch ändern.",
+        "submitted": "Beim Vorstand eingereicht. Nur der Vorstand kann ihn für Änderungen wieder öffnen.",
         "returned": "Vom Vorstand zurückgegeben: {note}",
         "returnedNoNote": "Vom Vorstand zurückgegeben. Bitte prüfen und erneut einreichen.",
         "approved": "Freigegeben und bekannt gegeben. Nur der Vorstand kann ihn jetzt ändern."

@@ -9,9 +9,12 @@ import { logError } from '@/shared/lib/log'
 
 import { planCheckIn } from '../domain/check-in'
 import { isPickable } from '../domain/selection'
-import type { CheckInOutcome, SquadOutcome } from '../types'
+import type { CheckInOutcome, SquadOutcome, SquadStatus } from '../types'
 import { type CaptainRef, loadCheckIn, loadSelection } from './backend-team'
 import { getCaptainAccess } from './captain'
+
+/** A captain changes a squad only before handing it in, or after the Board returned it. */
+const EDITABLE_STATUSES: readonly SquadStatus[] = ['open', 'returned']
 
 /** The largest squad list the app accepts: far above any real one, against abuse. */
 const MAX_PLAYERS = 60
@@ -106,7 +109,7 @@ export async function saveCheckInAction(input: unknown): Promise<{ status: Check
 
 /**
  * Submits the captain's squad to the Board (UC-9): only players they may pick, the XI and the
- * 12th man complete, carried-over players in the XI (R-12, R-13). Refused once announced.
+ * 12th man complete (R-12). Once submitted it is the Board's: refused until they reopen it.
  */
 export async function submitSquadAction(input: unknown): Promise<{ status: SquadOutcome }> {
   const parsed = squadSchema.safeParse(input)
@@ -118,14 +121,16 @@ export async function submitSquadAction(input: unknown): Promise<{ status: Squad
   try {
     const data = await loadSelection(captain, fixtureId, getNow())
     if (!data) return { status: 'invalid' }
-    if (data.selection.status === 'approved') return { status: 'locked' }
+    // Once submitted, only the Board reopens a squad (status returned or open).
+    if (!EDITABLE_STATUSES.includes(data.selection.status)) return { status: 'locked' }
 
     const byId = new Map(data.selection.candidates.map((candidate) => [candidate.id, candidate]))
     const isAllowed = picks.every((pick) => {
       const candidate = byId.get(pick.playerId)
-      return candidate !== undefined && (candidate.isCarriedOver || isPickable(candidate))
+      return candidate !== undefined && isPickable(candidate)
     })
-    const check = checkSquad({ picks, carryOvers: data.carryOvers, notGoing: data.notGoing })
+    // The captain picks every player themselves, carried-over ones included: none is required.
+    const check = checkSquad({ picks, carryOvers: [], notGoing: new Set() })
     if (!isAllowed || !check.isValid) return { status: 'invalid' }
 
     await backendRequest({

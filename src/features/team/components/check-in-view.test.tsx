@@ -18,17 +18,17 @@ function checkIn(overrides: Partial<CheckIn> = {}): CheckIn {
 }
 
 describe('CheckInView', () => {
-  it('lists who said Going first, ticked, and the rest of the squad unticked', () => {
+  it('lists who said Going first, with nobody ticked until the captain ticks them', () => {
     renderWithIntl(<CheckInView checkIn={checkIn()} isPreview={false} />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'ECC I practice' })).toBeInTheDocument()
     const going = screen.getByRole('list', { name: 'Said going' })
-    expect(within(going).getAllByRole('checkbox')).toHaveLength(14)
-    expect(within(going).getByRole('checkbox', { name: /Saqib Rafiq/ })).toBeChecked()
+    expect(within(going).getAllByRole('checkbox')).toHaveLength(15)
+    expect(within(going).getByRole('checkbox', { name: /Saqib Rafiq/ })).not.toBeChecked()
     const others = screen.getByRole('list', { name: 'Rest of the squad' })
     expect(within(others).getByRole('checkbox', { name: /Danish Ali/ })).not.toBeChecked()
     expect(within(others).getByText('Lukas Braun').nextSibling).toHaveTextContent('Not going')
-    expect(screen.getByText('14 present')).toBeInTheDocument()
+    expect(screen.getByText('Nobody present')).toBeInTheDocument()
   })
 
   it('saves who came, walk-ins included', async () => {
@@ -40,8 +40,7 @@ describe('CheckInView', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save check-in' }))
 
     const presentIds = (save.mock.calls[0] as unknown as [{ presentIds: string[] }])[0].presentIds
-    expect(presentIds).toContain('17')
-    expect(presentIds).not.toContain('1')
+    expect(presentIds.sort()).toEqual(['1', '17'])
     expect(save).toHaveBeenCalledWith(expect.objectContaining({ practiceId: 101 }))
     expect(await screen.findByRole('status')).toHaveTextContent('Attendance saved.')
   })
@@ -81,7 +80,7 @@ describe('CheckInView', () => {
     expect(screen.getByRole('heading', { name: 'Practice cancelled' })).toBeInTheDocument()
   })
 
-  it('says when nobody is ticked', async () => {
+  it('shows a recorded check-in as saved', async () => {
     renderWithIntl(
       <CheckInView
         checkIn={checkIn({
@@ -91,6 +90,8 @@ describe('CheckInView', () => {
       />,
     )
 
+    expect(screen.getByRole('checkbox', { name: /Saqib Rafiq/ })).toBeChecked()
+    expect(screen.getByText('1 present')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('checkbox', { name: /Saqib Rafiq/ }))
 
     expect(screen.getByText('Nobody present')).toBeInTheDocument()

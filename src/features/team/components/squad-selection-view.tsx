@@ -27,6 +27,9 @@ const BANNER_CLASS: Record<Exclude<SquadStatus, 'open'>, string> = {
   approved: 'border-status-going-text/40 bg-status-going-surface text-status-going-text',
 }
 
+/** A captain changes a squad only before handing it in, or after the Board returned it. */
+const EDITABLE_STATUSES: readonly SquadStatus[] = ['open', 'returned']
+
 function Counter({ label, value, of }: { label: string; value: number; of?: number }) {
   const isDone = of !== undefined && value === of
   return (
@@ -49,16 +52,21 @@ function StatusBanner({ status, note }: { status: SquadStatus; note: string | nu
   if (status === 'open') return null
   let text = t(status)
   if (status === 'returned') text = note ? t('returned', { note }) : t('returnedNoNote')
+  // A live region: submitting announces the new state.
   return (
-    <p className={cn('rounded-xl border px-4 py-3 text-sm font-medium', BANNER_CLASS[status])}>
+    <p
+      role="status"
+      className={cn('rounded-xl border px-4 py-3 text-sm font-medium', BANNER_CLASS[status])}
+    >
       {text}
     </p>
   )
 }
 
 /**
- * The captain picks the squad from the players who said Going (UC-9): taps fill the XI, a sheet
- * asks for the 12th man once it is full, further taps add reserves; then it goes to the Board.
+ * The captain picks the squad from the players who said Going (UC-9): nothing is preselected;
+ * taps fill the XI, a sheet asks for the 12th man once it is full, further taps add reserves.
+ * Once submitted the squad is the Board's: only they can reopen it.
  */
 export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadSelectionViewProps) {
   const t = useTranslations('team')
@@ -70,13 +78,11 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
   const [isSubmitting, startSubmitting] = useTransition()
 
   const { match, candidates } = selection
-  const isLocked = status === 'approved'
-  const carryOvers = candidates.filter((c) => c.isCarriedOver).map((c) => c.id)
-  const isComplete = checkSquad({ picks, carryOvers, notGoing: new Set() }).isValid
+  const isLocked = !EDITABLE_STATUSES.includes(status)
+  const isComplete = checkSquad({ picks, carryOvers: [], notGoing: new Set() }).isValid
   const pickOf = new Map(picks.map((pick) => [pick.playerId, pick]))
   const xi = picks.filter((pick) => pick.role === 'playing').map((pick) => pick.playerId)
   const free = candidates.filter((c) => isPickable(c) && !pickOf.has(c.id))
-  const going = candidates.filter((c) => c.answer === 'going').length
   const date = toDisplayDate(match.date)
 
   const tap = (playerId: string) => {
@@ -100,8 +106,7 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
         ? await submitSquad({ fixtureId: selection.fixtureId, picks })
         : { status: 'submitted' as const }
       setOutcome(result.status)
-      if (result.status === 'submitted') setStatus('submitted')
-      if (result.status === 'locked') setStatus('approved')
+      if (result.status === 'submitted' || result.status === 'locked') setStatus('submitted')
     })
   }
 
@@ -119,7 +124,7 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
       >
         <p className="text-sm text-text-muted">
           {t('squad.summary', {
-            going,
+            going: candidates.length,
             notGoing: selection.notGoing,
             awaiting: selection.awaiting,
           })}
@@ -127,11 +132,6 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
       </TeamHeader>
 
       <StatusBanner status={status} note={selection.note} />
-      {selection.forfeited.length > 0 && (
-        <p className="rounded-xl border border-border-default px-4 py-3 text-sm text-text-muted">
-          {t('squad.forfeited', { names: selection.forfeited.map((p) => p.name).join(', ') })}
-        </p>
-      )}
 
       <div className="sticky top-0 z-10 -mx-4 flex flex-col gap-2 border-b border-border-default bg-surface-page/95 px-4 py-3 backdrop-blur">
         <div className="grid grid-cols-3">
@@ -154,9 +154,6 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
         <h2 id="squad-candidates" className="font-display text-xl font-bold uppercase">
           {t('squad.list')}
         </h2>
-        {carryOvers.length > 0 && (
-          <p className="text-sm text-text-muted">{t('squad.carriedOverHint')}</p>
-        )}
         <ul className="flex flex-col gap-2">
           {candidates.map((candidate) => {
             const position = xi.indexOf(candidate.id)
@@ -178,11 +175,6 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
 
       {!isLocked && (
         <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 border-t border-border-default bg-surface-page/95 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
-          {outcome === 'submitted' && (
-            <p role="status" className="text-sm font-medium text-status-going-text">
-              {t('squad.submitted')}
-            </p>
-          )}
           {outcome !== null && outcome !== 'submitted' && (
             <p role="alert" className="text-sm font-medium text-status-missed-text">
               {t(`squad.errors.${outcome}`)}
@@ -195,11 +187,7 @@ export function SquadSelectionView({ selection, isPreview, submitSquad }: SquadS
             onClick={submit}
             className="w-full"
           >
-            {isSubmitting
-              ? t('squad.submitting')
-              : status === 'submitted'
-                ? t('squad.resubmit')
-                : t('squad.submit')}
+            {isSubmitting ? t('squad.submitting') : t('squad.submit')}
           </Button>
         </div>
       )}

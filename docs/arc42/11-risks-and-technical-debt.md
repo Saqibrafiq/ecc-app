@@ -32,7 +32,7 @@ Decided by the club president on 2026-11-08.
 | Q-10 | When do practice answers close?                                           | 12 hours before the practice starts (R-5).                                                                                                                                         |
 | Q-15 | What goes in rows A1, A2, B1 and B2 of the DCB match report sheet?        | A1 the 12th man, A2 the first reserve; B1 and B2 (team officials) are left for the captain to fill by hand (R-17).                                                                 |
 | Q-9  | Which 4 practices count when the captain selects for a match?             | The team's 4 most recent practices up to and including the one in the match's week, e.g. for Saturday 8 May: 14, 21 and 28 April and 5 May.                                        |
-| Q-14 | Last match's 12th man (or reserve) answers Not going for the next match.  | He forfeits the automatic place for that match, is notified that he gave up a place the motion guaranteed him, and is selected normally from then on.                              |
+| Q-14 | Last match's 12th man (or reserve) answers Not going for the next match.  | They are simply not available for that match. Nothing is automatic: the captain picks every player from those who said Going (club decision, 8 Nov 2026).                          |
 
 ### Motions and the app: decided with the club president on 2026-11-08
 

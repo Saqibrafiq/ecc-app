@@ -197,7 +197,7 @@ describe('submitSquadAction', () => {
     )
   })
 
-  it('accepts a carried-over player, though the captain cannot tap them', async () => {
+  it('accepts a carried-over player the captain picked', async () => {
     const candidates = IDS.map((id) => candidate(id, { isCarriedOver: id === '1' }))
     mocks.selection.mockResolvedValue({ ...selectionData({ candidates }), carryOvers: ['1'] })
 
@@ -234,7 +234,7 @@ describe('submitSquadAction', () => {
     expect(mocks.request).not.toHaveBeenCalled()
   })
 
-  it('refuses bad input, unknown matches and announced squads', async () => {
+  it('refuses bad input, unknown matches, and squads already submitted or announced', async () => {
     await expect(submitSquadAction({ fixtureId: 60, picks: 'all' })).resolves.toEqual({
       status: 'invalid',
     })
@@ -244,10 +244,13 @@ describe('submitSquadAction', () => {
       status: 'invalid',
     })
 
-    mocks.selection.mockResolvedValueOnce(selectionData({ status: 'approved' }))
-    await expect(submitSquadAction({ fixtureId: 60, picks: SQUAD_PICKS })).resolves.toEqual({
-      status: 'locked',
-    })
+    for (const status of ['submitted', 'approved']) {
+      mocks.selection.mockResolvedValueOnce(selectionData({ status }))
+      await expect(submitSquadAction({ fixtureId: 60, picks: SQUAD_PICKS })).resolves.toEqual({
+        status: 'locked',
+      })
+    }
+    expect(mocks.request).not.toHaveBeenCalled()
   })
 
   it('is for captains only, and logs failures', async () => {

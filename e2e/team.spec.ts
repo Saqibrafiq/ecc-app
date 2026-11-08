@@ -20,18 +20,21 @@ test.describe("the captain's team", () => {
     await page.getByRole('link', { name: 'Check in' }).click()
 
     await expect(page.getByRole('heading', { level: 1, name: 'ECC I practice' })).toBeVisible()
+    await page.getByText('Saqib Rafiq').click()
     await page.getByText('Danish Ali').click()
-    await expect(page.getByText('15 present')).toBeVisible()
+    await expect(page.getByText('2 present')).toBeVisible()
     await page.getByRole('button', { name: 'Save check-in' }).click()
 
     await expect(page.getByRole('status')).toHaveText(/Attendance saved/)
   })
 
-  test('picks the XI, then the 12th man, and submits the squad', async ({ page }) => {
+  test('picks the XI from nothing, then the 12th man, and submits the squad for good', async ({
+    page,
+  }) => {
     await page.goto('/team/squad/201')
     const free = page.locator('main ul button[aria-pressed="false"]:not([disabled])')
 
-    for (let index = 0; index < 10; index += 1) await free.first().click()
+    for (let index = 0; index < 11; index += 1) await free.first().click()
     const sheet = page.getByRole('dialog', { name: '11 selected' })
     await expect(sheet).toBeVisible()
     await sheet.getByRole('button', { name: 'Waqas Ahmed' }).click()
@@ -43,7 +46,10 @@ test.describe("the captain's team", () => {
     )
     await page.getByRole('button', { name: 'Submit for approval' }).click()
 
-    await expect(page.getByRole('status')).toHaveText('Sent to the Board for approval.')
+    await expect(page.getByRole('status')).toHaveText(
+      'Submitted to the Board. Only the Board can reopen it for changes.',
+    )
+    await expect(page.getByRole('button', { name: /Submit/ })).toHaveCount(0)
   })
 
   test('speaks German under /de', async ({ page }) => {
@@ -61,7 +67,7 @@ test.describe("the captain's team", () => {
 
     await page.goto('/team/squad/201')
     const free = page.locator('main ul button[aria-pressed="false"]:not([disabled])')
-    for (let index = 0; index < 10; index += 1) await free.first().click()
+    for (let index = 0; index < 11; index += 1) await free.first().click()
     await expect(page.getByRole('dialog')).toBeVisible()
     expect((await scan(page)).violations).toEqual([])
   })

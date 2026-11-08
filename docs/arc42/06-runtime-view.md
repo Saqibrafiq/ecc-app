@@ -49,7 +49,7 @@ Every scheduled step is idempotent: a step records what it did, so a second tick
 
 ## 6.2 Captain checks in a practice and selects the squad
 
-The captain works as themselves: the website's access rules check every write is for their own team, and a guard lets a captain only submit a squad, never approve it (ADR-0024 in the website).
+The captain works as themselves: the website's access rules check every write is for their own team, and a guard lets a captain only submit a squad, never approve or change it after submitting: only the Board reopens it (ADR-0024 in the website).
 
 ```mermaid
 sequenceDiagram
@@ -65,11 +65,11 @@ sequenceDiagram
   App->>CMS: Create or flip attendance records, mark the practice recorded
   C->>App: Open the match's squad
   App->>CMS: Squad (created open by the service account if missing), last announced squad, answers, season attendance
-  App-->>C: Going players with eligibility; carried-over players already in the XI
+  App-->>C: Going players with eligibility; nobody preselected
   C->>App: Tap 11 players, then the 12th man (asked for in a sheet), optional reserves
   C->>App: Submit for approval
-  App->>App: Check the squad against the club rules (R-12, R-13) and each player's eligibility
-  App->>CMS: Save the picks, status submitted
+  App->>App: Check the squad against the club rules (R-12) and each player's eligibility
+  App->>CMS: Save the picks, status submitted: locked until the Board reopens it
 ```
 
 ## 6.3 Further scenarios

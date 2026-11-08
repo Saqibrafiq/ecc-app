@@ -12,23 +12,23 @@ vi.mock('server-only', () => ({}))
 const { getSampleSelection, getTeamPreviewNow } = await import('../server/sample-team')
 
 const NOW = getTeamPreviewNow(new Date('2026-11-09T09:00:00Z'))
+const SUBMITTED = 'Submitted to the Board. Only the Board can reopen it for changes.'
 
 function selection(overrides: Partial<SquadSelection> = {}): SquadSelection {
   return { ...getSampleSelection(NOW), ...overrides }
 }
 
-const row = (name: string) => screen.getByRole('button', { name: new RegExp(name) })
-const freeRows = () =>
-  screen
-    .getAllByRole('button', { pressed: false })
-    .filter((button) => !button.hasAttribute('disabled'))
-
-async function pickTenMore() {
-  for (let index = 0; index < 10; index += 1) {
-    const [next] = freeRows()
-    if (!next) throw new Error('no free player left')
-    await userEvent.click(next)
-  }
+/** A complete squad of selectable sample players: 11 playing and a 12th man. */
+function completeSelection(overrides: Partial<SquadSelection> = {}): SquadSelection {
+  const base = selection(overrides)
+  const picks = base.candidates
+    .filter((c) => c.eligibility.verdict !== 'not-selectable')
+    .slice(0, 12)
+    .map((c, index) => ({
+      playerId: c.id,
+      role: index < 11 ? ('playing' as const) : ('twelfth' as const),
+    }))
+  return { ...base, picks }
 }
 
 /** Many taps with layout animations: slow under coverage instrumentation. */
@@ -41,26 +41,34 @@ function at(elements: readonly HTMLElement[], index: number): HTMLElement {
   return element
 }
 
+const row = (name: string) => screen.getByRole('button', { name: new RegExp(name) })
+const freeRows = () =>
+  screen
+    .getAllByRole('button', { pressed: false })
+    .filter((button) => !button.hasAttribute('disabled'))
+
+async function pickEleven() {
+  for (let index = 0; index < 11; index += 1) await userEvent.click(at(freeRows(), 0))
+}
+
 describe('SquadSelectionView', SLOW, () => {
-  it('shows the going players: carried over first and fixed, then why some cannot play', () => {
+  it('starts with nobody picked, and shows why some going players cannot play', () => {
     renderWithIntl(<SquadSelectionView selection={selection()} isPreview />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'vs Nürnberg CC' })).toBeInTheDocument()
-    expect(screen.getByText('14 going · 2 not going · 2 no answer')).toBeInTheDocument()
-    expect(row('Ali Shaan')).toHaveAttribute('aria-pressed', 'true')
-    expect(row('Ali Shaan')).toBeDisabled()
-    expect(row('Ali Shaan')).toHaveTextContent('Carried over')
+    expect(screen.getByText('15 going · 2 not going · 2 no answer')).toBeInTheDocument()
+    expect(screen.queryAllByRole('button', { pressed: true })).toHaveLength(0)
+    expect(screen.getByText('0/11')).toBeInTheDocument()
+    expect(row('Ali Shaan')).toBeEnabled()
+    expect(row('Ali Shaan')).toHaveTextContent('Carried over (motion 2023/10)')
     expect(row('Bilal Mir')).toHaveTextContent("Needs this week's practice")
     expect(row('Omar Farooq')).toBeDisabled()
     expect(row('Omar Farooq')).toHaveTextContent('Sits out: missed the last match (motion 2023/10)')
     expect(row('Usman Khan')).toHaveTextContent('Not cleared for ECC I (motion 2024/06)')
-    expect(
-      screen.getByText('Zain Malik said Not going and gives up the carried-over place.'),
-    ).toBeInTheDocument()
     expect(screen.getByText('Preview with sample data, shown as Saturday')).toBeInTheDocument()
   })
 
-  it('fills the XI, asks for the 12th man, then submits the squad to the Board', async () => {
+  it('fills the XI, asks for the 12th man, then submits and locks the squad', async () => {
     const submit = vi.fn(() => Promise.resolve({ status: 'submitted' as const }))
     renderWithIntl(
       <SquadSelectionView selection={selection()} isPreview={false} submitSquad={submit} />,
@@ -69,7 +77,7 @@ describe('SquadSelectionView', SLOW, () => {
     expect(submitButton).toBeDisabled()
     expect(screen.getByText('Tap players to fill the XI.')).toBeInTheDocument()
 
-    await pickTenMore()
+    await pickEleven()
 
     const sheet = screen.getByRole('dialog', { name: '11 selected' })
     expect(within(sheet).getByText('Now pick the 12th man.')).toBeInTheDocument()
@@ -79,7 +87,6 @@ describe('SquadSelectionView', SLOW, () => {
     expect(screen.getByText('11/11')).toBeInTheDocument()
     expect(screen.getByText('1/1')).toBeInTheDocument()
     expect(screen.getByText('Squad complete: tap to add reserves, or submit.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { pressed: true, name: /12th man/ })).toBeInTheDocument()
 
     await userEvent.click(submitButton)
 
@@ -87,18 +94,14 @@ describe('SquadSelectionView', SLOW, () => {
       fixtureId: 201,
       picks: expect.arrayContaining([{ playerId: '2', role: 'playing' }]) as unknown,
     })
-    expect(await screen.findByRole('status')).toHaveTextContent('Sent to the Board for approval.')
-    expect(
-      await screen.findByRole('button', { name: 'Submit changes' }, { timeout: 5000 }),
-    ).toBeEnabled()
-    expect(
-      screen.getByText("Waiting for the Board's approval. You can still change it."),
-    ).toBeInTheDocument()
+    expect(await screen.findByRole('status')).toHaveTextContent(SUBMITTED)
+    expect(screen.queryByRole('button', { name: /Submit/ })).not.toBeInTheDocument()
+    expect(row('Ali Shaan')).toBeDisabled()
   })
 
   it('adds reserves after the 12th man and drops a player on a second tap', async () => {
     renderWithIntl(<SquadSelectionView selection={selection()} isPreview />)
-    await pickTenMore()
+    await pickEleven()
     await userEvent.keyboard('{Escape}')
 
     await userEvent.click(at(freeRows(), 0))
@@ -112,13 +115,11 @@ describe('SquadSelectionView', SLOW, () => {
   })
 
   it('submits in the preview without a server', async () => {
-    renderWithIntl(<SquadSelectionView selection={selection()} isPreview />)
-    await pickTenMore()
-    await userEvent.click(at(within(screen.getByRole('dialog')).getAllByRole('button'), 1))
+    renderWithIntl(<SquadSelectionView selection={completeSelection()} isPreview />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Submit for approval' }))
 
-    expect(await screen.findByRole('status')).toHaveTextContent('Sent to the Board')
+    expect(await screen.findByRole('status')).toHaveTextContent(SUBMITTED)
   })
 
   it.each<[SquadOutcome, string]>([
@@ -126,21 +127,9 @@ describe('SquadSelectionView', SLOW, () => {
     ['unauthorized', "Only the team's captain can submit its squad."],
     ['error', 'The squad could not be submitted. Please try again.'],
   ])('says why a submission failed (%s)', async (status, message) => {
-    const complete = selection()
-    const picks = complete.candidates
-      .filter((c) => c.eligibility.verdict !== 'not-selectable')
-      .slice(0, 12)
-      .map((c, index) => ({
-        playerId: c.id,
-        role: index < 11 ? ('playing' as const) : ('twelfth' as const),
-      }))
     const submit = vi.fn(() => Promise.resolve({ status }))
     renderWithIntl(
-      <SquadSelectionView
-        selection={{ ...complete, picks }}
-        isPreview={false}
-        submitSquad={submit}
-      />,
+      <SquadSelectionView selection={completeSelection()} isPreview={false} submitSquad={submit} />,
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Submit for approval' }))
@@ -148,42 +137,44 @@ describe('SquadSelectionView', SLOW, () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(message)
   })
 
-  it('locks the squad once the Board has announced it', async () => {
-    const complete = selection()
-    const picks = complete.candidates
-      .filter((c) => c.eligibility.verdict !== 'not-selectable')
-      .slice(0, 12)
-      .map((c, index) => ({
-        playerId: c.id,
-        role: index < 11 ? ('playing' as const) : ('twelfth' as const),
-      }))
+  it('locks the squad when the server says it is already handed in', async () => {
     const submit = vi.fn(() => Promise.resolve({ status: 'locked' as const }))
-    const { unmount } = renderWithIntl(
-      <SquadSelectionView
-        selection={{ ...complete, picks }}
-        isPreview={false}
-        submitSquad={submit}
-      />,
+    renderWithIntl(
+      <SquadSelectionView selection={completeSelection()} isPreview={false} submitSquad={submit} />,
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Submit for approval' }))
 
-    expect(
-      await screen.findByText('Approved and announced. Only the Board can change it now.'),
-    ).toBeInTheDocument()
+    expect(await screen.findByRole('status')).toHaveTextContent(SUBMITTED)
     expect(screen.queryByRole('button', { name: /Submit/ })).not.toBeInTheDocument()
-    expect(row('Saqib Rafiq')).toBeDisabled()
-    unmount()
   })
 
-  it("shows the Board's note when it returned the squad", () => {
+  it('shows a submitted or announced squad read-only', () => {
+    const { unmount } = renderWithIntl(
+      <SquadSelectionView selection={completeSelection({ status: 'submitted' })} isPreview />,
+    )
+    expect(screen.getByRole('status')).toHaveTextContent(SUBMITTED)
+    expect(screen.queryByText('Tap players to fill the XI.')).not.toBeInTheDocument()
+    expect(row('Saqib Rafiq')).toBeDisabled()
+    unmount()
+
+    renderWithIntl(
+      <SquadSelectionView selection={completeSelection({ status: 'approved' })} isPreview />,
+    )
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Approved and announced. Only the Board can change it now.',
+    )
+  })
+
+  it("lets the captain change a squad the Board returned, with the Board's note", () => {
     const { unmount } = renderWithIntl(
       <SquadSelectionView
-        selection={selection({ status: 'returned', note: 'Pick a keeper' })}
+        selection={completeSelection({ status: 'returned', note: 'Pick a keeper' })}
         isPreview
       />,
     )
     expect(screen.getByText('Returned by the Board: Pick a keeper')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Submit for approval' })).toBeEnabled()
     unmount()
 
     renderWithIntl(
@@ -200,7 +191,6 @@ describe('SquadSelectionView', SLOW, () => {
       <SquadSelectionView
         selection={{
           ...few,
-          forfeited: [],
           candidates: few.candidates
             .filter((c) => c.eligibility.verdict !== 'not-selectable')
             .slice(0, 11),
@@ -209,7 +199,7 @@ describe('SquadSelectionView', SLOW, () => {
       />,
     )
 
-    await pickTenMore()
+    await pickEleven()
 
     expect(
       within(screen.getByRole('dialog')).getByText(

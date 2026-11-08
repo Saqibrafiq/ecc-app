@@ -208,8 +208,7 @@
         "twelfth": "12th man",
         "reserve": "Reserve"
       },
-      "carriedOver": "Carried over",
-      "carriedOverHint": "Last match's 12th man and reserves play this match (motion 2023/10).",
+      "carriedOver": "Carried over (motion 2023/10)",
       "conditional": "Needs this week's practice",
       "practices": "Practices {attended}/{required}",
       "reason": {
@@ -217,7 +216,6 @@
         "not-ecc1-eligible": "Not cleared for ECC I (motion 2024/06)",
         "no-show": "Sits out: missed the last match (motion 2023/10)"
       },
-      "forfeited": "{names} said Not going and gives up the carried-over place.",
       "twelfthSheet": {
         "title": "11 selected",
         "description": "Now pick the 12th man.",
@@ -225,12 +223,10 @@
         "none": "Nobody else can be picked. Ask the Board for help."
       },
       "submit": "Submit for approval",
-      "resubmit": "Submit changes",
       "submitting": "Submitting…",
-      "submitted": "Sent to the Board for approval.",
       "incomplete": "Pick 11 players and a 12th man to submit.",
       "banner": {
-        "submitted": "Waiting for the Board's approval. You can still change it.",
+        "submitted": "Submitted to the Board. Only the Board can reopen it for changes.",
         "returned": "Returned by the Board: {note}",
         "returnedNoNote": "Returned by the Board. Please check it and submit again.",
         "approved": "Approved and announced. Only the Board can change it now."

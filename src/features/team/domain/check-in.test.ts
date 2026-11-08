@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { Answer } from '@/features/week'
 
-import { isInitiallyPresent, planCheckIn } from './check-in'
+import { planCheckIn } from './check-in'
 
 describe('planCheckIn', () => {
   const answers = new Map<string, Answer>([
@@ -42,18 +42,5 @@ describe('planCheckIn', () => {
       { kind: 'update', recordId: 11, attended: true },
       { kind: 'update', recordId: 12, attended: false },
     ])
-  })
-})
-
-describe('isInitiallyPresent', () => {
-  it('shows the recorded attendance', () => {
-    expect(isInitiallyPresent({ id: 1, playerId: '1', attended: false }, 'going', true)).toBe(false)
-    expect(isInitiallyPresent({ id: 1, playerId: '1', attended: true }, null, true)).toBe(true)
-  })
-
-  it('ticks who said Going before the first check-in, and nobody unrecorded after it', () => {
-    expect(isInitiallyPresent(undefined, 'going', false)).toBe(true)
-    expect(isInitiallyPresent(undefined, 'not-going', false)).toBe(false)
-    expect(isInitiallyPresent(undefined, 'going', true)).toBe(false)
   })
 })

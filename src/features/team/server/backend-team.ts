@@ -24,8 +24,8 @@ import { type BackendAuth, BackendError, backendRequest } from '@/shared/backend
 import { dayStart, toQuery } from '@/shared/backend/query'
 import { listOf, relationIdSchema } from '@/shared/backend/schemas'
 
-import { type AttendanceRecord, isInitiallyPresent } from '../domain/check-in'
-import { buildCandidates, getInitialPicks, isFirstTeam } from '../domain/selection'
+import type { AttendanceRecord } from '../domain/check-in'
+import { buildCandidates, isFirstTeam } from '../domain/selection'
 import type { CheckIn, SquadSelection, SquadStatus, TeamWeek } from '../types'
 
 /** The signed-in captain: the team they lead and their session. */
@@ -299,7 +299,7 @@ export async function loadCheckIn(
             id: player.id,
             name: player.name,
             answer,
-            isPresent: isInitiallyPresent(recordByPlayer.get(player.id), answer, isRecorded),
+            isPresent: recordByPlayer.get(player.id)?.attended ?? false,
           }
         })
         .sort((a, b) => saidGoing(a.id) - saidGoing(b.id)),
@@ -309,12 +309,7 @@ export async function loadCheckIn(
   }
 }
 
-export type SelectionData = {
-  selection: SquadSelection
-  squadId: number
-  carryOvers: string[]
-  notGoing: Set<string>
-}
+export type SelectionData = { selection: SquadSelection; squadId: number }
 
 /** A match of the captain's team with everyone they may pick and the squad so far, or `null`. */
 export async function loadSelection(
@@ -360,10 +355,7 @@ export async function loadSelection(
     today,
     seasonStart,
   })
-  const notGoing = new Set(
-    [...answers].filter(([, answer]) => answer === 'not-going').map(([id]) => id),
-  )
-  const nameOf = new Map(players.map((player) => [player.id, player.name]))
+  const notGoing = [...answers.values()].filter((answer) => answer === 'not-going').length
 
   return {
     selection: {
@@ -372,15 +364,10 @@ export async function loadSelection(
       status: squad.status,
       note: squad.note ?? null,
       candidates,
-      picks: getInitialPicks(saved, candidates),
-      forfeited: carryOvers
-        .filter((id) => notGoing.has(id))
-        .map((id) => ({ id, name: nameOf.get(id) ?? '' })),
-      notGoing: notGoing.size,
+      picks: saved,
+      notGoing,
       awaiting: players.filter((player) => !answers.has(player.id)).length,
     },
     squadId: squad.id,
-    carryOvers,
-    notGoing,
   }
 }
