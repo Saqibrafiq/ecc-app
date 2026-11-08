@@ -45,7 +45,7 @@
       "closed": "Answers closed",
       "format": {
         "t20": "T20",
-        "fifty-over": "50 overs"
+        "overs": "{overs} overs"
       },
       "yourAnswer": "Your answer",
       "change": "Change"
@@ -79,7 +79,47 @@
     "other": {
       "title": "{team} this week",
       "help": "I can help",
-      "helping": "You offered to help"
+      "helping": "You offered to help",
+      "undoReason": "No longer available to help"
+    },
+    "closed": "Answers for this have closed.",
+    "saveFailed": "Your answer could not be saved. Please try again."
+  },
+  "signIn": {
+    "eyebrow": "Erlangen Cricket Club",
+    "title": "Sign in",
+    "intro": "With your club account: the same email and password as on the club website.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "signingIn": "Signing in…",
+    "help": "No account yet, or forgot your password? Ask the Board for a personal link.",
+    "error": "Signing in is not possible right now. Please try again.",
+    "rejected": {
+      "credentials": "Email or password is not right.",
+      "locked": "Too many attempts: your account is locked for a while. Try again later."
+    },
+    "errors": {
+      "required": "Please fill in this field.",
+      "invalidEmail": "Please enter a valid email address."
     }
+  },
+  "weekState": {
+    "unlinked": {
+      "title": "Almost there",
+      "text": "Your account is not linked to a player yet. Ask the Board to link it, then your week appears here."
+    },
+    "noSquad": {
+      "title": "No team yet",
+      "text": "You are not in a team squad yet. The Board assigns you to ECC I or ECC II."
+    },
+    "quiet": {
+      "title": "A quiet week",
+      "text": "No matches or practices for your team this week.",
+      "next": "Next match: {title} on {date}"
+    },
+    "saveFailed": "Your answer could not be saved. Please try again.",
+    "closed": "Answers for this have closed.",
+    "signOut": "Sign out"
   }
 }

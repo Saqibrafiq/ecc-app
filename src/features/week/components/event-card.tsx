@@ -14,12 +14,15 @@ export type EventCardProps = {
   event: WeekEvent
   answer: Answer | null
   reason: string | null
+  /** Why the last answer was not saved, if it was not. */
+  error?: string
   /** For a practice: the day of the match it prepares for, e.g. "Saturday". */
   forMatchDay?: string
   onGoing: () => void
   onNotGoing: () => void
 }
 
+const T20_OVERS = 20
 const POP = { type: 'spring', stiffness: 500, damping: 30 } as const
 
 /** A match or practice of the member's own team, with its deadline and the Going / Not going answer. */
@@ -27,11 +30,14 @@ export function EventCard({
   event,
   answer,
   reason,
+  error,
   forMatchDay,
   onGoing,
   onNotGoing,
 }: EventCardProps) {
   const t = useTranslations('week.event')
+  const formatOvers = (overs: number) =>
+    overs === T20_OVERS ? t('format.t20') : t('format.overs', { overs })
   const tButton = useTranslations('button')
   const format = useFormatter()
   const date = toDisplayDate(event.date)
@@ -39,7 +45,7 @@ export function EventCard({
   const headingId = `event-${event.id}`
 
   const heading = isMatch
-    ? [t('match'), event.competition, event.format && t(`format.${event.format}`)]
+    ? [t('match'), event.competition, event.overs && formatOvers(event.overs)]
         .filter(Boolean)
         .join(' · ')
     : [t('practice'), forMatchDay && t('forMatch', { day: forMatchDay })]
@@ -100,7 +106,7 @@ export function EventCard({
             {title}
           </h2>
           <span className="text-sm text-text-muted">
-            {event.startTime} · {place}
+            {[event.startTime, place].filter(Boolean).join(' · ')}
           </span>
         </div>
       </div>
@@ -154,6 +160,11 @@ export function EventCard({
             {tButton('notGoing')}
           </Button>
         </div>
+        {error && (
+          <p role="alert" className="text-sm font-medium text-status-missed-text">
+            {error}
+          </p>
+        )}
         <AnimatePresence initial={false}>
           {answer === 'not-going' && reason && (
             <motion.p

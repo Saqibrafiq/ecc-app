@@ -52,7 +52,7 @@ function sampleEvents(monday: LocalDate): ScheduledEvent[] {
       ground: 'Nürnberg',
       opponent: 'Nürnberg CC',
       competition: 'BCV Regionalliga',
-      format: 't20',
+      overs: 20,
       isHome: false,
     },
     {
@@ -72,7 +72,7 @@ function sampleEvents(monday: LocalDate): ScheduledEvent[] {
       ground: 'Erlangen ground',
       opponent: 'Fürth II',
       competition: 'BCV Verbandsliga',
-      format: 't20',
+      overs: 20,
       isHome: true,
     },
   ]

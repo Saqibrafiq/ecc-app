@@ -45,7 +45,7 @@
       "closed": "Antworten geschlossen",
       "format": {
         "t20": "T20",
-        "fifty-over": "50 Overs"
+        "overs": "{overs} Overs"
       },
       "yourAnswer": "Deine Antwort",
       "change": "Ändern"
@@ -79,7 +79,47 @@
     "other": {
       "title": "{team} diese Woche",
       "help": "Ich kann helfen",
-      "helping": "Du hast Hilfe angeboten"
+      "helping": "Du hast Hilfe angeboten",
+      "undoReason": "Kann doch nicht helfen"
+    },
+    "closed": "Antworten dafür sind geschlossen.",
+    "saveFailed": "Deine Antwort konnte nicht gespeichert werden. Bitte versuche es noch einmal."
+  },
+  "signIn": {
+    "eyebrow": "Erlangen Cricket Club",
+    "title": "Anmelden",
+    "intro": "Mit deinem Vereinskonto: dieselbe E-Mail und dasselbe Passwort wie auf der Vereinswebsite.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "signingIn": "Wird angemeldet …",
+    "help": "Noch kein Konto oder Passwort vergessen? Der Vorstand schickt dir einen persönlichen Link.",
+    "error": "Anmelden ist gerade nicht möglich. Bitte versuche es noch einmal.",
+    "rejected": {
+      "credentials": "E-Mail oder Passwort stimmt nicht.",
+      "locked": "Zu viele Versuche: Dein Konto ist eine Weile gesperrt. Versuche es später noch einmal."
+    },
+    "errors": {
+      "required": "Bitte fülle dieses Feld aus.",
+      "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein."
     }
+  },
+  "weekState": {
+    "unlinked": {
+      "title": "Fast geschafft",
+      "text": "Dein Konto ist noch mit keinem Spieler verknüpft. Bitte den Vorstand darum, dann erscheint hier deine Woche."
+    },
+    "noSquad": {
+      "title": "Noch kein Team",
+      "text": "Du bist noch in keinem Mannschaftskader. Der Vorstand ordnet dich ECC I oder ECC II zu."
+    },
+    "quiet": {
+      "title": "Eine ruhige Woche",
+      "text": "Diese Woche keine Spiele und kein Training für dein Team.",
+      "next": "Nächstes Spiel: {title} am {date}"
+    },
+    "saveFailed": "Deine Antwort konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
+    "closed": "Antworten dafür sind geschlossen.",
+    "signOut": "Abmelden"
   }
 }

@@ -9,6 +9,7 @@ import {
   type LocalDate,
   startOfWeek,
   type TeamPractice,
+  toLocalTime,
 } from '@/domain/club-rules'
 
 import type {
@@ -22,6 +23,8 @@ import type {
 } from '../types'
 
 const DAYS_PER_WEEK = 7
+/** A practice without a stored start time starts at the usual hour. */
+const DEFAULT_PRACTICE_TIME = toLocalTime('18:30')
 
 export type WeekInput = {
   now: Date
@@ -39,7 +42,7 @@ export type WeekInput = {
 function getClosesAt(event: ScheduledEvent): Date {
   return event.kind === 'match'
     ? getAvailabilityDeadline(event.date, event.deadlineDay)
-    : getPracticeDeadline(event.date, event.startTime)
+    : getPracticeDeadline(event.date, event.startTime ?? DEFAULT_PRACTICE_TIME)
 }
 
 function toWeekEvent(event: ScheduledEvent, input: WeekInput): WeekEvent {
@@ -56,7 +59,7 @@ function toWeekEvent(event: ScheduledEvent, input: WeekInput): WeekEvent {
 }
 
 function byDateAndTime(a: ScheduledEvent, b: ScheduledEvent): number {
-  return `${a.date} ${a.startTime}`.localeCompare(`${b.date} ${b.startTime}`)
+  return `${a.date} ${a.startTime ?? ''}`.localeCompare(`${b.date} ${b.startTime ?? ''}`)
 }
 
 function getAttendance(input: WeekInput, events: readonly WeekEvent[], today: LocalDate) {
