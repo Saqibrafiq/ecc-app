@@ -1,15 +1,85 @@
 {
   "metadata": {
     "appName": "ECC App",
-    "description": "Erlangen Cricket Club members' app: match and practice availability, attendance and squad selection."
-  },
-  "home": {
-    "eyebrow": "Erlangen Cricket Club",
-    "title": "Your week",
-    "intro": "Matches, practices and your attendance, in one place. Coming for the 2027 season."
+    "description": "Erlangen Cricket Club members' app: match and practice availability, attendance and squad selection.",
+    "weekTitle": "Your week"
   },
   "button": {
     "going": "Going",
     "notGoing": "Not going"
+  },
+  "nav": {
+    "label": "Main",
+    "week": "Week",
+    "attendance": "Attendance",
+    "profile": "Profile",
+    "comingSoon": "coming soon"
+  },
+  "week": {
+    "preview": "Preview with sample data, shown as {date}",
+    "greeting": "Hi {name}",
+    "teamWeek": "{team} · {from} – {to}",
+    "days": "This week",
+    "today": "Today",
+    "marker": {
+      "match": "Match",
+      "practice": "Prac"
+    },
+    "banner": {
+      "needed": "{count, plural, one {answer needed} other {answers needed}}",
+      "allDone": "All answered",
+      "allDoneText": "You have answered for everything this week.",
+      "which": "{events}",
+      "matchOn": "{day}'s match",
+      "practiceOn": "{day}'s practice"
+    },
+    "event": {
+      "match": "Match",
+      "practice": "Practice",
+      "forMatch": "before {day}",
+      "practiceTitle": "{team} practice",
+      "versus": "vs {opponent}",
+      "home": "Home",
+      "away": "Away",
+      "answerBy": "Answer by {when}",
+      "closed": "Answers closed",
+      "format": {
+        "t20": "T20",
+        "fifty-over": "50 overs"
+      },
+      "yourAnswer": "Your answer",
+      "change": "Change"
+    },
+    "reason": {
+      "title": "Not going?",
+      "description": "Tell your captain why. Only you, your captain and the Board see it.",
+      "label": "Reason",
+      "placeholder": "e.g. working late",
+      "required": "Please give a reason.",
+      "tooLong": "Keep it under {max} characters.",
+      "motion": "ECC league matches come first: not going to play tennis- or tape-ball cricket is not allowed (motion 2026/03).",
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "attendance": {
+      "title": "Practice attendance",
+      "count": "{attended} / {total}",
+      "outcome": {
+        "attended": "Attended",
+        "missed": "Missed",
+        "upcoming": "Upcoming",
+        "unrecorded": "Not recorded yet"
+      },
+      "met": "You can be selected. These practices count for {day}'s match.",
+      "needs": "Attend {needed} of the next {of, plural, one {practice} other {# practices}} to be selected.",
+      "out": "You can't be selected for this match: 2 of the last 4 practices are needed (motion 2023/01).",
+      "notActive": "The 2-of-4 rule starts once 4 practices have taken place."
+    },
+    "other": {
+      "title": "{team} this week",
+      "help": "I can help",
+      "helping": "You offered to help"
+    }
   }
 }
