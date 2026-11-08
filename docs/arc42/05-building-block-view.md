@@ -91,7 +91,13 @@ classDiagram
     note
   }
   class SquadMember {
+    role: playing | twelfth | reserve
+    isCarriedOver
     isException
+  }
+  class AttendanceCorrection {
+    status: requested | accepted | declined
+    decidedBy
   }
   class Spielerpass {
     image (private)
@@ -121,6 +127,7 @@ classDiagram
   Squad "0..1" --> "1" Fixture
   SquadMember "0..*" --> "1" Squad
   SquadMember "0..*" --> "1" Player
+  AttendanceCorrection "0..*" --> "1" Attendance : asks to change
   Spielerpass "0..1" --> "1" Player
   PushSubscription "0..*" --> "1" User
   NotificationLog "0..*" --> "1" User

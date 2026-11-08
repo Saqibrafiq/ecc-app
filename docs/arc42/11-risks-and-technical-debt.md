@@ -15,23 +15,37 @@
 
 Decided by the club president on 2026-11-08.
 
-| ID  | Question                                                     | Decision                                                                                                                                                        |
-| --- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Q-1 | Is there a practice in a week without a match for that team? | No automatic practice. If anyone wants one, the admin creates it by hand (UC-16).                                                                               |
-| Q-2 | Do cancelled practices count in the "last 4"?                | No. Only practices that took place count (R-2).                                                                                                                 |
-| Q-3 | How big is a squad?                                          | A team's squad (roster) has been 15 players and may grow to 17–18; the club has 44 registered members. No fixed size; the admin assigns players to teams (R-9). |
-| Q-4 | When are members reminded?                                   | First on Monday, then **every day until the member has answered**, for practices and matches alike (R-10).                                                      |
-| Q-5 | How long are Spielerpass images kept?                        | Out of the app's scope: the admin uploads, replaces and deletes Spielerpasses by hand, as the club decides.                                                     |
-| Q-6 | How do the 44 members get their first login?                 | A personal, one-time invite link per member, created by the admin and sent on WhatsApp; the member sets a password. Forgotten passwords: a new link (ADR-0006). |
+| ID   | Question                                                                  | Decision                                                                                                                                                                           |
+| ---- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q-1  | Is there a practice in a week without a match for that team?              | No automatic practice. If anyone wants one, the admin creates it by hand (UC-16).                                                                                                  |
+| Q-2  | Do cancelled practices count in the "last 4"?                             | No. Only practices that took place count (R-2).                                                                                                                                    |
+| Q-3  | How big is a squad?                                                       | A team's squad (roster) has been 15 players and may grow to 17–18; the club has 44 registered members. No fixed size; the admin assigns players to teams (R-9).                    |
+| Q-4  | When are members reminded?                                                | First on Monday, then **every day until the member has answered**, for practices and matches alike (R-10).                                                                         |
+| Q-5  | How long are Spielerpass images kept?                                     | Out of the app's scope: the admin uploads, replaces and deletes Spielerpasses by hand, as the club decides.                                                                        |
+| Q-6  | How do the 44 members get their first login?                              | A personal, one-time invite link per member, created by the admin and sent on WhatsApp; the member sets a password. Forgotten passwords: a new link (ADR-0006).                    |
+| Q-11 | How does the attendance rule work at the start of the season?             | Practice starts before the first match. The rule applies once 4 practices of the season count for a match, pre-season ones included (R-11).                                        |
+| Q-13 | When are teams announced, given the practice is on Wednesday or Thursday? | By the end of Thursday, after the practice. Availability still closes on Tuesday (R-5).                                                                                            |
+| Q-7  | How many players does a captain pick for a match?                         | A playing XI of 11 plus one 12th man; reserves may be added, e.g. for two games on one day. The 12th man and reserves play the team's next match automatically (R-12, R-13).       |
+| Q-12 | What if a player came to practice but was not marked?                     | The captain marks everyone, themselves included; anyone not marked present counts as absent. The player sees it in the app and asks the captain or an admin to correct it (UC-18). |
+| Q-8  | When do reminders go out?                                                 | Monday at 11:00, then every day at 11:00 until the member has answered (R-10).                                                                                                     |
+| Q-10 | When do practice answers close?                                           | 12 hours before the practice starts (R-5).                                                                                                                                         |
+| Q-9  | Which 4 practices count when the captain selects for a match?             | The team's 4 most recent practices up to and including the one in the match's week, e.g. for Saturday 8 May: 14, 21 and 28 April and 5 May.                                        |
+| Q-14 | Last match's 12th man (or reserve) answers Not going for the next match.  | He forfeits the automatic place for that match, is notified that he gave up a place the motion guaranteed him, and is selected normally from then on.                              |
+
+### Motions and the app: decided with the club president on 2026-11-08
+
+| Topic                         | Decision                                                                                                                     |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Squad of fifteen (2026/02)    | A guide, not a limit; the app enforces no squad size (R-9).                                                                  |
+| Equal treatment (2024/02)     | "Own team first" is display order only; any member can answer for the other team; borrowing needs both captains (R-7, R-16). |
+| Board and captaincy (2024/04) | Separate jobs by design: captains select, the Board approves and announces. Nothing to block in the app.                     |
+| Vice-captains (2026/07)       | No separate role; an admin records attendance when the captain cannot; a stand-in captain gets the captain role.             |
+| Bundesliga squad (2023/08)    | Superseded by later motions; not built.                                                                                      |
 
 ## 11.3 Open questions
 
-| ID   | Question                                           | Status                                                                                                                               |
-| ---- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Q-7  | How many players does a captain pick for a match?  | Assumed: the playing XI plus optional reserves, at least 11; no upper limit enforced. To be confirmed.                               |
-| Q-8  | At what time of day do the daily reminders go out? | Assumed: Monday 09:00, then daily at 18:00 until answered or the event's deadline passes.                                            |
-| Q-9  | Which 4 practices count for a match?               | Assumed (design approved 2026-11-08): the 4 up to and including the practice before the match; the upcoming one shows as "upcoming". |
-| Q-10 | When do practice answers close?                    | Assumed: when the practice starts.                                                                                                   |
+| ID  | Question | Status |
+| --- | -------- | ------ |
 
 ## 11.4 Technical debt
 

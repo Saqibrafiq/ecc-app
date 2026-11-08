@@ -13,7 +13,7 @@ sequenceDiagram
   actor Captain
   actor Admin
 
-  Note over GHA,App: Monday, first tick after 09:00 (Europe/Berlin)
+  Note over GHA,App: Monday, first tick after 11:00 (Europe/Berlin); daily at 11:00 until answered
   GHA->>App: POST /api/jobs/tick (signed)
   App->>CMS: Fixtures of the week per team
   App->>App: club-rules: practice day per team (Sat → Wed, Sun → Thu)
@@ -31,7 +31,7 @@ sequenceDiagram
   App->>CMS: Save attendance
   App->>Push: Countdown to players who missed ("attend 2 of the next 3")
 
-  Note over GHA,App: Deadline (end of Tuesday, or as extended)
+  Note over GHA,App: Availability closes (end of Tuesday, or as extended); the squad is picked after practice, announced by end of Thursday
   GHA->>App: tick
   App->>Push: "Pick your squad: 14 going, 12 eligible"
   Push-->>Captain: Notification

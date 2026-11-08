@@ -24,7 +24,7 @@ The app's value rests on a few rules that decide who plays: practice day per fix
 
 Option 1.
 
-- Functions take plain data and an explicit `now` (never read the clock themselves), e.g. `getPracticeDay(fixtureDate)`, `getAttendanceStatus(practices, attendance)`, `getCountdown(status)`, `getDeadline(fixture, extension)`, `getEligibility(player, team, status, exception)`.
+- Functions take plain data and an explicit `now` (never read the clock themselves), e.g. `getPracticeDate(matchDate)`, `planPractices(fixtures)`, `getAttendanceStatus({ practices, attendedPracticeIds, matchDate, today, seasonStart })`, `getCountdown(status)`, `getMatchDeadline(matchDate, deadlineDay)`, `getPracticeDeadline(date, startTime)`, `getEligibility({ isFirstTeam, isEcc1Eligible, attendance, hasException })`. The module lives in `src/domain/club-rules`.
 - Times are computed in Europe/Berlin and returned as UTC instants.
 - Tests use fixed clocks, including the weeks of the March and October clock changes.
 - Option 2 scatters and duplicates rules. Option 3 hides them in another repo and couples them to Payload.
