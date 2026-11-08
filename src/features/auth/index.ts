@@ -1,4 +1,5 @@
 export { SignInForm, type SignInFormProps } from './components/sign-in-form'
 export { signInAction, signOutAction } from './server/actions'
+export { redirectToSignIn } from './server/redirect-to-sign-in'
 export { getCurrentMember, getSessionToken } from './server/session'
 export type { Member, Role } from './types'

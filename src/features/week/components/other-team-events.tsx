@@ -8,7 +8,7 @@ import { useState, useTransition } from 'react'
 import { cn } from '@/shared/lib/cn'
 
 import type { SaveAnswer, WeekEvent } from '../types'
-import { toDisplayDate } from './dates'
+import { toDisplayDate } from '@/shared/lib/display-date'
 
 export type OtherTeamEventsProps = {
   teamName: string

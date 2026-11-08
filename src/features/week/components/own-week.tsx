@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react'
 
 import type { Answer, MemberAnswer, SaveAnswer, WeekEvent } from '../types'
 import { AnswersBanner } from './answers-banner'
-import { toDisplayDate } from './dates'
+import { toDisplayDate } from '@/shared/lib/display-date'
 import { EventCard } from './event-card'
 import { ReasonSheet } from './reason-sheet'
 

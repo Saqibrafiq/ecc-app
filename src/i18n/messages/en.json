@@ -2,7 +2,10 @@
   "metadata": {
     "appName": "ECC App",
     "description": "Erlangen Cricket Club members' app: match and practice availability, attendance and squad selection.",
-    "weekTitle": "Your week"
+    "weekTitle": "Your week",
+    "teamTitle": "Your team",
+    "checkInTitle": "Practice check-in",
+    "squadTitle": "Squad selection"
   },
   "button": {
     "going": "Going",
@@ -13,7 +16,8 @@
     "week": "Week",
     "attendance": "Attendance",
     "profile": "Profile",
-    "comingSoon": "coming soon"
+    "comingSoon": "coming soon",
+    "team": "Team"
   },
   "week": {
     "preview": "Preview with sample data, shown as {date}",
@@ -121,5 +125,123 @@
     "saveFailed": "Your answer could not be saved. Please try again.",
     "closed": "Answers for this have closed.",
     "signOut": "Sign out"
+  },
+  "team": {
+    "eyebrow": "{team} · Captain",
+    "title": "Your team",
+    "preview": "Preview with sample data, shown as {date}",
+    "back": "Team",
+    "loading": "Loading…",
+    "practices": "Practice check-in",
+    "matches": "Squad selection",
+    "practice": {
+      "title": "{team} practice",
+      "checkIn": "Check in",
+      "correct": "Correct check-in",
+      "recorded": "Attendance recorded",
+      "due": "Check-in due",
+      "opens": "Check-in opens {day}",
+      "cancelled": "Cancelled"
+    },
+    "match": {
+      "title": "vs {opponent}",
+      "select": "Select squad",
+      "view": "View squad",
+      "status": {
+        "open": "Not selected yet",
+        "submitted": "Waiting for approval",
+        "approved": "Approved and announced",
+        "returned": "Returned by the Board"
+      }
+    },
+    "quiet": {
+      "title": "A quiet week",
+      "text": "{team} has no match or practice this week."
+    },
+    "notCaptain": {
+      "title": "Captains only",
+      "text": "These screens are for team captains. Your week has everything you need.",
+      "back": "Back to your week"
+    },
+    "notFound": {
+      "title": "Not found",
+      "text": "This is not one of your team's matches or practices.",
+      "back": "Back to your team"
+    },
+    "checkIn": {
+      "eyebrow": "Check-in · {date}",
+      "legend": "Who came to practice?",
+      "going": "Said going",
+      "others": "Rest of the squad",
+      "answer": {
+        "going": "Going",
+        "not-going": "Not going",
+        "none": "No answer"
+      },
+      "count": "{count, plural, =0 {Nobody present} other {# present}}",
+      "walkIn": "Ticking someone who had not said Going records them as a walk-in.",
+      "save": "Save check-in",
+      "saving": "Saving…",
+      "saved": "Attendance saved. Players see it in their week.",
+      "failed": "The check-in could not be saved. Please try again.",
+      "notYetTitle": "Not yet",
+      "notYetText": "The check-in opens on {day}, the practice day.",
+      "cancelledTitle": "Practice cancelled",
+      "cancelledText": "Cancelled practices don't count for attendance."
+    },
+    "squad": {
+      "eyebrow": "Squad · {date}",
+      "summary": "{going} going · {notGoing} not going · {awaiting} no answer",
+      "counter": {
+        "xi": "XI",
+        "twelfth": "12th",
+        "reserves": "Reserves"
+      },
+      "hint": {
+        "playing": "Tap players to fill the XI.",
+        "twelfth": "Now pick the 12th man.",
+        "reserve": "Squad complete: tap to add reserves, or submit."
+      },
+      "list": "Going players",
+      "role": {
+        "playing": "XI",
+        "twelfth": "12th man",
+        "reserve": "Reserve"
+      },
+      "carriedOver": "Carried over (motion 2023/10)",
+      "conditional": "Needs this week's practice",
+      "practices": "Practices {attended}/{required}",
+      "reason": {
+        "attendance": "Not enough practices (motion 2023/01)",
+        "not-ecc1-eligible": "Not cleared for ECC I (motion 2024/06)",
+        "no-show": "Sits out: missed the last match (motion 2023/10)"
+      },
+      "twelfthSheet": {
+        "title": "11 selected",
+        "description": "Now pick the 12th man.",
+        "close": "Close",
+        "none": "Nobody else can be picked. Ask the Board for help."
+      },
+      "submit": "Submit for approval",
+      "submitting": "Submitting…",
+      "incomplete": "Pick 11 players and a 12th man to submit.",
+      "banner": {
+        "submitted": "Submitted to the Board. Only the Board can reopen it for changes.",
+        "returned": "Returned by the Board: {note}",
+        "returnedNoNote": "Returned by the Board. Please check it and submit again.",
+        "approved": "Approved and announced. Only the Board can change it now."
+      },
+      "errors": {
+        "invalid": "This squad breaks a club rule. Reload the page and check it.",
+        "locked": "The squad is already announced.",
+        "unauthorized": "Only the team's captain can submit its squad.",
+        "error": "The squad could not be submitted. Please try again."
+      }
+    }
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "text": "This page could not be loaded. Please try again.",
+    "retry": "Try again"
   }
 }

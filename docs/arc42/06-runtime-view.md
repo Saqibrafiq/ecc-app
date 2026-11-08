@@ -47,6 +47,31 @@ sequenceDiagram
 
 Every scheduled step is idempotent: a step records what it did, so a second tick in the same hour, or a delayed tick, does nothing twice (ADR-0004).
 
-## 6.2 Further scenarios
+## 6.2 Captain checks in a practice and selects the squad
 
-Added with their slices: sign-in and first-run install guide; answering from a notification; captain adds a walk-in; admin extends a deadline; admin makes an exception; captain opens Spielerpasses on match day.
+The captain works as themselves: the website's access rules check every write is for their own team, and a guard lets a captain only submit a squad, never approve or change it after submitting: only the Board reopens it (ADR-0024 in the website).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor C as Captain
+  participant App as ECC App (server)
+  participant CMS as Website (Payload)
+
+  C->>App: Open the practice's check-in (on practice day)
+  App->>CMS: Practice, its Going answers, attendance so far (as the captain)
+  App-->>C: Squad list, Going players ticked
+  C->>App: Save check-in (who came)
+  App->>CMS: Create or flip attendance records, mark the practice recorded
+  C->>App: Open the match's squad
+  App->>CMS: Squad (created open by the service account if missing), last announced squad, answers, season attendance
+  App-->>C: Going players with eligibility; nobody preselected
+  C->>App: Tap 11 players, then the 12th man (asked for in a sheet), optional reserves
+  C->>App: Submit for approval
+  App->>App: Check the squad against the club rules (R-12) and each player's eligibility
+  App->>CMS: Save the picks, status submitted: locked until the Board reopens it
+```
+
+## 6.3 Further scenarios
+
+Added with their slices: first-run install guide; answering from a notification; admin approves or returns a squad; admin extends a deadline; admin makes an exception; captain records no-shows; captain opens Spielerpasses on match day.

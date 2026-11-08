@@ -6,9 +6,10 @@ import { useFormatter, useTranslations } from 'next-intl'
 
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
+import { DateTile } from '@/shared/ui/date-tile'
 
 import type { Answer, WeekEvent } from '../types'
-import { toDisplayDate } from './dates'
+import { toDisplayDate } from '@/shared/lib/display-date'
 
 export type EventCardProps = {
   event: WeekEvent
@@ -82,22 +83,7 @@ export function EventCard({
       </div>
 
       <div className="grid grid-cols-[4rem_1fr] items-center gap-4 px-4 py-4">
-        <div className="flex flex-col items-center border-r border-border-default pr-3">
-          <span className="text-xs font-bold tracking-wide text-text-muted uppercase">
-            {format.dateTime(date, { weekday: 'short' })}
-          </span>
-          <span
-            className={cn(
-              'font-display text-5xl leading-none font-bold tabular-nums',
-              isMatch ? 'text-accent-match' : 'text-accent-practice',
-            )}
-          >
-            {format.dateTime(date, { day: 'numeric' })}
-          </span>
-          <span className="text-xs font-bold tracking-wide text-text-muted uppercase">
-            {format.dateTime(date, { month: 'short' })}
-          </span>
-        </div>
+        <DateTile date={date} tone={isMatch ? 'match' : 'practice'} />
         <div className="flex min-w-0 flex-col gap-1">
           <h2
             id={headingId}
