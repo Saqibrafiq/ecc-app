@@ -2,7 +2,10 @@
   "metadata": {
     "appName": "ECC App",
     "description": "Die Mitglieder-App des Erlangen Cricket Club: Zusagen für Spiele und Training, Anwesenheit und Kaderauswahl.",
-    "weekTitle": "Deine Woche"
+    "weekTitle": "Deine Woche",
+    "teamTitle": "Dein Team",
+    "checkInTitle": "Trainings-Check-in",
+    "squadTitle": "Kaderauswahl"
   },
   "button": {
     "going": "Dabei",
@@ -13,7 +16,8 @@
     "week": "Woche",
     "attendance": "Anwesenheit",
     "profile": "Profil",
-    "comingSoon": "kommt bald"
+    "comingSoon": "kommt bald",
+    "team": "Team"
   },
   "week": {
     "preview": "Vorschau mit Beispieldaten, gezeigt als {date}",
@@ -121,5 +125,127 @@
     "saveFailed": "Deine Antwort konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
     "closed": "Antworten dafür sind geschlossen.",
     "signOut": "Abmelden"
+  },
+  "team": {
+    "eyebrow": "{team} · Kapitän",
+    "title": "Dein Team",
+    "preview": "Vorschau mit Beispieldaten, Stand {date}",
+    "back": "Team",
+    "loading": "Wird geladen…",
+    "practices": "Trainings-Check-in",
+    "matches": "Kaderauswahl",
+    "practice": {
+      "title": "Training {team}",
+      "checkIn": "Check-in",
+      "correct": "Check-in korrigieren",
+      "recorded": "Anwesenheit erfasst",
+      "due": "Check-in fällig",
+      "opens": "Check-in ab {day}",
+      "cancelled": "Abgesagt"
+    },
+    "match": {
+      "title": "gegen {opponent}",
+      "select": "Kader wählen",
+      "view": "Kader ansehen",
+      "status": {
+        "open": "Noch nicht gewählt",
+        "submitted": "Wartet auf Freigabe",
+        "approved": "Freigegeben und bekannt gegeben",
+        "returned": "Vom Vorstand zurückgegeben"
+      }
+    },
+    "quiet": {
+      "title": "Eine ruhige Woche",
+      "text": "{team} hat diese Woche kein Spiel und kein Training."
+    },
+    "notCaptain": {
+      "title": "Nur für Kapitäne",
+      "text": "Diese Seiten sind für Teamkapitäne. Deine Woche enthält alles, was du brauchst.",
+      "back": "Zurück zu deiner Woche"
+    },
+    "notFound": {
+      "title": "Nicht gefunden",
+      "text": "Das ist kein Spiel und kein Training deines Teams.",
+      "back": "Zurück zu deinem Team"
+    },
+    "checkIn": {
+      "eyebrow": "Check-in · {date}",
+      "legend": "Wer war beim Training?",
+      "going": "Hat zugesagt",
+      "others": "Restlicher Kader",
+      "answer": {
+        "going": "Dabei",
+        "not-going": "Nicht dabei",
+        "none": "Keine Antwort"
+      },
+      "count": "{count, plural, =0 {Niemand anwesend} other {# anwesend}}",
+      "walkIn": "Wer ohne Zusage angehakt wird, zählt als spontan dabei.",
+      "save": "Check-in speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Anwesenheit gespeichert. Die Spieler sehen sie in ihrer Woche.",
+      "failed": "Der Check-in konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
+      "notYetTitle": "Noch nicht",
+      "notYetText": "Der Check-in ist ab {day} möglich, dem Trainingstag.",
+      "cancelledTitle": "Training abgesagt",
+      "cancelledText": "Abgesagte Trainings zählen nicht für die Anwesenheit."
+    },
+    "squad": {
+      "eyebrow": "Kader · {date}",
+      "summary": "{going} dabei · {notGoing} nicht dabei · {awaiting} ohne Antwort",
+      "counter": {
+        "xi": "XI",
+        "twelfth": "12.",
+        "reserves": "Reserve"
+      },
+      "hint": {
+        "playing": "Tippe Spieler an, um die XI zu füllen.",
+        "twelfth": "Wähle jetzt den 12. Mann.",
+        "reserve": "Kader vollständig: tippe für Reservisten oder reiche ein."
+      },
+      "list": "Zugesagte Spieler",
+      "role": {
+        "playing": "XI",
+        "twelfth": "12. Mann",
+        "reserve": "Reserve"
+      },
+      "carriedOver": "Übernommen",
+      "carriedOverHint": "12. Mann und Reservisten des letzten Spiels spielen dieses Spiel (Antrag 2023/10).",
+      "conditional": "Braucht das Training dieser Woche",
+      "practices": "Trainings {attended}/{required}",
+      "reason": {
+        "attendance": "Zu wenige Trainings (Antrag 2023/01)",
+        "not-ecc1-eligible": "Nicht für ECC I freigegeben (Antrag 2024/06)",
+        "no-show": "Setzt aus: beim letzten Spiel nicht erschienen (Antrag 2023/10)"
+      },
+      "forfeited": "{names} hat abgesagt und verliert den übernommenen Platz.",
+      "twelfthSheet": {
+        "title": "11 ausgewählt",
+        "description": "Wähle jetzt den 12. Mann.",
+        "close": "Schließen",
+        "none": "Niemand sonst ist wählbar. Bitte den Vorstand um Hilfe."
+      },
+      "submit": "Zur Freigabe einreichen",
+      "resubmit": "Änderungen einreichen",
+      "submitting": "Wird eingereicht…",
+      "submitted": "An den Vorstand zur Freigabe geschickt.",
+      "incomplete": "Wähle 11 Spieler und einen 12. Mann, um einzureichen.",
+      "banner": {
+        "submitted": "Wartet auf die Freigabe des Vorstands. Du kannst ihn noch ändern.",
+        "returned": "Vom Vorstand zurückgegeben: {note}",
+        "returnedNoNote": "Vom Vorstand zurückgegeben. Bitte prüfen und erneut einreichen.",
+        "approved": "Freigegeben und bekannt gegeben. Nur der Vorstand kann ihn jetzt ändern."
+      },
+      "errors": {
+        "invalid": "Dieser Kader verstößt gegen eine Vereinsregel. Lade die Seite neu und prüfe ihn.",
+        "locked": "Der Kader ist bereits bekannt gegeben.",
+        "unauthorized": "Nur der Kapitän des Teams kann den Kader einreichen.",
+        "error": "Der Kader konnte nicht eingereicht werden. Bitte versuche es noch einmal."
+      }
+    }
+  },
+  "errorPage": {
+    "title": "Etwas ist schiefgelaufen",
+    "text": "Diese Seite konnte nicht geladen werden. Bitte versuche es noch einmal.",
+    "retry": "Erneut versuchen"
   }
 }

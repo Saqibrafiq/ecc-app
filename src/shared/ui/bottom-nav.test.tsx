@@ -5,8 +5,10 @@ import { renderWithIntl } from '@/shared/testing/render-with-intl'
 
 import { BottomNav } from './bottom-nav'
 
+const pathname = vi.hoisted(() => ({ value: '/' }))
+
 vi.mock('@/i18n/navigation', () => ({
-  usePathname: () => '/',
+  usePathname: () => pathname.value,
   Link: ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
     <a href={href} {...props}>
       {children}
@@ -33,5 +35,23 @@ describe('BottomNav', () => {
     expect(screen.queryByRole('link', { name: /Attendance/ })).not.toBeInTheDocument()
     expect(screen.getByText('Attendance').closest('[aria-disabled="true"]')).not.toBeNull()
     expect(screen.getByText('(coming soon)')).toBeInTheDocument()
+  })
+
+  it('keeps a section current on its sub-pages, but not the week', () => {
+    pathname.value = '/team/check-in/5'
+    renderWithIntl(
+      <BottomNav
+        label="Main"
+        comingSoonLabel="coming soon"
+        items={[
+          { href: '/', label: 'Week', icon: null },
+          { href: '/team', label: 'Team', icon: null },
+        ]}
+      />,
+    )
+
+    expect(screen.getByRole('link', { name: 'Team' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Week' })).not.toHaveAttribute('aria-current')
+    pathname.value = '/'
   })
 })

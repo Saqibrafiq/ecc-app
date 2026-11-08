@@ -1,7 +1,7 @@
 import { useFormatter, useTranslations } from 'next-intl'
 
 import type { MyWeek } from '../types'
-import { toDisplayDate } from './dates'
+import { toDisplayDate } from '@/shared/lib/display-date'
 
 export type WeekHeaderProps = {
   week: MyWeek

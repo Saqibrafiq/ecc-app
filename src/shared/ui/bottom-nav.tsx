@@ -24,6 +24,12 @@ const SPRING = { type: 'spring', stiffness: 500, damping: 40 } as const
 const ITEM_CLASS =
   'relative flex min-h-13 flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold'
 
+/** The week is current only on itself; any other item also on its sub-pages (e.g. a check-in). */
+function isCurrentPage(pathname: string, href: string): boolean {
+  if (href === '/') return pathname === '/'
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
 /**
  * The app's main navigation, fixed to the bottom edge where the thumb rests. The current page's
  * marker glides between items (one shared Motion layout element).
@@ -36,9 +42,12 @@ export function BottomNav({ label, items, comingSoonLabel }: BottomNavProps) {
       aria-label={label}
       className="fixed inset-x-0 bottom-0 z-30 border-t border-border-default bg-surface-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur"
     >
-      <ul className="mx-auto grid max-w-md grid-cols-3 gap-1 px-2 py-1.5">
+      <ul
+        className="mx-auto grid max-w-md gap-1 px-2 py-1.5"
+        style={{ gridTemplateColumns: `repeat(${String(items.length)}, minmax(0, 1fr))` }}
+      >
         {items.map((item) => {
-          const isCurrent = pathname === item.href
+          const isCurrent = isCurrentPage(pathname, item.href)
           return (
             <li key={item.href}>
               {item.isComingSoon ? (

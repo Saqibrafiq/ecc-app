@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 import { z } from 'zod'
 
 import { backendRequest, isAccessError, isBackendConfigured } from '@/shared/backend/client'
@@ -32,9 +33,10 @@ export async function getSessionToken(): Promise<string | null> {
 
 /**
  * The signed-in member, or `null` without a valid session (none, expired, or revoked). In the
- * preview (no backend) there is never a member.
+ * preview (no backend) there is never a member. Cached per request, so a page and its navigation
+ * ask the backend once.
  */
-export async function getCurrentMember(): Promise<Member | null> {
+export const getCurrentMember = cache(async (): Promise<Member | null> => {
   if (!isBackendConfigured()) return null
   const token = await getSessionToken()
   if (!token) return null
@@ -58,4 +60,4 @@ export async function getCurrentMember(): Promise<Member | null> {
     if (isAccessError(error)) return null
     throw error
   }
-}
+})

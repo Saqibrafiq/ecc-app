@@ -4,7 +4,7 @@ Squad availability and practice attendance for **Erlangen Cricket Club**: an ins
 
 Members answer **Going / Not going** from a notification. Practices are created automatically. Captains mark attendance at the ground and pick the squad from eligible players. The board approves it, and the captain gets the squad's Spielerpasses for the umpire.
 
-> **Status:** sign-in with the club account and the player's week on real data: fixtures from the club website, practices created from them, answers saved, attendance from the captain's records. Without a backend the app shows a preview with sample data. Next: the captain's practice check-in and squad selection.
+> **Status:** sign-in with the club account; the player's week on real data (fixtures from the club website, practices created from them, answers saved, attendance from the captain's records); the captain's practice check-in and squad selection, submitted to the Board. Without a backend the app shows a preview with sample data. Next: the Board's approval, deadlines and exceptions.
 
 ## What it does
 

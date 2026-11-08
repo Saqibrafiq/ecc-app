@@ -6,7 +6,7 @@ import type { PracticeOutcome } from '@/domain/club-rules'
 import { cn } from '@/shared/lib/cn'
 
 import type { AttendanceSummary } from '../types'
-import { toDisplayDate } from './dates'
+import { toDisplayDate } from '@/shared/lib/display-date'
 
 export type AttendanceCardProps = {
   attendance: AttendanceSummary

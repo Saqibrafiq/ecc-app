@@ -3,7 +3,7 @@ import { useFormatter, useTranslations } from 'next-intl'
 import { cn } from '@/shared/lib/cn'
 
 import type { WeekDay } from '../types'
-import { toDisplayDate } from './dates'
+import { toDisplayDate } from '@/shared/lib/display-date'
 
 export type WeekStripProps = {
   days: readonly WeekDay[]

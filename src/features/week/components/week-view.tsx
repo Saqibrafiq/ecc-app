@@ -1,11 +1,12 @@
 import { CalendarOff, Link2Off, Users } from 'lucide-react'
 import { useFormatter, useTranslations } from 'next-intl'
-import type { ReactNode } from 'react'
+
+import { StateCard } from '@/shared/ui/state-card'
 
 import type { WeekResult } from '../server/queries'
 import type { SaveAnswer, WeekEvent } from '../types'
 import { AttendanceCard } from './attendance-card'
-import { toDisplayDate } from './dates'
+import { toDisplayDate } from '@/shared/lib/display-date'
 import { OtherTeamEvents } from './other-team-events'
 import { OwnWeek } from './own-week'
 import { WeekHeader } from './week-header'
@@ -14,18 +15,6 @@ import { WeekStrip } from './week-strip'
 export type WeekViewProps = {
   result: Exclude<WeekResult, { kind: 'signed-out' }>
   saveAnswer?: SaveAnswer
-}
-
-function StateCard({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
-  return (
-    <section className="flex flex-col items-start gap-3 rounded-2xl border border-border-default bg-surface-card p-5">
-      <span className="flex size-11 items-center justify-center rounded-full bg-surface-raised text-accent-practice">
-        {icon}
-      </span>
-      <h2 className="font-display text-2xl leading-none font-bold uppercase">{title}</h2>
-      <p className="text-text-muted">{text}</p>
-    </section>
-  )
 }
 
 /** The other teams' events, one section per team (own team first is display order only, R-7). */
@@ -47,6 +36,7 @@ export function WeekView({ result, saveAnswer }: WeekViewProps) {
   if (result.kind === 'unlinked') {
     return (
       <StateCard
+        headingLevel={1}
         icon={<Link2Off aria-hidden="true" className="size-5" />}
         title={t('unlinked.title')}
         text={t('unlinked.text')}
@@ -56,6 +46,7 @@ export function WeekView({ result, saveAnswer }: WeekViewProps) {
   if (result.kind === 'no-squad') {
     return (
       <StateCard
+        headingLevel={1}
         icon={<Users aria-hidden="true" className="size-5" />}
         title={t('noSquad.title')}
         text={t('noSquad.text')}
