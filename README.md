@@ -4,7 +4,7 @@ Squad availability and practice attendance for **Erlangen Cricket Club**: an ins
 
 Members answer **Going / Not going** from a notification. Practices are created automatically. Captains mark attendance at the ground and pick the squad from eligible players. The board approves it, and the captain gets the squad's Spielerpasses for the umpire.
 
-> **Status:** architecture and design phase. See the [architecture documentation](docs/arc42/README.md).
+> **Status:** project set up, with the design chosen (navy and gold "Scoreboard" theme) and CI in place. Features are built next, one slice at a time. See the [architecture documentation](docs/arc42/README.md).
 
 ## What it does
 
@@ -35,6 +35,26 @@ flowchart LR
   gha["GitHub Actions<br/>hourly"] -- signed --> app
   app -- "Web Push" --> member
 ```
+
+## Getting started
+
+Requires Node.js 24 and pnpm (`corepack enable`).
+
+```bash
+pnpm install
+pnpm dev            # http://localhost:3000 (German: /de)
+```
+
+| Command                        | What it does                                                      |
+| ------------------------------ | ----------------------------------------------------------------- |
+| `pnpm lint` / `pnpm typecheck` | ESLint (strict, type-checked, jsx-a11y) and TypeScript            |
+| `pnpm depcruise`               | Architecture rules: layers, feature boundaries, pure domain       |
+| `pnpm test` / `test:coverage`  | Unit and component tests (Vitest, Testing Library)                |
+| `pnpm test:e2e`                | Playwright on iPhone and Android profiles, with axe accessibility |
+| `pnpm storybook`               | Component workshop                                                |
+| `pnpm changelog`               | Regenerate `CHANGELOG.md` from the Conventional Commits           |
+
+Every pull request runs all of the above in CI, plus SonarCloud once its token is set.
 
 ## Documentation
 

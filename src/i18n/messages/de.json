@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "appName": "ECC App",
+    "description": "Die Mitglieder-App des Erlangen Cricket Club: Zusagen für Spiele und Training, Anwesenheit und Kaderauswahl."
+  },
+  "home": {
+    "eyebrow": "Erlangen Cricket Club",
+    "title": "Deine Woche",
+    "intro": "Spiele, Training und deine Anwesenheit an einem Ort. Ab der Saison 2027."
+  },
+  "button": {
+    "going": "Dabei",
+    "notGoing": "Nicht dabei"
+  }
+}
