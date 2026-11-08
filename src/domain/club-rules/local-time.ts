@@ -12,7 +12,7 @@ export type Weekday =
 
 const LOCAL_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 const LOCAL_TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/
-const UTC_OFFSET_NAME = 'GMT'
+const MS_PER_SECOND = 1_000
 const MS_PER_MINUTE = 60_000
 const MS_PER_DAY = 86_400_000
 const MINUTES_PER_HOUR = 60
@@ -77,23 +77,47 @@ export function startOfWeek(date: LocalDate): LocalDate {
   return addDays(date, -daysSinceMonday)
 }
 
-/** The local day (in `timeZone`) on which `instant` falls. */
-export function getLocalDate(instant: Date, timeZone: string = CLUB_TIME_ZONE): LocalDate {
-  // en-CA formats dates as YYYY-MM-DD.
-  return new Intl.DateTimeFormat('en-CA', { timeZone }).format(instant) as LocalDate
+/**
+ * The wall-clock reading of `instant` in `timeZone`, as numbers. Only numeric parts are read, so
+ * the result does not depend on how a locale writes dates or names offsets (which has changed
+ * between ICU versions, e.g. "GMT" vs "GMT+00:00" for UTC).
+ */
+function getWallClock(instant: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).formatToParts(instant)
+  const value: Partial<Record<Intl.DateTimeFormatPartTypes, string>> = Object.fromEntries(
+    parts.map((part) => [part.type, part.value]),
+  )
+  return {
+    year: Number(value.year),
+    month: Number(value.month),
+    day: Number(value.day),
+    hour: Number(value.hour),
+    minute: Number(value.minute),
+    second: Number(value.second),
+  }
 }
 
-/** The zone's offset from UTC at `instant`, in minutes ("GMT+02:00" → 120, "GMT" → 0). */
+/** The local day (in `timeZone`) on which `instant` falls. */
+export function getLocalDate(instant: Date, timeZone: string = CLUB_TIME_ZONE): LocalDate {
+  const { year, month, day } = getWallClock(instant, timeZone)
+  return fromUtcMidnight(Date.UTC(year, month - 1, day))
+}
+
+/** The zone's offset from UTC at `instant`, in minutes (e.g. 120 for CEST, 0 for UTC). */
 function getOffsetMinutes(instant: Date, timeZone: string): number {
-  const name = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'longOffset' })
-    .formatToParts(instant)
-    .filter((part) => part.type === 'timeZoneName')
-    .map((part) => part.value)
-    .join('')
-  if (name === UTC_OFFSET_NAME) return 0
-  // "GMT+02:00": sign at 3, hours at 4–5, minutes at 7–8.
-  const offset = Number(name.slice(4, 6)) * MINUTES_PER_HOUR + Number(name.slice(7, 9))
-  return name[3] === '-' ? -offset : offset
+  const { year, month, day, hour, minute, second } = getWallClock(instant, timeZone)
+  const wallClockAsUtc = Date.UTC(year, month - 1, day, hour, minute, second)
+  const wholeSecond = Math.floor(instant.getTime() / MS_PER_SECOND) * MS_PER_SECOND
+  return Math.round((wallClockAsUtc - wholeSecond) / MS_PER_MINUTE)
 }
 
 /**
