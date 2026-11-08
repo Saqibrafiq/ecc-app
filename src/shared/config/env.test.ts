@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('server-only', () => ({}))
 
-const { parseServerEnv } = await import('./env')
+const { getServerEnv, parseServerEnv } = await import('./env')
 
 describe('parseServerEnv', () => {
   it('runs as a preview without a backend', () => {
@@ -38,5 +38,17 @@ describe('parseServerEnv', () => {
     expect(() =>
       parseServerEnv({ BACKEND_URL: 'not a url', BACKEND_SERVICE_API_KEY: 'k' }),
     ).toThrow('Invalid server environment variables')
+  })
+})
+
+describe('getServerEnv', () => {
+  it('reads the process environment once', () => {
+    vi.stubEnv('APP_NOW', '2026-11-09T09:00:00Z')
+
+    const env = getServerEnv()
+
+    expect(env.APP_NOW).toBe('2026-11-09T09:00:00Z')
+    expect(getServerEnv()).toBe(env)
+    vi.unstubAllEnvs()
   })
 })

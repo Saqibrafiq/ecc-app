@@ -112,4 +112,36 @@ describe('OwnWeek', () => {
     expect(screen.getByRole('button', { name: 'Going' })).toBeDisabled()
     expect(screen.getByText('All answered')).toBeInTheDocument()
   })
+  it('puts the earlier answer back and says why when saving fails', async () => {
+    const save = vi
+      .fn<() => Promise<{ status: 'closed' | 'error' }>>()
+      .mockResolvedValueOnce({ status: 'closed' })
+      .mockResolvedValueOnce({ status: 'error' })
+    renderWithIntl(
+      <OwnWeek
+        events={[{ ...PRACTICE, answer: 'not-going', reason: 'Away' }, MATCH]}
+        saveAnswer={save}
+      />,
+    )
+
+    const practice = card(/ECC I practice/i)
+    await userEvent.click(within(practice).getByRole('button', { name: 'Going' }))
+
+    expect(await within(practice).findByText('Answers for this have closed.')).toBeInTheDocument()
+    expect(within(practice).getByRole('button', { name: 'Not going' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+
+    const match = card(/vs Nürnberg CC/i)
+    await userEvent.click(within(match).getByRole('button', { name: 'Going' }))
+
+    expect(
+      await within(match).findByText('Your answer could not be saved. Please try again.'),
+    ).toBeInTheDocument()
+    expect(within(match).getByRole('button', { name: 'Going' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+  })
 })

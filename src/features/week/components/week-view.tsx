@@ -1,5 +1,5 @@
 import { CalendarOff, Link2Off, Users } from 'lucide-react'
-import { getFormatter, getTranslations } from 'next-intl/server'
+import { useFormatter, useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 
 import type { WeekResult } from '../server/queries'
@@ -40,9 +40,9 @@ function groupByTeam(events: readonly WeekEvent[]) {
 }
 
 /** A player's week: what to answer, what counts for selection, and the other teams' events. */
-export async function WeekView({ result, saveAnswer }: WeekViewProps) {
-  const t = await getTranslations('weekState')
-  const format = await getFormatter()
+export function WeekView({ result, saveAnswer }: WeekViewProps) {
+  const t = useTranslations('weekState')
+  const format = useFormatter()
 
   if (result.kind === 'unlinked') {
     return (

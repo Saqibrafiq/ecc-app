@@ -1,4 +1,4 @@
-import { getFormatter, getTranslations } from 'next-intl/server'
+import { useFormatter, useTranslations } from 'next-intl'
 
 import { cn } from '@/shared/lib/cn'
 
@@ -10,9 +10,9 @@ export type WeekStripProps = {
 }
 
 /** Monday to Sunday at a glance: today in gold, the own team's practice and match days marked. */
-export async function WeekStrip({ days }: WeekStripProps) {
-  const t = await getTranslations('week')
-  const format = await getFormatter()
+export function WeekStrip({ days }: WeekStripProps) {
+  const t = useTranslations('week')
+  const format = useFormatter()
 
   return (
     <ol aria-label={t('days')} className="grid grid-cols-7 gap-1">

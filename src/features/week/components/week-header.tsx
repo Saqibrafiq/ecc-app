@@ -1,4 +1,4 @@
-import { getFormatter, getTranslations } from 'next-intl/server'
+import { useFormatter, useTranslations } from 'next-intl'
 
 import type { MyWeek } from '../types'
 import { toDisplayDate } from './dates'
@@ -21,9 +21,9 @@ function getInitials(name: string): string {
 }
 
 /** Greeting, the member's team and the week's dates, and their avatar. */
-export async function WeekHeader({ week, memberName, isPreview }: WeekHeaderProps) {
-  const t = await getTranslations('week')
-  const format = await getFormatter()
+export function WeekHeader({ week, memberName, isPreview }: WeekHeaderProps) {
+  const t = useTranslations('week')
+  const format = useFormatter()
   const first = week.days[0]
   const last = week.days.at(-1)
   const dayMonth = { day: 'numeric', month: 'short' } as const
