@@ -1,104 +1,25 @@
 import 'server-only'
 
-import { z } from 'zod'
-
-import {
-  addDays,
-  type DeadlineDay,
-  getLocalDate,
-  type LocalDate,
-  startOfWeek,
-} from '@/domain/club-rules'
-import { type BackendAuth, backendRequest } from '@/shared/backend/client'
-import { dayStart, toQuery } from '@/shared/backend/query'
-import { listOf, relationIdSchema } from '@/shared/backend/schemas'
+import { addDays, getLocalDate, type LocalDate, startOfWeek } from '@/domain/club-rules'
+import type { BackendAuth } from '@/shared/backend/client'
 
 import { buildWeek } from '../domain/build-week'
 import type { MyWeek, ScheduledEvent } from '../types'
 import { getClubSchedule, getTeamSeasonPractices } from './club-schedule'
+import { toPracticeEvent } from './map-backend'
 import {
-  answerDocSchema,
-  fixtureDocSchema,
-  toAnswerMap,
-  toMatchEvent,
-  toPracticeEvent,
-} from './map-backend'
+  getAnswers,
+  getAttendedPracticeIds,
+  getDeadlineDays,
+  getNextMatch,
+  getSquadTeamId,
+  type MemberRef,
+} from './member-data'
 
 const DAYS_PER_WEEK = 7
 
-export type MemberRef = { playerId: number; token: string }
-
 export type BackendWeek =
   { kind: 'week'; week: MyWeek; nextMatch: ScheduledEvent | null } | { kind: 'no-squad' }
-
-async function getSquadTeamId(member: MemberRef): Promise<number | null> {
-  const player = await backendRequest({
-    path: `/players/${String(member.playerId)}?depth=0`,
-    auth: { as: 'member', token: member.token },
-    schema: z.object({ squadTeam: relationIdSchema.nullish() }),
-  })
-  return player.squadTeam ?? null
-}
-
-async function getDeadlineDays(member: MemberRef, matches: readonly ScheduledEvent[]) {
-  const ids = matches.map((match) => match.id.replace('fixture-', ''))
-  if (ids.length === 0) return new Map<string, DeadlineDay>()
-  const { docs } = await backendRequest({
-    path: `/squads${toQuery({ 'where[fixture][in]': ids.join(','), depth: '0' })}`,
-    auth: { as: 'member', token: member.token },
-    schema: listOf(
-      z.object({
-        fixture: relationIdSchema,
-        deadlineDay: z.enum(['tuesday', 'wednesday', 'thursday']),
-      }),
-    ),
-  })
-  return new Map(docs.map((doc) => [`fixture-${String(doc.fixture)}`, doc.deadlineDay]))
-}
-
-async function getAnswers(member: MemberRef) {
-  const { docs } = await backendRequest({
-    path: `/availability-responses${toQuery({
-      'where[player][equals]': String(member.playerId),
-      depth: '0',
-      sort: '-updatedAt',
-    })}`,
-    auth: { as: 'member', token: member.token },
-    schema: listOf(answerDocSchema),
-  })
-  return toAnswerMap(docs)
-}
-
-async function getAttendedPracticeIds(member: MemberRef): Promise<Set<string>> {
-  const { docs } = await backendRequest({
-    path: `/attendance${toQuery({
-      'where[player][equals]': String(member.playerId),
-      'where[attended][equals]': 'true',
-      depth: '0',
-    })}`,
-    auth: { as: 'member', token: member.token },
-    schema: listOf(z.object({ practice: relationIdSchema })),
-  })
-  return new Set(docs.map((doc) => `practice-${String(doc.practice)}`))
-}
-
-/** The member's team's next match after this week, for a quiet week. */
-async function getNextMatch(auth: BackendAuth, after: LocalDate, teamId: string) {
-  const { docs } = await backendRequest({
-    path: `/fixtures${toQuery({
-      'where[date][greater_than_equal]': dayStart(after),
-      'where[or][0][team1][equals]': teamId,
-      'where[or][1][team2][equals]': teamId,
-      depth: '1',
-      sort: 'date',
-      limit: '1',
-    })}`,
-    auth,
-    schema: listOf(fixtureDocSchema),
-  })
-  const [first] = docs
-  return first ? toMatchEvent(first) : null
-}
 
 /**
  * The signed-in member's week from the club's backend: real fixtures, the practices they lead to,

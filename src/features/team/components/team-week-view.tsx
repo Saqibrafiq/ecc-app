@@ -10,12 +10,21 @@ import { DateTile } from '@/shared/ui/date-tile'
 import { StateCard } from '@/shared/ui/state-card'
 
 import type { TeamWeekResult } from '../server/queries'
-import type { SquadStatus, TeamWeek, TeamWeekMatch, TeamWeekPractice } from '../types'
+import type {
+  DecideCorrection,
+  SquadStatus,
+  TeamWeek,
+  TeamWeekMatch,
+  TeamWeekPractice,
+} from '../types'
+import { CorrectionRequests } from './correction-requests'
 import { TeamAccessState } from './team-access-state'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 
 export type TeamWeekViewProps = {
   result: Exclude<TeamWeekResult, { kind: 'signed-out' }>
+  /** Decides correction requests on the server; the preview keeps decisions in the page. */
+  decideCorrection?: DecideCorrection
 }
 
 const LINK_CLASS = cn(buttonVariants({ size: 'md' }), 'w-full')
@@ -164,7 +173,7 @@ function TeamSwitcher({ teamWeek }: { teamWeek: TeamWeek }) {
 }
 
 /** A team's week: practices to check in, matches to select a squad for. */
-export function TeamWeekView({ result }: TeamWeekViewProps) {
+export function TeamWeekView({ result, decideCorrection }: TeamWeekViewProps) {
   const t = useTranslations('team')
   const format = useFormatter()
 
@@ -216,6 +225,7 @@ export function TeamWeekView({ result }: TeamWeekViewProps) {
           </ul>
         </section>
       )}
+      <CorrectionRequests corrections={teamWeek.corrections} decideCorrection={decideCorrection} />
       {teamWeek.matches.length > 0 && (
         <section aria-labelledby="team-matches" className="flex flex-col gap-3">
           <h2 id="team-matches" className="font-display text-xl font-bold uppercase">

@@ -106,6 +106,14 @@ export function getSampleTeamWeek(now: Date): TeamWeek {
       },
     ],
     matches: [{ event: match, fixtureId: SAMPLE_FIXTURE_ID, squadStatus: 'open' }],
+    corrections: [
+      {
+        id: 1,
+        playerName: 'Lukas Braun',
+        practiceDate: addDays(practice.date, -DAYS_PER_WEEK),
+        note: 'Came after the check-in, stayed until the end.',
+      },
+    ],
   }
 }
 

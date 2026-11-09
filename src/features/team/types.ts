@@ -1,4 +1,4 @@
-import type { Eligibility, SquadPick } from '@/domain/club-rules'
+import type { Eligibility, LocalDate, SquadPick } from '@/domain/club-rules'
 import type { Answer, ScheduledEvent, Team } from '@/features/week'
 
 /** Where a match squad stands, as the website stores it (ADR-0024 in the website). */
@@ -19,6 +19,21 @@ export type TeamWeekMatch = {
   squadStatus: SquadStatus
 }
 
+/** A player's open request to be marked present at a practice (UC-18). */
+export type TeamCorrection = {
+  id: number
+  playerName: string
+  practiceDate: LocalDate
+  note: string
+}
+
+export type CorrectionDecisionInput = { correctionId: number; isAccepted: boolean }
+export type CorrectionDecisionOutcome = 'decided' | 'invalid' | 'unauthorized' | 'error'
+/** Accepts or declines a request on the server; the preview has none and keeps it in the page. */
+export type DecideCorrection = (
+  input: CorrectionDecisionInput,
+) => Promise<{ status: CorrectionDecisionOutcome }>
+
 /** The captain's team this week: practices to check in, matches to select for. */
 export type TeamWeek = {
   team: Team
@@ -26,6 +41,8 @@ export type TeamWeek = {
   choices: Team[]
   practices: TeamWeekPractice[]
   matches: TeamWeekMatch[]
+  /** Players' open requests to be marked present, oldest practice first. */
+  corrections: TeamCorrection[]
 }
 
 export type CheckInPlayer = {

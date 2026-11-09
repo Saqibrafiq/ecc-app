@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { redirectToSignIn } from '@/features/auth'
-import { getTeamWeek, TeamWeekView } from '@/features/team'
+import { decideCorrectionAction, getTeamWeek, TeamWeekView } from '@/features/team'
 import { PageMain } from '@/shared/ui/page-main'
 
 import { AppNav } from '../app-nav'
@@ -24,7 +24,12 @@ export default async function TeamPage({ searchParams }: PageProps<'/[locale]/te
   return (
     <>
       <PageMain>
-        <TeamWeekView result={result} />
+        <TeamWeekView
+          result={result}
+          decideCorrection={
+            result.kind === 'team-week' && !result.isPreview ? decideCorrectionAction : undefined
+          }
+        />
       </PageMain>
       <AppNav />
     </>

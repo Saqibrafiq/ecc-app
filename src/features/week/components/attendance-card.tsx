@@ -1,31 +1,15 @@
-import { Check, Clock, HelpCircle, X } from 'lucide-react'
 import { useFormatter, useTranslations } from 'next-intl'
-import type { ReactNode } from 'react'
 
-import type { PracticeOutcome } from '@/domain/club-rules'
 import { cn } from '@/shared/lib/cn'
 
 import type { AttendanceSummary } from '../types'
 import { toDisplayDate } from '@/shared/lib/display-date'
+import { OutcomeMark } from '@/shared/ui/outcome-mark'
 
 export type AttendanceCardProps = {
   attendance: AttendanceSummary
   /** The day of the match these practices count for, e.g. "Saturday". */
   matchDay: string
-}
-
-const SLOT_STYLE: Record<PracticeOutcome, string> = {
-  attended: 'bg-status-attended text-text-on-accent',
-  missed: 'bg-status-missed-surface text-status-missed-text',
-  upcoming: 'border-2 border-dashed border-accent-practice text-accent-practice',
-  unrecorded: 'border-2 border-dashed border-border-strong text-text-muted',
-}
-
-const SLOT_ICON: Record<PracticeOutcome, ReactNode> = {
-  attended: <Check aria-hidden="true" className="size-5" strokeWidth={3} />,
-  missed: <X aria-hidden="true" className="size-5" strokeWidth={3} />,
-  upcoming: <Clock aria-hidden="true" className="size-5" />,
-  unrecorded: <HelpCircle aria-hidden="true" className="size-5" />,
 }
 
 /** The practices that count for the next match, and what the member still needs (R-2, R-3). */
@@ -62,15 +46,7 @@ export function AttendanceCard({ attendance, matchDay }: AttendanceCardProps) {
           const date = toDisplayDate(slot.date)
           return (
             <li key={slot.id} className="flex flex-col items-center gap-1.5">
-              <span
-                className={cn(
-                  'flex size-11 items-center justify-center rounded-full',
-                  SLOT_STYLE[slot.outcome],
-                )}
-              >
-                {SLOT_ICON[slot.outcome]}
-                <span className="sr-only">{t(`outcome.${slot.outcome}`)}</span>
-              </span>
+              <OutcomeMark outcome={slot.outcome} label={t(`outcome.${slot.outcome}`)} />
               <span
                 className={cn(
                   'text-xs',
