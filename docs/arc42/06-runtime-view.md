@@ -101,6 +101,26 @@ sequenceDiagram
   end
 ```
 
-## 6.4 Further scenarios
+## 6.4 A player asks for an attendance correction
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor P as Player
+  actor C as Captain
+  participant App as ECC App (server)
+  participant CMS as Website (Payload)
+
+  P->>App: "I was there" on a missed practice, with a note
+  App->>CMS: Create the request (as the player; only for themselves)
+  C->>App: Open the Team screen
+  App->>CMS: The team's open requests
+  C->>App: Accept
+  App->>CMS: status accepted
+  CMS->>CMS: Mark the player present at the practice (same transaction)
+  P->>App: Open Attendance: "Corrected by your captain"
+```
+
+## 6.5 Further scenarios
 
 Added with their slices: first-run install guide; answering from a notification; selection notices after approval; captain records no-shows; captain opens Spielerpasses on match day.

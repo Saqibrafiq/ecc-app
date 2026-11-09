@@ -7,7 +7,8 @@
     "checkInTitle": "Trainings-Check-in",
     "squadTitle": "Kaderauswahl",
     "boardTitle": "Vorstand",
-    "boardSquadTitle": "Kader prüfen"
+    "boardSquadTitle": "Kader prüfen",
+    "attendanceTitle": "Deine Anwesenheit"
   },
   "button": {
     "going": "Dabei",
@@ -242,7 +243,17 @@
       }
     },
     "switcher": "Teams",
-    "eyebrowStandIn": "{team} · Vorstand, als Vertretung"
+    "eyebrowStandIn": "{team} · Vorstand, als Vertretung",
+    "corrections": {
+      "title": "Anwesenheits-Korrekturen",
+      "practiceOn": "Training am {date}",
+      "accept": "Annehmen",
+      "decline": "Ablehnen",
+      "acceptFor": "Anfrage von {name} annehmen",
+      "declineFor": "Anfrage von {name} ablehnen",
+      "done": "Alle Anfragen entschieden.",
+      "failed": "Das konnte nicht gespeichert werden. Bitte versuche es noch einmal."
+    }
   },
   "errorPage": {
     "title": "Etwas ist schiefgelaufen",
@@ -330,6 +341,61 @@
       "not-allowed": "Der Kader hat sich inzwischen geändert. Lade die Seite neu.",
       "unauthorized": "Das kann nur der Vorstand.",
       "error": "Das konnte nicht gespeichert werden. Bitte versuche es noch einmal."
+    }
+  },
+  "attendance": {
+    "eyebrow": "{team} · Saison {season}",
+    "title": "Deine Anwesenheit",
+    "preview": "Vorschau mit Beispieldaten",
+    "standing": {
+      "title": "Aufstellung",
+      "count": "{attended} der letzten {total}",
+      "met": "Du kannst für das Spiel am {date} aufgestellt werden.",
+      "needs": "Besuche {needed} der nächsten {of, plural, one {Trainings} other {# Trainings}}, um für das Spiel am {date} aufgestellt zu werden.",
+      "out": "Du kannst für das Spiel am {date} nicht aufgestellt werden: 2 der letzten 4 Trainings sind nötig (Antrag 2023/01).",
+      "noMatch": "Dein Team hat in dieser Saison kein Spiel mehr.",
+      "notActive": "Die 2-aus-4-Regel gilt, sobald 4 Trainings stattgefunden haben."
+    },
+    "outcome": {
+      "attended": "Dabei",
+      "missed": "Gefehlt",
+      "unrecorded": "Noch nicht erfasst",
+      "upcoming": "Kommt noch",
+      "cancelled": "Abgesagt"
+    },
+    "targets": {
+      "title": "Verfügbarkeitsziele",
+      "away": "Auswärtsspiele",
+      "captain": "Alle Spiele, als Kapitän",
+      "motion": "Antrag {motion}: {share} % der Saison",
+      "count": "Dabei bei {available} von {required} nötigen",
+      "met": "Ziel für die Saison erreicht.",
+      "onTrack": "Sei bei {needed} der {upcoming} kommenden Spiele dabei.",
+      "missed": "In dieser Saison nicht mehr erreichbar."
+    },
+    "practices": {
+      "title": "Trainings",
+      "empty": "In dieser Saison noch keine Trainings."
+    },
+    "correction": {
+      "ask": "Ich war da",
+      "askFor": "Ich war am {date} da",
+      "requested": "Korrektur angefragt",
+      "accepted": "Von deinem Kapitän korrigiert",
+      "declined": "Korrektur abgelehnt",
+      "sent": "Dein Kapitän wurde gebeten, es zu korrigieren.",
+      "failed": "Die Anfrage konnte nicht gesendet werden. Bitte versuche es noch einmal.",
+      "sheet": {
+        "title": "Ich war da",
+        "description": "Dein Kapitän oder der Vorstand prüft es und trägt dich als anwesend ein.",
+        "label": "Was ist passiert?",
+        "placeholder": "z. B. nach dem Check-in gekommen",
+        "required": "Bitte schreib, was passiert ist.",
+        "tooLong": "Bitte unter {max} Zeichen bleiben.",
+        "send": "Korrektur anfragen",
+        "cancel": "Abbrechen",
+        "close": "Schließen"
+      }
     }
   }
 }

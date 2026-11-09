@@ -4,14 +4,15 @@ import { z } from 'zod'
 
 import { checkSquad } from '@/domain/club-rules'
 import { backendRequest, isAccessError } from '@/shared/backend/client'
+import { relationIdSchema } from '@/shared/backend/schemas'
 import { getNow } from '@/shared/lib/clock'
 import { logError } from '@/shared/lib/log'
 
 import { planCheckIn } from '../domain/check-in'
 import { isPickable } from '../domain/selection'
-import type { CheckInOutcome, SquadOutcome, SquadStatus } from '../types'
+import type { CheckInOutcome, CorrectionDecisionOutcome, SquadOutcome, SquadStatus } from '../types'
 import { loadCheckIn, loadSelection } from './backend-team'
-import { getTeamAccess, type TeamActor } from './team-access'
+import { canManageTeam, getTeamAccess, type TeamActor } from './team-access'
 
 /** A captain changes a squad only before handing it in, or after the Board returned it. */
 const EDITABLE_STATUSES: readonly SquadStatus[] = ['open', 'returned']
@@ -104,6 +105,47 @@ export async function saveCheckInAction(input: unknown): Promise<{ status: Check
     return { status: 'saved' }
   } catch (error) {
     return failure('Saving a check-in failed', error)
+  }
+}
+
+const decisionSchema = z.object({
+  correctionId: z.number().int().positive(),
+  isAccepted: z.boolean(),
+})
+
+/**
+ * Accepts or declines a player's request to be marked present (UC-18), as the captain of the
+ * practice's team or an admin; accepting marks the player present (website hook).
+ */
+export async function decideCorrectionAction(
+  input: unknown,
+): Promise<{ status: CorrectionDecisionOutcome }> {
+  const parsed = decisionSchema.safeParse(input)
+  if (!parsed.success) return { status: 'invalid' }
+  const actor = await getActor()
+  if (!actor) return { status: 'unauthorized' }
+  const { correctionId, isAccepted } = parsed.data
+  const auth = { as: 'member', token: actor.token } as const
+
+  try {
+    const correction = await backendRequest({
+      path: `/attendance-corrections/${String(correctionId)}?depth=0`,
+      auth,
+      schema: z.object({ team: relationIdSchema, status: z.string() }),
+    })
+    if (!canManageTeam(actor, correction.team) || correction.status !== 'requested') {
+      return { status: 'invalid' }
+    }
+    await backendRequest({
+      method: 'PATCH',
+      path: `/attendance-corrections/${String(correctionId)}`,
+      auth,
+      body: { status: isAccepted ? 'accepted' : 'declined' },
+      schema: z.unknown(),
+    })
+    return { status: 'decided' }
+  } catch (error) {
+    return failure('Deciding an attendance correction failed', error)
   }
 }
 

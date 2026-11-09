@@ -28,7 +28,7 @@ import { listOf, relationIdSchema } from '@/shared/backend/schemas'
 
 import type { AttendanceRecord } from '../domain/check-in'
 import { buildCandidates, isFirstTeam } from '../domain/selection'
-import type { CheckIn, SquadSelection, SquadStatus, TeamWeek } from '../types'
+import type { CheckIn, SquadSelection, SquadStatus, TeamCorrection, TeamWeek } from '../types'
 import { canManageTeam, type TeamActor } from './team-access'
 
 const NOT_FOUND = 404
@@ -207,6 +207,34 @@ async function getPracticeRecords(
   }))
 }
 
+const openCorrectionSchema = z.object({
+  id: z.number(),
+  note: z.string().nullish(),
+  player: z.object({ name: z.string() }),
+  practice: z.object({ date: z.string() }),
+})
+
+/** The team's open correction requests, oldest practice first (UC-18). */
+async function getOpenCorrections(auth: BackendAuth, teamId: number): Promise<TeamCorrection[]> {
+  const { docs } = await backendRequest({
+    path: `/attendance-corrections${toQuery({
+      'where[team][equals]': String(teamId),
+      'where[status][equals]': 'requested',
+      depth: '1',
+    })}`,
+    auth,
+    schema: listOf(openCorrectionSchema),
+  })
+  return docs
+    .map((doc) => ({
+      id: doc.id,
+      playerName: doc.player.name,
+      practiceDate: toLocalDay(doc.practice.date),
+      note: doc.note ?? '',
+    }))
+    .sort((a, b) => a.practiceDate.localeCompare(b.practiceDate))
+}
+
 async function getSquadStatuses(auth: BackendAuth, fixtureIds: readonly number[]) {
   if (fixtureIds.length === 0) return new Map<number, SquadStatus>()
   const { docs } = await backendRequest({
@@ -239,10 +267,13 @@ export async function getBackendTeamWeek(
       : Number(teams[0]?.id ?? 0))
   const team = schedule.teams.get(teamId) ?? unnamedTeam(teamId)
   const matches = schedule.matches.filter((match) => match.team.id === team.id)
-  const statuses = await getSquadStatuses(
-    auth,
-    matches.map((match) => fixtureNumber(match.id)),
-  )
+  const [statuses, corrections] = await Promise.all([
+    getSquadStatuses(
+      auth,
+      matches.map((match) => fixtureNumber(match.id)),
+    ),
+    getOpenCorrections(auth, teamId),
+  ])
 
   return {
     team,
@@ -262,6 +293,7 @@ export async function getBackendTeamWeek(
       fixtureId: fixtureNumber(match.id),
       squadStatus: statuses.get(fixtureNumber(match.id)) ?? 'open',
     })),
+    corrections,
   }
 }
 

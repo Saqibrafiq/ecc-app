@@ -7,7 +7,8 @@
     "checkInTitle": "Practice check-in",
     "squadTitle": "Squad selection",
     "boardTitle": "Board",
-    "boardSquadTitle": "Squad review"
+    "boardSquadTitle": "Squad review",
+    "attendanceTitle": "Your attendance"
   },
   "button": {
     "going": "Going",
@@ -242,7 +243,17 @@
       }
     },
     "switcher": "Teams",
-    "eyebrowStandIn": "{team} · Board, standing in"
+    "eyebrowStandIn": "{team} · Board, standing in",
+    "corrections": {
+      "title": "Attendance corrections",
+      "practiceOn": "Practice on {date}",
+      "accept": "Accept",
+      "decline": "Decline",
+      "acceptFor": "Accept {name}’s request",
+      "declineFor": "Decline {name}’s request",
+      "done": "All requests decided.",
+      "failed": "That could not be saved. Please try again."
+    }
   },
   "errorPage": {
     "title": "Something went wrong",
@@ -330,6 +341,61 @@
       "not-allowed": "The squad has changed in the meantime. Reload the page.",
       "unauthorized": "Only the Board can do this.",
       "error": "That could not be saved. Please try again."
+    }
+  },
+  "attendance": {
+    "eyebrow": "{team} · Season {season}",
+    "title": "Your attendance",
+    "preview": "Preview with sample data",
+    "standing": {
+      "title": "Selection",
+      "count": "{attended} of the last {total}",
+      "met": "You can be selected for the match on {date}.",
+      "needs": "Attend {needed} of the next {of, plural, one {practice} other {# practices}} to be selected for the match on {date}.",
+      "out": "You can’t be selected for the match on {date}: 2 of the last 4 practices are needed (motion 2023/01).",
+      "noMatch": "Your team has no match left this season.",
+      "notActive": "The 2-of-4 rule starts once 4 practices have taken place."
+    },
+    "outcome": {
+      "attended": "Attended",
+      "missed": "Missed",
+      "unrecorded": "Not recorded yet",
+      "upcoming": "To come",
+      "cancelled": "Cancelled"
+    },
+    "targets": {
+      "title": "Availability targets",
+      "away": "Away matches",
+      "captain": "All matches, as captain",
+      "motion": "Motion {motion}: {share}% of the season",
+      "count": "Going for {available} of {required} needed",
+      "met": "Target reached for the season.",
+      "onTrack": "Be available for {needed} of the {upcoming} matches to come.",
+      "missed": "Can no longer be reached this season."
+    },
+    "practices": {
+      "title": "Practices",
+      "empty": "No practices yet this season."
+    },
+    "correction": {
+      "ask": "I was there",
+      "askFor": "I was there on {date}",
+      "requested": "Correction requested",
+      "accepted": "Corrected by your captain",
+      "declined": "Correction declined",
+      "sent": "Your captain has been asked to correct it.",
+      "failed": "The request could not be sent. Please try again.",
+      "sheet": {
+        "title": "I was there",
+        "description": "Your captain or the Board checks it and marks you present.",
+        "label": "What happened?",
+        "placeholder": "e.g. came after the check-in",
+        "required": "Please say what happened.",
+        "tooLong": "Keep it under {max} characters.",
+        "send": "Ask for correction",
+        "cancel": "Cancel",
+        "close": "Close"
+      }
     }
   }
 }

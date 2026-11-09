@@ -31,13 +31,18 @@ vi.mock('@/shared/backend/client', async () => {
     backendRequest: mocks.request,
   }
 })
-vi.mock('./team-access', () => ({ getTeamAccess: () => Promise.resolve(mocks.access) }))
+vi.mock('./team-access', async () => ({
+  ...(await vi.importActual<typeof TeamAccessModule>('./team-access')),
+  getTeamAccess: () => Promise.resolve(mocks.access),
+}))
 vi.mock('./backend-team', () => ({ loadCheckIn: mocks.checkIn, loadSelection: mocks.selection }))
 
 import type * as BackendClient from '@/shared/backend/client'
 
+import type * as TeamAccessModule from './team-access'
+
 const { BackendError } = await import('@/shared/backend/client')
-const { saveCheckInAction, submitSquadAction } = await import('./actions')
+const { decideCorrectionAction, saveCheckInAction, submitSquadAction } = await import('./actions')
 
 const CAPTAIN = { teamId: 1, token: 'jwt', isAdmin: false }
 
@@ -266,5 +271,64 @@ describe('submitSquadAction', () => {
       status: 'error',
     })
     expect(mocks.logError).toHaveBeenCalledWith('Submitting a squad failed', expect.any(Error))
+  })
+})
+
+describe('decideCorrectionAction', () => {
+  const open = { team: 1, status: 'requested' }
+
+  it("accepts or declines an open request of the captain's team", async () => {
+    mocks.request.mockResolvedValueOnce(open).mockResolvedValueOnce({})
+    await expect(decideCorrectionAction({ correctionId: 3, isAccepted: true })).resolves.toEqual({
+      status: 'decided',
+    })
+    expect(mocks.request).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        method: 'PATCH',
+        path: '/attendance-corrections/3',
+        auth: { as: 'member', token: 'jwt' },
+        body: { status: 'accepted' },
+      }),
+    )
+
+    mocks.request.mockResolvedValueOnce(open).mockResolvedValueOnce({})
+    await decideCorrectionAction({ correctionId: 3, isAccepted: false })
+    expect(mocks.request).toHaveBeenLastCalledWith(
+      expect.objectContaining({ body: { status: 'declined' } }),
+    )
+  })
+
+  it("refuses another team's request, a decided one, or bad input", async () => {
+    await expect(decideCorrectionAction({ correctionId: 'x' })).resolves.toEqual({
+      status: 'invalid',
+    })
+
+    mocks.request.mockResolvedValueOnce({ team: 14, status: 'requested' })
+    await expect(decideCorrectionAction({ correctionId: 3, isAccepted: true })).resolves.toEqual({
+      status: 'invalid',
+    })
+
+    mocks.request.mockResolvedValueOnce({ team: 1, status: 'accepted' })
+    await expect(decideCorrectionAction({ correctionId: 3, isAccepted: true })).resolves.toEqual({
+      status: 'invalid',
+    })
+    expect(mocks.request).toHaveBeenCalledTimes(2)
+  })
+
+  it('is for captains and admins, and logs failures', async () => {
+    mocks.access = { kind: 'not-captain' }
+    await expect(decideCorrectionAction({ correctionId: 3, isAccepted: true })).resolves.toEqual({
+      status: 'unauthorized',
+    })
+
+    mocks.access = { kind: 'allowed', actor: CAPTAIN }
+    mocks.request.mockRejectedValueOnce(new Error('down'))
+    await expect(decideCorrectionAction({ correctionId: 3, isAccepted: true })).resolves.toEqual({
+      status: 'error',
+    })
+    expect(mocks.logError).toHaveBeenCalledWith(
+      'Deciding an attendance correction failed',
+      expect.any(Error),
+    )
   })
 })

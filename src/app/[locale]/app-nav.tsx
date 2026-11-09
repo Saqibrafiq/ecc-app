@@ -36,7 +36,6 @@ export async function AppNav() {
       href: '/attendance',
       label: t('attendance'),
       icon: <ChartNoAxesColumn aria-hidden="true" className={ICON_CLASS} />,
-      isComingSoon: true,
     },
     {
       href: '/profile',

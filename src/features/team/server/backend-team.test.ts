@@ -59,6 +59,7 @@ type Backend = {
   records?: unknown[]
   answers?: unknown[]
   createFails?: boolean
+  corrections?: unknown[]
 }
 
 type Request = { path: string; method?: string; schema: { parse: (raw: unknown) => unknown } }
@@ -73,6 +74,7 @@ function backend({
   records = [],
   answers = [],
   createFails = false,
+  corrections = [],
 }: Backend = {}) {
   const squadReads = [...squads]
   request.mockImplementation(({ path, method = 'GET', schema }: Request) => {
@@ -120,6 +122,7 @@ function backend({
     }
     if (path.startsWith('/squads')) return respond({ docs: squadReads.shift() ?? [] })
     if (path.startsWith('/players')) return respond({ docs: PLAYERS })
+    if (path.startsWith('/attendance-corrections')) return respond({ docs: corrections })
     if (path.startsWith('/availability-responses')) return respond({ docs: answers })
     if (path.startsWith('/attendance') && path.includes('practice%5D%5Bequals')) {
       return respond({ docs: records })
@@ -179,6 +182,37 @@ describe('getBackendTeamWeek', () => {
 
     expect(week).toMatchObject({ team: { id: '72', name: '' }, practices: [], matches: [] })
     expect(calls().some((call) => call.path.includes('fixture%5D%5Bin'))).toBe(false)
+  })
+})
+
+describe('getBackendTeamWeek: correction requests', () => {
+  it("lists the team's open requests, oldest practice first", async () => {
+    backend({
+      corrections: [
+        {
+          id: 2,
+          note: null,
+          player: { name: 'Bilal Mir' },
+          practice: { date: '2026-11-04T12:00:00.000Z' },
+        },
+        {
+          id: 1,
+          note: 'Came late',
+          player: { name: 'Ali Shaan' },
+          practice: { date: '2026-10-28T12:00:00.000Z' },
+        },
+      ],
+    })
+
+    const { corrections } = await getBackendTeamWeek(CAPTAIN, null, NOW)
+
+    expect(corrections).toEqual([
+      { id: 1, playerName: 'Ali Shaan', practiceDate: '2026-10-28', note: 'Came late' },
+      { id: 2, playerName: 'Bilal Mir', practiceDate: '2026-11-04', note: '' },
+    ])
+    expect(calls().find((call) => call.path.startsWith('/attendance-corrections'))?.path).toContain(
+      'where%5Bstatus%5D%5Bequals%5D=requested',
+    )
   })
 })
 

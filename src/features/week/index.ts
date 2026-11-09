@@ -15,6 +15,13 @@ export {
   toPracticeEvent,
   toTeamPractice,
 } from './server/map-backend'
+export {
+  getAnswers,
+  getAttendedPracticeIds,
+  getDeadlineDays,
+  getSquadTeamId,
+  type MemberRef,
+} from './server/member-data'
 export { getMyWeek, type WeekResult } from './server/queries'
 export { getPreviewNow } from './server/sample-week'
 export type { Answer, MyWeek, SaveAnswer, ScheduledEvent, Team, WeekEvent } from './types'
