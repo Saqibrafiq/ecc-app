@@ -30,4 +30,6 @@ flowchart LR
 | GitHub Actions   | Free for public repositories          | Hourly tick, CI.                                            |
 | Push services    | Free, operated by the browser vendors | Encrypted payloads only.                                    |
 
+The blank DCB match report sheet (`assets/dcb-match-report-sheet-2015.pdf`) is traced into the match-day routes (`outputFileTracingIncludes`). Server Actions accept bodies up to 4 MB (`serverActions.bodySizeLimit`) for the signed sheet's photo, which the browser scales down first; Vercel refuses request bodies over 4.5 MB.
+
 Environment variables (validated with Zod in `shared/config/env.ts`): `BACKEND_URL` (the club website; empty = preview with sample data), `BACKEND_SERVICE_API_KEY` (the app's service account, an admin with an API key), `APP_NOW` (development only: pins the clock). Still to come with their features: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `JOBS_SECRET`.

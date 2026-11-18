@@ -39,3 +39,10 @@ Option 1.
 - Good: names and numbers come from the Spielerpass records the admin maintains, so they match the league's registration.
 - Bad: field positions depend on the form's layout. If the DCB changes the form, the template and positions must be updated (risk R-7). Mitigation: a test renders the sheet and checks every field lands inside its box.
 - Neutral: the signed sheet comes back into the app as a photo uploaded by the captain (UC-22), stored privately like Spielerpasses.
+
+## Implementation notes (2026-11-19)
+
+- The blank form is the DCB's published "DCB-Spielberichtsbogen 2015" (`assets/dcb-match-report-sheet-2015.pdf`, traced into the sheet route). It has no form fields, so values are drawn at positions measured from the form's own labels (`features/match-day/domain/sheet-layout.ts`); a text that does not fit shrinks to 6 pt, then is shortened.
+- The header's Meisterschaft and Spielklasse come from two fields the Board fills on each competition in the website; without them the sheet shows the competition's name and leaves the division empty.
+- Card images and the signed sheet's photo are stored in the website's database, never on a public address (website ADR-0025). The app server reads the cards as its service account after checking the caller is the squad's captain or an admin; every file route checks again.
+- The signed sheet's photo is scaled in the browser to at most 1600 px before upload: Vercel refuses request bodies over 4.5 MB.

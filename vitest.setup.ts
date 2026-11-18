@@ -8,15 +8,18 @@ import { afterEach, vi } from 'vitest'
 MotionGlobalConfig.skipAnimations = true
 
 // jsdom has no matchMedia (Motion reads prefers-reduced-motion): a device with default settings.
-window.matchMedia = (query: string) =>
-  ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(() => false),
-  }) as unknown as MediaQueryList
+// Server-code tests opt into the node environment, which has no window.
+if (typeof window !== 'undefined') {
+  window.matchMedia = (query: string) =>
+    ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(() => false),
+    }) as unknown as MediaQueryList
+}
 
 afterEach(() => {
   cleanup()

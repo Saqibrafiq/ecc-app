@@ -83,6 +83,10 @@ describe('TeamWeekView', () => {
     expect(screen.getByText('Approved and announced')).toBeInTheDocument()
     expect(screen.getByText('Returned by the Board')).toBeInTheDocument()
     expect(screen.getAllByRole('link', { name: 'View squad' })).toHaveLength(2)
+    expect(screen.getByRole('link', { name: 'Match day' })).toHaveAttribute(
+      'href',
+      '/team/match-day/2',
+    )
     expect(screen.getByRole('link', { name: 'Select squad' })).toHaveAttribute(
       'href',
       '/team/squad/3',

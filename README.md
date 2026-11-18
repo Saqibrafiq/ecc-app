@@ -4,7 +4,7 @@ Squad availability and practice attendance for **Erlangen Cricket Club**: an ins
 
 Members answer **Going / Not going** from a notification. Practices are created automatically. Captains mark attendance at the ground and pick the squad from eligible players. The board approves it, and the captain gets the squad's Spielerpasses for the umpire.
 
-> **Status:** sign-in with the club account; the player's week and attendance ledger on real data, with correction requests and availability targets; the captain's check-in and squad selection; the Board's review, deadlines and exceptions, and admins standing in for an absent captain. Without a backend the app shows a preview with sample data. Every member has a profile with the language switch. Next: match day and Spielerpasses.
+> **Status:** sign-in with the club account; the player's week and attendance ledger on real data, with correction requests and availability targets; the captain's check-in and squad selection; the Board's review, deadlines and exceptions, and admins standing in for an absent captain. Without a backend the app shows a preview with sample data. Every member has a profile with the language switch. Captains get match day: the filled DCB match report sheet, the squad's Spielerpasses and the signed sheet's upload. Next: no-shows after the match.
 
 ## What it does
 

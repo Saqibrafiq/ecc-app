@@ -2,15 +2,15 @@
 
 ## 11.1 Risks
 
-| ID  | Risk                                                                          | Probability | Impact | Mitigation                                                                                                     |
-| --- | ----------------------------------------------------------------------------- | ----------- | ------ | -------------------------------------------------------------------------------------------------------------- |
-| R-1 | iPhone members never add the app to the Home Screen and miss notifications    | High        | High   | First-run install guide; "push off" shown to captains and admins; tasks also visible on the app's home screen. |
-| R-2 | Free-tier limits change (Vercel, Neon, GitHub Actions)                        | Medium      | High   | Small volumes; monthly usage check; architecture portable to other free hosts.                                 |
-| R-3 | GitHub disables the hourly schedule after 60 days without repository activity | Medium      | High   | Active during the season; keep-alive off-season; a failing tick alerts the admin.                              |
-| R-4 | Spielerpass images leak (personal data)                                       | Low         | High   | Private storage, access-checked route, no caching, audit log; ADR before the Spielerpass slice.                |
-| R-5 | Changing the website's backend breaks the website                             | Low         | High   | Additive migrations only; the website's CI and E2E tests run on every backend change.                          |
-| R-6 | Members find the rules unfair because data was entered late or wrong          | Medium      | Medium | Captains can correct attendance until the next practice; every change is logged with who and when.             |
-| R-7 | The DCB changes the match report sheet, so filled fields no longer fit        | Low         | Medium | Template and field positions in one place; a test checks every field lands inside its box (ADR-0007).          |
+| ID  | Risk                                                                                                          | Probability | Impact | Mitigation                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------- | ----------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| R-1 | iPhone members never add the app to the Home Screen and miss notifications                                    | High        | High   | First-run install guide; "push off" shown to captains and admins; tasks also visible on the app's home screen. |
+| R-2 | Free-tier limits change (Vercel, Neon, GitHub Actions)                                                        | Medium      | High   | Small volumes; monthly usage check; architecture portable to other free hosts.                                 |
+| R-3 | GitHub disables the hourly schedule after 60 days without repository activity                                 | Medium      | High   | Active during the season; keep-alive off-season; a failing tick alerts the admin.                              |
+| R-4 | Spielerpass images leak (personal data)                                                                       | Low         | High   | Private storage, access-checked route, no caching, audit log; ADR before the Spielerpass slice.                |
+| R-5 | Changing the website's backend breaks the website                                                             | Low         | High   | Additive migrations only; the website's CI and E2E tests run on every backend change.                          |
+| R-6 | Members find the rules unfair because data was entered late or wrong                                          | Medium      | Medium | Captains can correct attendance until the next practice; every change is logged with who and when.             |
+| R-7 | The DCB changes the match report sheet (the app uses the published 2015 form), so filled fields no longer fit | Low         | Medium | Template and field positions in one place; a test checks every field lands inside its box (ADR-0007).          |
 
 ## 11.2 Questions decided with the club
 
@@ -51,9 +51,10 @@ Decided by the club president on 2026-11-08.
 
 ## 11.4 Technical debt
 
-| ID   | Debt                                                                                                                                             | Plan                                                                                                                       |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| TD-1 | App icons are scaled up from the only crest file available (256 px), so the 512 px icons are soft.                                               | Replace with a high-resolution or vector crest.                                                                            |
-| TD-3 | Practices are created when a member opens the week (idempotent); the scheduled Monday job will take this over (ADR-0004).                        | Notifications slice.                                                                                                       |
-| TD-4 | The check-in lists the team's own squad (plus earlier walk-ins); a walk-in from another squad cannot be added yet.                               | Search all members in the check-in.                                                                                        |
-| TD-5 | Borrowing a player from the other squad (R-16) is not offered in the selection yet; the captain asks the Board for an exception (UC-14) instead. | Selection: show the other squad's Going players when the own squad cannot field an XI, with the other captain's agreement. |
+| ID   | Debt                                                                                                                                                        | Plan                                                                                                                       |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| TD-1 | App icons are scaled up from the only crest file available (256 px), so the 512 px icons are soft.                                                          | Replace with a high-resolution or vector crest.                                                                            |
+| TD-3 | Practices are created when a member opens the week (idempotent); the scheduled Monday job will take this over (ADR-0004).                                   | Notifications slice.                                                                                                       |
+| TD-4 | The check-in lists the team's own squad (plus earlier walk-ins); a walk-in from another squad cannot be added yet.                                          | Search all members in the check-in.                                                                                        |
+| TD-5 | Borrowing a player from the other squad (R-16) is not offered in the selection yet; the captain asks the Board for an exception (UC-14) instead.            | Selection: show the other squad's Going players when the own squad cannot field an XI, with the other captain's agreement. |
+| TD-7 | `pdf-lib` (MIT) fills the match report sheet but has had no release since 2022. It is small, has no native dependencies and is covered by a rendering test. | Replace if a security issue appears or the form needs features it lacks; the drawing is isolated in `render-sheet.ts`.     |

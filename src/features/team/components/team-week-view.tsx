@@ -132,12 +132,19 @@ function MatchItem({ match }: { match: TeamWeekMatch }) {
         </span>
       }
     >
-      <Link
-        href={`/team/squad/${String(match.fixtureId)}`}
-        className={isSelectable ? LINK_CLASS : OUTLINE_LINK_CLASS}
-      >
-        {isSelectable ? t('select') : t('view')}
-      </Link>
+      <div className="flex flex-col gap-2.5">
+        {squadStatus === 'approved' && (
+          <Link href={`/team/match-day/${String(match.fixtureId)}`} className={LINK_CLASS}>
+            {t('matchDay')}
+          </Link>
+        )}
+        <Link
+          href={`/team/squad/${String(match.fixtureId)}`}
+          className={isSelectable ? LINK_CLASS : OUTLINE_LINK_CLASS}
+        >
+          {isSelectable ? t('select') : t('view')}
+        </Link>
+      </div>
     </TeamCard>
   )
 }
