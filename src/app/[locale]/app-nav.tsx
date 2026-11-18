@@ -41,7 +41,6 @@ export async function AppNav() {
       href: '/profile',
       label: t('profile'),
       icon: <UserRound aria-hidden="true" className={ICON_CLASS} />,
-      isComingSoon: true,
     },
   ]
   return <BottomNav label={t('label')} comingSoonLabel={t('comingSoon')} items={items} />

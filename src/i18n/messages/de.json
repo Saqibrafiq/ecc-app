@@ -8,7 +8,8 @@
     "squadTitle": "Kaderauswahl",
     "boardTitle": "Vorstand",
     "boardSquadTitle": "Kader prüfen",
-    "attendanceTitle": "Deine Anwesenheit"
+    "attendanceTitle": "Deine Anwesenheit",
+    "profileTitle": "Profil"
   },
   "button": {
     "going": "Dabei",
@@ -127,8 +128,7 @@
       "next": "Nächstes Spiel: {title} am {date}"
     },
     "saveFailed": "Deine Antwort konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
-    "closed": "Antworten dafür sind geschlossen.",
-    "signOut": "Abmelden"
+    "closed": "Antworten dafür sind geschlossen."
   },
   "team": {
     "eyebrow": "{team} · Kapitän",
@@ -396,6 +396,35 @@
         "cancel": "Abbrechen",
         "close": "Schließen"
       }
+    }
+  },
+  "profile": {
+    "eyebrow": "ECC App",
+    "title": "Dein Profil",
+    "preview": "Vorschau mit Beispieldaten",
+    "card": "Mitglied",
+    "player": "Spieler: {name}",
+    "unlinked": "Noch nicht mit einem Spieler verknüpft: frag den Vorstand.",
+    "role": {
+      "player": "Spieler",
+      "captain": "Kapitän",
+      "captainOf": "Kapitän von {team}",
+      "admin": "Vorstand"
+    },
+    "language": {
+      "title": "Sprache",
+      "en": "English",
+      "de": "Deutsch"
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "text": "Erinnerungen zum Antworten, Check-in und Neues zur Aufstellung.",
+      "soon": "Bald verfügbar"
+    },
+    "account": {
+      "title": "Konto",
+      "email": "E-Mail",
+      "signOut": "Abmelden"
     }
   }
 }

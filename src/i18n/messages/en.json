@@ -8,7 +8,8 @@
     "squadTitle": "Squad selection",
     "boardTitle": "Board",
     "boardSquadTitle": "Squad review",
-    "attendanceTitle": "Your attendance"
+    "attendanceTitle": "Your attendance",
+    "profileTitle": "Profile"
   },
   "button": {
     "going": "Going",
@@ -127,8 +128,7 @@
       "next": "Next match: {title} on {date}"
     },
     "saveFailed": "Your answer could not be saved. Please try again.",
-    "closed": "Answers for this have closed.",
-    "signOut": "Sign out"
+    "closed": "Answers for this have closed."
   },
   "team": {
     "eyebrow": "{team} · Captain",
@@ -396,6 +396,35 @@
         "cancel": "Cancel",
         "close": "Close"
       }
+    }
+  },
+  "profile": {
+    "eyebrow": "ECC App",
+    "title": "Your profile",
+    "preview": "Preview with sample data",
+    "card": "Member",
+    "player": "Player record: {name}",
+    "unlinked": "Not linked to a player yet: ask the Board.",
+    "role": {
+      "player": "Player",
+      "captain": "Captain",
+      "captainOf": "Captain of {team}",
+      "admin": "Board"
+    },
+    "language": {
+      "title": "Language",
+      "en": "English",
+      "de": "Deutsch"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "text": "Reminders to answer, check-in and selection news.",
+      "soon": "Coming soon"
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "signOut": "Sign out"
     }
   }
 }
