@@ -35,3 +35,7 @@ CLAUDE.md
 
 # TypeScript build cache
 *.tsbuildinfo
+
+# Players' Spielerpasses (personal data): imported into the website, never committed.
+/Spielerpas/
+/Spielerpass*/
