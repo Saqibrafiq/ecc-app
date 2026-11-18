@@ -2,22 +2,12 @@ import { useFormatter, useTranslations } from 'next-intl'
 
 import type { MyWeek } from '../types'
 import { toDisplayDate } from '@/shared/lib/display-date'
+import { getInitials } from '@/shared/lib/initials'
 
 export type WeekHeaderProps = {
   week: MyWeek
   memberName: string
   isPreview: boolean
-}
-
-const INITIALS_LENGTH = 2
-
-function getInitials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, INITIALS_LENGTH)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join('')
 }
 
 /** Greeting, the member's team and the week's dates, and their avatar. */
