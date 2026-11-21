@@ -9,7 +9,8 @@
     "boardTitle": "Vorstand",
     "boardSquadTitle": "Kader prüfen",
     "attendanceTitle": "Deine Anwesenheit",
-    "profileTitle": "Profil"
+    "profileTitle": "Profil",
+    "matchDayTitle": "Spieltag"
   },
   "button": {
     "going": "Dabei",
@@ -156,7 +157,8 @@
         "submitted": "Wartet auf Freigabe",
         "approved": "Freigegeben und bekannt gegeben",
         "returned": "Vom Vorstand zurückgegeben"
-      }
+      },
+      "matchDay": "Spieltag"
     },
     "quiet": {
       "title": "Eine ruhige Woche",
@@ -425,6 +427,52 @@
       "title": "Konto",
       "email": "E-Mail",
       "signOut": "Abmelden"
+    }
+  },
+  "matchDay": {
+    "eyebrow": "Spieltag · {date}",
+    "title": "gegen {opponent}",
+    "back": "Team",
+    "preview": "Vorschau mit Beispieldaten",
+    "notApproved": {
+      "title": "Noch nicht bekannt gegeben",
+      "text": "Spielberichtsbogen und Spielerpässe stehen bereit, sobald der Vorstand den Kader freigibt.",
+      "back": "Zurück zu deinem Team"
+    },
+    "sheet": {
+      "title": "Spielberichtsbogen",
+      "text": "Der offizielle DCB-Bogen mit unserem ausgefüllten Block ({block, select, home {Heim} other {Auswärts}}). Ausdrucken und zum Spiel mitbringen; dort unterschreiben Schiedsrichter und beide Kapitäne.",
+      "download": "Bogen herunterladen (PDF)",
+      "missing": "Noch kein Spielerpass für {names}: Der Bogen zeigt den Namen ohne Passnummer. Bitte den Vorstand, ihn einzutragen."
+    },
+    "squad": {
+      "title": "Kader und Spielerpässe",
+      "registeredAs": "Registriert als {name}",
+      "pass": "Pass {number}",
+      "noPass": "Kein Spielerpass",
+      "showCard": "Pass zeigen",
+      "showCardOf": "Spielerpass von {name} zeigen",
+      "noCard": "Kein Passbild",
+      "cardTitle": "Spielerpass",
+      "cardAlt": "Spielerpass von {name}",
+      "close": "Schließen",
+      "validFrom": "gültig ab {date}"
+    },
+    "signed": {
+      "title": "Unterschriebener Bogen",
+      "text": "Fotografiere nach dem Spiel den unterschriebenen Bogen. Nur du und der Vorstand sehen ihn.",
+      "upload": "Foto hochladen",
+      "replace": "Foto ersetzen",
+      "uploading": "Wird hochgeladen…",
+      "uploadedAt": "Hochgeladen am {date}",
+      "uploaded": "Foto hochgeladen.",
+      "alt": "Foto des unterschriebenen Spielberichtsbogens",
+      "errors": {
+        "invalid": "Bitte wähle ein Foto (JPEG, PNG oder WebP) unter 4 MB.",
+        "not-approved": "Der Kader ist nicht mehr freigegeben.",
+        "unauthorized": "Nur der Kapitän des Teams oder der Vorstand kann es hochladen.",
+        "error": "Das Foto konnte nicht hochgeladen werden. Bitte versuche es noch einmal."
+      }
     }
   }
 }

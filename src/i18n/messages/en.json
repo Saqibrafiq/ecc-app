@@ -9,7 +9,8 @@
     "boardTitle": "Board",
     "boardSquadTitle": "Squad review",
     "attendanceTitle": "Your attendance",
-    "profileTitle": "Profile"
+    "profileTitle": "Profile",
+    "matchDayTitle": "Match day"
   },
   "button": {
     "going": "Going",
@@ -156,7 +157,8 @@
         "submitted": "Waiting for approval",
         "approved": "Approved and announced",
         "returned": "Returned by the Board"
-      }
+      },
+      "matchDay": "Match day"
     },
     "quiet": {
       "title": "A quiet week",
@@ -425,6 +427,52 @@
       "title": "Account",
       "email": "Email",
       "signOut": "Sign out"
+    }
+  },
+  "matchDay": {
+    "eyebrow": "Match day · {date}",
+    "title": "vs {opponent}",
+    "back": "Team",
+    "preview": "Preview with sample data",
+    "notApproved": {
+      "title": "Not announced yet",
+      "text": "The match report sheet and the Spielerpasses are ready once the Board approves the squad.",
+      "back": "Back to your team"
+    },
+    "sheet": {
+      "title": "Match report sheet",
+      "text": "The official DCB sheet with our {block, select, home {home} other {away}} block filled in. Print it and bring it to the match; the umpires and both captains sign it there.",
+      "download": "Download the sheet (PDF)",
+      "missing": "No Spielerpass yet for {names}: the sheet shows the name without a pass number. Ask the Board to add it."
+    },
+    "squad": {
+      "title": "Squad and Spielerpasses",
+      "registeredAs": "Registered as {name}",
+      "pass": "Pass {number}",
+      "noPass": "No Spielerpass",
+      "showCard": "Show card",
+      "showCardOf": "Show {name}’s Spielerpass",
+      "noCard": "No card image",
+      "cardTitle": "Spielerpass",
+      "cardAlt": "Spielerpass of {name}",
+      "close": "Close",
+      "validFrom": "valid from {date}"
+    },
+    "signed": {
+      "title": "Signed sheet",
+      "text": "After the match, take a photo of the signed sheet. Only you and the Board can see it.",
+      "upload": "Upload photo",
+      "replace": "Replace photo",
+      "uploading": "Uploading…",
+      "uploadedAt": "Uploaded {date}",
+      "uploaded": "Photo uploaded.",
+      "alt": "Photo of the signed match report sheet",
+      "errors": {
+        "invalid": "Please choose a photo (JPEG, PNG or WebP) under 4 MB.",
+        "not-approved": "The squad is no longer approved.",
+        "unauthorized": "Only the team's captain or the Board can upload it.",
+        "error": "The photo could not be uploaded. Please try again."
+      }
     }
   }
 }

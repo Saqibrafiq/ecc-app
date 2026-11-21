@@ -46,6 +46,33 @@ export type BackendRequest<T> = {
   schema: z.ZodType<T>
 }
 
+async function readError(response: Response): Promise<BackendError> {
+  const json: unknown = await response.json().catch(() => null)
+  const error = payloadErrorSchema.safeParse(json)
+  const detail = error.success ? (error.data.errors?.[0]?.message ?? error.data.message) : undefined
+  return new BackendError(response.status, detail ?? response.statusText)
+}
+
+/** Sends one request to the Payload REST API; a refused one throws a `BackendError`. */
+async function send(
+  path: string,
+  { auth, headers, ...init }: Omit<RequestInit, 'cache'> & { auth?: BackendAuth },
+): Promise<Response> {
+  const { BACKEND_URL } = getServerEnv()
+  if (!BACKEND_URL) throw new BackendError(0, 'No backend configured')
+
+  const requestHeaders = new Headers(headers)
+  const authorization = getAuthorization(auth)
+  if (authorization) requestHeaders.set('Authorization', authorization)
+  const response = await fetch(`${BACKEND_URL}/api${path}`, {
+    ...init,
+    cache: 'no-store',
+    headers: requestHeaders,
+  })
+  if (!response.ok) throw await readError(response)
+  return response
+}
+
 /**
  * Calls the club website's Payload REST API from the server (backend-for-frontend, ADR-0002).
  * Never cached: answers and attendance change all the time.
@@ -57,30 +84,66 @@ export async function backendRequest<T>({
   auth,
   schema,
 }: BackendRequest<T>): Promise<T> {
-  const { BACKEND_URL } = getServerEnv()
-  if (!BACKEND_URL) throw new BackendError(0, 'No backend configured')
-
-  const authorization = getAuthorization(auth)
-  const response = await fetch(`${BACKEND_URL}/api${path}`, {
+  const response = await send(path, {
     method,
-    cache: 'no-store',
+    auth,
     headers: {
       Accept: 'application/json',
       ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-      ...(authorization ? { Authorization: authorization } : {}),
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   })
-  const json: unknown = await response.json().catch(() => null)
+  return schema.parse(await response.json())
+}
 
-  if (!response.ok) {
-    const error = payloadErrorSchema.safeParse(json)
-    const detail = error.success
-      ? (error.data.errors?.[0]?.message ?? error.data.message)
-      : undefined
-    throw new BackendError(response.status, detail ?? response.statusText)
+export type BackendFile = { bytes: ArrayBuffer; contentType: string }
+
+/** Reads an upload's file through Payload's access-checked file route (ADR-0025 in the website). */
+export async function backendFile({
+  path,
+  auth,
+}: {
+  path: string
+  auth: BackendAuth
+}): Promise<BackendFile> {
+  const response = await send(path, { auth })
+  return {
+    bytes: await response.arrayBuffer(),
+    contentType: response.headers.get('Content-Type') ?? 'application/octet-stream',
   }
-  return schema.parse(json)
+}
+
+export type BackendUpload<T> = {
+  method?: 'POST' | 'PATCH'
+  path: string
+  auth: BackendAuth
+  file: Blob
+  filename: string
+  /** The document's other fields, sent as Payload's `_payload` part. */
+  data: Record<string, unknown>
+  schema: z.ZodType<T>
+}
+
+/** Creates or replaces an upload's file, as Payload expects it: multipart with `file`. */
+export async function backendUpload<T>({
+  method = 'POST',
+  path,
+  auth,
+  file,
+  filename,
+  data,
+  schema,
+}: BackendUpload<T>): Promise<T> {
+  const form = new FormData()
+  form.append('file', file, filename)
+  form.append('_payload', JSON.stringify(data))
+  const response = await send(path, {
+    method,
+    auth,
+    headers: { Accept: 'application/json' },
+    body: form,
+  })
+  return schema.parse(await response.json())
 }
 
 /** True for a refused session (expired or never valid) or a missing permission. */
