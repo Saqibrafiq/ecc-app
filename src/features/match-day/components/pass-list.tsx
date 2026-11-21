@@ -45,9 +45,9 @@ export function PassList({ fixtureId, players }: PassListProps) {
                       ? t('registeredAs', { name: player.registeredName })
                       : null,
                     t('pass', { number: player.passNumber }),
-                    player.validUntil
-                      ? t('validUntil', {
-                          date: format.dateTime(toDisplayDate(player.validUntil), {
+                    player.validFrom
+                      ? t('validFrom', {
+                          date: format.dateTime(toDisplayDate(player.validFrom), {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',

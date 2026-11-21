@@ -27,7 +27,7 @@ const passSchema = z.object({
   player: relationIdSchema,
   registeredName: z.string(),
   passNumber: z.string(),
-  validUntil: z.string().nullish(),
+  validFrom: z.string().nullish(),
   card: z.object({ filename: z.string() }).nullish(),
 })
 type PassDoc = z.infer<typeof passSchema>
@@ -130,7 +130,7 @@ export async function loadMatchDay(
               name: selection.names[row.playerId] ?? row.registeredName,
               registeredName: pass?.registeredName ?? null,
               passNumber: pass?.passNumber ?? null,
-              validUntil: pass?.validUntil ? toLocalDay(pass.validUntil) : null,
+              validFrom: pass?.validFrom ? toLocalDay(pass.validFrom) : null,
               hasCard: Boolean(pass?.card),
             },
           ]

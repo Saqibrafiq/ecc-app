@@ -12,7 +12,7 @@ export type MatchDayPlayer = {
   /** As on the Spielerpass, or `null` when the Board has not entered the pass yet. */
   registeredName: string | null
   passNumber: string | null
-  validUntil: LocalDate | null
+  validFrom: LocalDate | null
   hasCard: boolean
 }
 

@@ -48,7 +48,7 @@ export function getSampleMatchDay(realNow: Date): MatchDay {
               name: names[row.playerId] ?? '',
               registeredName: passes.get(row.playerId)?.registeredName ?? null,
               passNumber: passes.get(row.playerId)?.passNumber ?? null,
-              validUntil: null,
+              validFrom: null,
               hasCard: false,
             },
           ],

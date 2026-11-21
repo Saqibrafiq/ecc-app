@@ -52,7 +52,7 @@ function backend({
       player: { id: 1 },
       registeredName: 'Player One Registered',
       passNumber: 'BY-1',
-      validUntil: '2026-12-31T12:00:00.000Z',
+      validFrom: '2026-12-31T12:00:00.000Z',
       card: { filename: 'card-1.jpg' },
     },
     { player: 2, registeredName: 'Player 2', passNumber: 'BY-2' },
@@ -125,10 +125,10 @@ describe('loadMatchDay', () => {
       name: 'Player 1',
       registeredName: 'Player One Registered',
       passNumber: 'BY-1',
-      validUntil: '2026-12-31',
+      validFrom: '2026-12-31',
       hasCard: true,
     })
-    expect(players[1]).toMatchObject({ hasCard: false, validUntil: null })
+    expect(players[1]).toMatchObject({ hasCard: false, validFrom: null })
     expect(players[11]).toMatchObject({ label: 'A1', registeredName: null, passNumber: null })
     expect(missingPasses).toHaveLength(10)
     expect(mocks.request).toHaveBeenCalledWith(

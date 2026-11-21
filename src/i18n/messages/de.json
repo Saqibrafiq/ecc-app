@@ -449,14 +449,14 @@
       "title": "Kader und Spielerpässe",
       "registeredAs": "Registriert als {name}",
       "pass": "Pass {number}",
-      "validUntil": "gültig bis {date}",
       "noPass": "Kein Spielerpass",
       "showCard": "Pass zeigen",
       "showCardOf": "Spielerpass von {name} zeigen",
       "noCard": "Kein Passbild",
       "cardTitle": "Spielerpass",
       "cardAlt": "Spielerpass von {name}",
-      "close": "Schließen"
+      "close": "Schließen",
+      "validFrom": "gültig ab {date}"
     },
     "signed": {
       "title": "Unterschriebener Bogen",

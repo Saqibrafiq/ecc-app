@@ -34,7 +34,7 @@ const MATCH_DAY: MatchDay = {
       name: 'Ali Shaan',
       registeredName: 'Ali Shaan Khan',
       passNumber: 'BY-26-001',
-      validUntil: day('2026-12-31'),
+      validFrom: day('2026-12-31'),
       hasCard: true,
     },
     {
@@ -43,7 +43,7 @@ const MATCH_DAY: MatchDay = {
       name: 'Bilal Mir',
       registeredName: 'Bilal Mir',
       passNumber: 'BY-26-002',
-      validUntil: null,
+      validFrom: null,
       hasCard: false,
     },
     {
@@ -52,7 +52,7 @@ const MATCH_DAY: MatchDay = {
       name: 'Omar Farooq',
       registeredName: null,
       passNumber: null,
-      validUntil: null,
+      validFrom: null,
       hasCard: false,
     },
   ],
@@ -94,7 +94,7 @@ describe('MatchDayView', () => {
     const [first, second, third] = within(
       screen.getByRole('region', { name: 'Squad and Spielerpasses' }),
     ).getAllByRole('listitem')
-    expect(first).toHaveTextContent('Registered as Ali Shaan Khan · Pass BY-26-001 · valid until')
+    expect(first).toHaveTextContent('Registered as Ali Shaan Khan · Pass BY-26-001 · valid from')
     expect(second).toHaveTextContent('Pass BY-26-002')
     expect(second).toHaveTextContent('No card image')
     expect(third).toHaveTextContent('A1Omar FarooqNo Spielerpass')

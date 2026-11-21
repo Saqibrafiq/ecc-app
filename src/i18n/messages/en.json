@@ -449,14 +449,14 @@
       "title": "Squad and Spielerpasses",
       "registeredAs": "Registered as {name}",
       "pass": "Pass {number}",
-      "validUntil": "valid until {date}",
       "noPass": "No Spielerpass",
       "showCard": "Show card",
       "showCardOf": "Show {name}’s Spielerpass",
       "noCard": "No card image",
       "cardTitle": "Spielerpass",
       "cardAlt": "Spielerpass of {name}",
-      "close": "Close"
+      "close": "Close",
+      "validFrom": "valid from {date}"
     },
     "signed": {
       "title": "Signed sheet",
