@@ -39,14 +39,15 @@ export type WeekInput = {
   seasonStart: LocalDate
 }
 
-function getClosesAt(event: ScheduledEvent): Date {
+/** When answers for an event close: the match deadline (R-5) or 12 hours before practice (Q-10). */
+export function getEventDeadline(event: ScheduledEvent): Date {
   return event.kind === 'match'
     ? getAvailabilityDeadline(event.date, event.deadlineDay)
     : getPracticeDeadline(event.date, event.startTime ?? DEFAULT_PRACTICE_TIME)
 }
 
 function toWeekEvent(event: ScheduledEvent, input: WeekInput): WeekEvent {
-  const closesAt = getClosesAt(event)
+  const closesAt = getEventDeadline(event)
   const answer = input.answers[event.id]
   return {
     ...event,

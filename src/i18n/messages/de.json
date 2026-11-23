@@ -563,5 +563,24 @@
       "title": "ECC: Benachrichtigungen sind an",
       "body": "Du bekommst hier Erinnerungen zum Antworten, den Check-in und Neuigkeiten zur Aufstellung."
     }
+  },
+  "jobs": {
+    "reminder": {
+      "title": "Bist du dabei?",
+      "one": "Gib deine Antwort für {event}.",
+      "many": "{count} Antworten fehlen: {events}."
+    },
+    "event": {
+      "match": "das Spiel am {day} gegen {opponent}",
+      "practice": "das Training am {day}"
+    },
+    "checkIn": {
+      "title": "Check-in fürs Training am {day}",
+      "body": "{going, plural, =0 {Niemand hat zugesagt.} one {# Spieler hat zugesagt.} other {# Spieler haben zugesagt.}} Trag ein, wer da war."
+    },
+    "selection": {
+      "title": "Stell deinen Kader auf",
+      "body": "Die Antworten für das Spiel am {day} gegen {opponent} sind geschlossen: {going, plural, one {# Zusage} other {# Zusagen}}."
+    }
   }
 }

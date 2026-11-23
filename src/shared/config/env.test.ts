@@ -48,6 +48,14 @@ describe('parseServerEnv', () => {
     )
   })
 
+  it('accepts a long jobs secret only', () => {
+    const secret = 'x'.repeat(32)
+    expect(parseServerEnv({ JOBS_SECRET: secret }).JOBS_SECRET).toBe(secret)
+    expect(() => parseServerEnv({ JOBS_SECRET: 'short' })).toThrow(
+      'Invalid server environment variables',
+    )
+  })
+
   it('fails fast on a backend without a service key or with a bad URL', () => {
     expect(() => parseServerEnv({ BACKEND_URL: 'http://localhost:3001' })).toThrow(
       'BACKEND_SERVICE_API_KEY is required',

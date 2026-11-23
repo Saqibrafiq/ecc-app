@@ -20,6 +20,7 @@ const doc = (id: number, user: number) => ({
   endpoint: SUBSCRIPTION.endpoint,
   p256dh: 'BNc',
   auth: 'tBH',
+  locale: 'de',
 })
 
 let stored: ReturnType<typeof doc>[] = []
@@ -35,7 +36,7 @@ beforeEach(() => {
 
 describe('saveSubscription', () => {
   it('registers a new device for the member, as the service account', async () => {
-    await saveSubscription(4, SUBSCRIPTION, 'iPhone · Safari')
+    await saveSubscription(4, SUBSCRIPTION, 'iPhone · Safari', 'de')
 
     expect(calls().at(-1)).toMatchObject({
       method: 'POST',
@@ -47,6 +48,7 @@ describe('saveSubscription', () => {
         p256dh: 'BNc',
         auth: 'tBH',
         userAgent: 'iPhone · Safari',
+        locale: 'de',
       },
     })
   })
@@ -54,7 +56,7 @@ describe('saveSubscription', () => {
   it('moves a known device to whoever is signed in on it now', async () => {
     stored = [doc(9, 7)]
 
-    await saveSubscription(4, SUBSCRIPTION, 'iPhone · Safari')
+    await saveSubscription(4, SUBSCRIPTION, 'iPhone · Safari', 'en')
 
     expect(calls().at(-1)).toMatchObject({
       method: 'PATCH',
@@ -80,7 +82,13 @@ describe('getSubscriptions', () => {
     stored = [doc(9, 4)]
 
     await expect(getSubscriptions([4, 5])).resolves.toEqual([
-      { id: 9, userId: 4, endpoint: SUBSCRIPTION.endpoint, keys: { p256dh: 'BNc', auth: 'tBH' } },
+      {
+        id: 9,
+        userId: 4,
+        locale: 'de',
+        endpoint: SUBSCRIPTION.endpoint,
+        keys: { p256dh: 'BNc', auth: 'tBH' },
+      },
     ])
     expect(new URLSearchParams(calls()[0]?.path.split('?')[1]).get('where[user][in]')).toBe('4,5')
   })

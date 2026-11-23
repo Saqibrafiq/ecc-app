@@ -563,5 +563,24 @@
       "title": "ECC: notifications are on",
       "body": "You'll get reminders to answer, the check-in and selection news here."
     }
+  },
+  "jobs": {
+    "reminder": {
+      "title": "Are you in?",
+      "one": "Answer for {event}.",
+      "many": "{count} answers needed: {events}."
+    },
+    "event": {
+      "match": "{day}'s match vs {opponent}",
+      "practice": "{day}'s practice"
+    },
+    "checkIn": {
+      "title": "Check in {day}'s practice",
+      "body": "{going, plural, =0 {Nobody said they're going.} one {# player said they're going.} other {# players said they're going.}} Mark who came."
+    },
+    "selection": {
+      "title": "Pick your squad",
+      "body": "Answers for {day}'s match vs {opponent} have closed: {going, plural, one {# player} other {# players}} going."
+    }
   }
 }

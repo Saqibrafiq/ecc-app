@@ -1,6 +1,6 @@
 'use server'
 
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { z } from 'zod'
 
 import { getCurrentMember } from '@/features/auth'
@@ -35,6 +35,8 @@ export async function savePushSubscriptionAction(
       member.id,
       parsed.data.subscription,
       describeDevice(parsed.data.userAgent),
+      // The language this device uses now: scheduled notifications reach it in that language.
+      await getLocale(),
     )
     return { status: 'saved' }
   } catch (error) {
