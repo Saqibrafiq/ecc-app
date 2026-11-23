@@ -7,6 +7,9 @@ const optionalString = z
   .optional()
   .transform((value) => (value === '' ? undefined : value))
 
+/** The public key, the private key and the subject. */
+const VAPID_SETTINGS = 3
+
 const serverEnvSchema = z
   .object({
     /** The club website (Payload CMS), e.g. http://localhost:3001 or the production URL. */
@@ -15,11 +18,32 @@ const serverEnvSchema = z
     BACKEND_SERVICE_API_KEY: optionalString,
     /** Development only: pins "now", e.g. 2027-05-03T08:00:00Z. Ignored in production. */
     APP_NOW: optionalString.pipe(z.iso.datetime().optional()),
+    /** Web Push key pair (ADR-0003); the public key also goes to the browser to subscribe. */
+    VAPID_PUBLIC_KEY: optionalString,
+    VAPID_PRIVATE_KEY: optionalString,
+    /** Who push services contact about this sender: an https URL or a mailto: address. */
+    VAPID_SUBJECT: optionalString.pipe(
+      z
+        .string()
+        .regex(/^(https:|mailto:)/)
+        .optional(),
+    ),
   })
   .refine((env) => !env.BACKEND_URL || Boolean(env.BACKEND_SERVICE_API_KEY), {
     message: 'BACKEND_SERVICE_API_KEY is required when BACKEND_URL is set.',
     path: ['BACKEND_SERVICE_API_KEY'],
   })
+  .refine(
+    (env) => {
+      const set = [env.VAPID_PUBLIC_KEY, env.VAPID_PRIVATE_KEY, env.VAPID_SUBJECT].filter(Boolean)
+      return set.length === 0 || set.length === VAPID_SETTINGS
+    },
+    {
+      message:
+        'VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY and VAPID_SUBJECT are set together or not at all.',
+      path: ['VAPID_PUBLIC_KEY'],
+    },
+  )
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>
 

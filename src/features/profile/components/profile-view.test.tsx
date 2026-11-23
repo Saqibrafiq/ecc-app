@@ -8,8 +8,20 @@ import type { Profile } from '../types'
 import { ProfileView } from './profile-view'
 
 const router = vi.hoisted(() => ({ replace: vi.fn() }))
+const calls = vi.hoisted(() => [] as string[])
 
-vi.mock('@/features/auth', () => ({ signOutAction: vi.fn() }))
+vi.mock('@/features/auth', () => ({
+  signOutAction: vi.fn(() => {
+    calls.push('signOut')
+    return Promise.resolve()
+  }),
+}))
+vi.mock('@/shared/lib/push-device', () => ({
+  unsubscribeDevice: vi.fn(() => {
+    calls.push('unsubscribe')
+    return Promise.reject(new Error('push service unreachable'))
+  }),
+}))
 vi.mock('@/i18n/navigation', () => ({
   usePathname: () => '/profile',
   useRouter: () => router,
@@ -26,12 +38,16 @@ const PROFILE: Profile = {
 
 function render(profile: Partial<Profile> = {}, isPreview = false) {
   return renderWithIntl(
-    <ProfileView result={{ kind: 'profile', profile: { ...PROFILE, ...profile }, isPreview }} />,
+    <ProfileView
+      result={{ kind: 'profile', profile: { ...PROFILE, ...profile }, isPreview }}
+      notifications={<p>Notifications setting</p>}
+    />,
   )
 }
 
 beforeEach(() => {
   router.replace.mockClear()
+  calls.length = 0
 })
 
 describe('ProfileView', () => {
@@ -45,7 +61,8 @@ describe('ProfileView', () => {
     expect(within(card).getByText('Player record: Saqib Rafiq')).toBeInTheDocument()
     expect(screen.getByText('saqib@example.com')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Sign out' })).toBeInTheDocument()
-    expect(screen.getByText('Coming soon')).toBeInTheDocument()
+    const notifications = screen.getByRole('region', { name: 'Notifications' })
+    expect(within(notifications).getByText('Notifications setting')).toBeInTheDocument()
   })
 
   it.each<[Partial<Profile>, string]>([
@@ -77,6 +94,16 @@ describe('ProfileView', () => {
 
     await userEvent.click(language.getByRole('button', { name: 'Deutsch' }))
     expect(router.replace).toHaveBeenCalledWith('/profile', { locale: 'de' })
+  })
+
+  it("ends this device's notifications before signing out, even if that fails", async () => {
+    render()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sign out' }))
+
+    await vi.waitFor(() => {
+      expect(calls).toEqual(['unsubscribe', 'signOut'])
+    })
   })
 
   it('has no sign out in the preview', () => {

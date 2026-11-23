@@ -19,17 +19,18 @@
 - Who is going or not going for each match and practice is visible to all members: the app is the squad availability sheet of motion 2026/06. The **reasons** for not going are visible only to the player, their captain and admins.
 - Spielerpasses and match report sheets: private storage, served through an access-checked route. Spielerpasses are visible to admins and to the captain of an approved squad the player is in; the filled sheet and the uploaded signed sheet to admins and that team's captain. Never cached by the service worker, never in notifications or logs.
 - Notifications contain no personal data beyond what the recipient may see.
+- Push devices are stored with a short label ("iPhone · Safari"), not the full user agent. Members never read or write `push-subscriptions` directly: the app server does, with its service account, after checking the session. Signing out ends the device's subscription first, so the next member on a shared phone gets none of the previous one's notifications.
 
 ## 8.4 Offline and installability
 
-- Web app manifest (name, icons, theme colours, `display: standalone`); service worker caches the app shell and the last-seen week for reading offline.
+- Web app manifest (name, icons, theme colours, `display: standalone`). The service worker (`public/sw.js`, served uncached) handles push only and caches nothing yet; reading the last-seen week offline is open (TD-8).
 - Writes require a connection; the UI says so and keeps the user's choice until it can be sent.
 
 ## 8.5 Design system, motion, i18n, accessibility
 
 - **Direction "Scoreboard"**, chosen by the club on 2026-11-08 from three explored directions (Scoreboard, Team sheet, Clubhouse) and refined into one combined screen. Night navy like a ground scoreboard, the club kit's gold for matches and a light blue for practices, so the two are never confused. Condensed display type (Barlow Condensed) for dates and headings, Inter for text. Tokens in `src/app/globals.css` (`--color-accent-match`, `--color-accent-practice`, …); no pure white anywhere.
 - **A player's week, top to bottom:** the week strip (today highlighted, practice and match days marked); a banner with the number of answers needed; the match card (heading with competition and format, answer deadline, team-sheet body with the big date, Going / Not going); the practice card (the same, in practice blue); the last 4 practices as attended / missed / upcoming; the other team's match and practice below, smaller.
-- **Building blocks:** shadcn/ui-style primitives with `cva` variants; in `shared/ui`: `Button` (primary in match gold, outline), `BottomSheet` (Radix dialog sliding up to thumb height) and `BottomNav` (fixed to the bottom edge, the current page's marker gliding between items). Times are shown in 24-hour format in both languages. Motion for every interactive element (press feedback on every button), turned into instant changes under reduced motion by `MotionProvider`.
+- **Building blocks:** shadcn/ui-style primitives with `cva` variants; in `shared/ui`: `Button` (primary in match gold, outline), `BottomSheet` (Radix dialog sliding up to thumb height), `BottomNav` (fixed to the bottom edge, the current page's marker gliding between items), `SegmentedNav` (views of one thing as links, e.g. This week / Season) and `Switch` (an on/off setting with a gliding thumb). Times are shown in 24-hour format in both languages. Motion for every interactive element (press feedback on every button), turned into instant changes under reduced motion by `MotionProvider`.
 - **i18n:** next-intl in English (default, no prefix) and German (`/de`); the locale comes from the root `[locale]` segment via `next/root-params`. Members switch the language on their profile; next-intl keeps the choice in its cookie, so the app opens in that language on the next visit.
 - **Accessibility:** WCAG 2.2 AA; axe runs in the Playwright tests on iPhone and Android profiles; touch targets at least 44 px (answer buttons 52 px).
 - **Installability:** `app/manifest.ts` (standalone, portrait, navy theme), icons in `public/icons` including a maskable one and an Apple touch icon.
