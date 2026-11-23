@@ -31,6 +31,23 @@ describe('parseServerEnv', () => {
     expect(() => parseServerEnv({ APP_NOW: 'next monday' })).toThrow()
   })
 
+  it('accepts the Web Push settings together, or none of them', () => {
+    const vapid = {
+      VAPID_PUBLIC_KEY: 'public',
+      VAPID_PRIVATE_KEY: 'private',
+      VAPID_SUBJECT: 'https://erlangen-cricket-club.vercel.app',
+    }
+    expect(parseServerEnv(vapid)).toMatchObject(vapid)
+    expect(parseServerEnv({ ...vapid, VAPID_SUBJECT: 'mailto:board@example.com' })).toBeDefined()
+
+    expect(() => parseServerEnv({ ...vapid, VAPID_PRIVATE_KEY: '' })).toThrow(
+      'set together or not at all',
+    )
+    expect(() => parseServerEnv({ ...vapid, VAPID_SUBJECT: 'http://localhost' })).toThrow(
+      'Invalid server environment variables',
+    )
+  })
+
   it('fails fast on a backend without a service key or with a bad URL', () => {
     expect(() => parseServerEnv({ BACKEND_URL: 'http://localhost:3001' })).toThrow(
       'BACKEND_SERVICE_API_KEY is required',

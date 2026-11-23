@@ -1,19 +1,19 @@
-import { BellRing, LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 
 import { signOutAction } from '@/features/auth'
-import { cn } from '@/shared/lib/cn'
 import { getInitials } from '@/shared/lib/initials'
-import { buttonVariants } from '@/shared/ui/button-variants'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 
 import type { ProfileResult } from '../server/queries'
 import type { Profile } from '../types'
 import { LanguageSwitch } from './language-switch'
+import { SignOutForm } from './sign-out-form'
 
 export type ProfileViewProps = {
   result: Exclude<ProfileResult, { kind: 'signed-out' }>
+  /** This device's notifications setting, composed by the route (the notifications feature). */
+  notifications: ReactNode
 }
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
@@ -40,7 +40,7 @@ function useRoleLabel(profile: Profile): string {
 }
 
 /** Who the member is, their language and notifications, and signing out. */
-export function ProfileView({ result }: ProfileViewProps) {
+export function ProfileView({ result, notifications }: ProfileViewProps) {
   const t = useTranslations('profile')
   const { profile, isPreview } = result
   const role = useRoleLabel(profile)
@@ -81,13 +81,7 @@ export function ProfileView({ result }: ProfileViewProps) {
       </Section>
 
       <Section id="profile-notifications" title={t('notifications.title')}>
-        <div className="flex items-center gap-3 rounded-2xl border border-border-default bg-surface-card p-4">
-          <BellRing aria-hidden="true" className="size-5 shrink-0 text-accent-practice" />
-          <p className="flex-1 text-sm text-text-muted">{t('notifications.text')}</p>
-          <span className="shrink-0 rounded-full bg-surface-raised px-2.5 py-1 text-xs font-bold text-text-muted">
-            {t('notifications.soon')}
-          </span>
-        </div>
+        {notifications}
       </Section>
 
       <Section id="profile-account" title={t('account.title')}>
@@ -98,17 +92,7 @@ export function ProfileView({ result }: ProfileViewProps) {
             </span>
             <span className="break-all">{profile.email}</span>
           </p>
-          {!isPreview && (
-            <form action={signOutAction}>
-              <button
-                type="submit"
-                className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
-              >
-                <LogOut aria-hidden="true" className="size-5" />
-                {t('account.signOut')}
-              </button>
-            </form>
-          )}
+          {!isPreview && <SignOutForm signOut={signOutAction} label={t('account.signOut')} />}
         </div>
       </Section>
     </div>

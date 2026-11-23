@@ -14,6 +14,21 @@ test.describe('your profile', () => {
     await expect(card).toContainText('Saqib Rafiq')
     await expect(card).toContainText('ECC I · Captain of ECC I')
     await expect(page).toHaveTitle('Profile')
+    // The preview has no member to register a device for.
+    await expect(page.getByRole('region', { name: 'Notifications' })).toContainText(
+      "Notifications aren't available yet.",
+    )
+  })
+
+  test('serves the service worker uncached, allowed to load only itself', async ({ request }) => {
+    const response = await request.get('/sw.js')
+
+    expect(response.status()).toBe(200)
+    expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate')
+    expect(response.headers()['content-security-policy']).toBe(
+      "default-src 'self'; script-src 'self'",
+    )
+    expect(await response.text()).toContain("addEventListener('push'")
   })
 
   test('switches the app to German and keeps it', async ({ page }) => {

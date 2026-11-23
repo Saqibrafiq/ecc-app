@@ -20,6 +20,20 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/api/match-day/**': ['./assets/dcb-match-report-sheet-2015.pdf'],
   },
+  // The service worker (ADR-0003): never cached, so a fix reaches every device on its next visit,
+  // and allowed to load only itself.
+  headers() {
+    return Promise.resolve([
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'" },
+        ],
+      },
+    ])
+  },
 }
 
 export default withNextIntl(nextConfig)

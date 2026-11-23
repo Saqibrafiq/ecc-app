@@ -421,9 +421,7 @@
       "de": "Deutsch"
     },
     "notifications": {
-      "title": "Benachrichtigungen",
-      "text": "Erinnerungen zum Antworten, Check-in und Neues zur Aufstellung.",
-      "soon": "Bald verfügbar"
+      "title": "Benachrichtigungen"
     },
     "account": {
       "title": "Konto",
@@ -540,6 +538,30 @@
     "earlier": {
       "show": "{count, plural, one {# früheres Spiel} other {# frühere Spiele}} anzeigen",
       "hide": "Frühere Spiele ausblenden"
+    }
+  },
+  "notifications": {
+    "label": "Benachrichtigungen auf diesem Gerät",
+    "state": {
+      "checking": "Gerät wird geprüft …",
+      "off": "Erinnerungen zum Antworten, der Trainings-Check-in und Neuigkeiten zur Aufstellung. Schalte sie auf jedem Handy ein, das du nutzt.",
+      "on": "An. Du bekommst hier Erinnerungen zum Antworten, den Check-in und Neuigkeiten zur Aufstellung.",
+      "unsupported": "Dieser Browser kann keine Benachrichtigungen anzeigen. Probiere Chrome, Edge, Firefox oder Safari.",
+      "install": "Auf iPhone und iPad füge die App zuerst zum Home-Bildschirm hinzu (Teilen, dann „Zum Home-Bildschirm“), öffne sie von dort und schalte Benachrichtigungen ein.",
+      "unavailable": "Benachrichtigungen sind noch nicht verfügbar.",
+      "denied": "Benachrichtigungen sind für diese App blockiert. Erlaube sie in den Einstellungen deines Handys oder Browsers und komm dann zurück."
+    },
+    "sendTest": "Test-Benachrichtigung senden",
+    "notice": {
+      "failed": "Benachrichtigungen konnten nicht eingeschaltet werden. Bitte versuche es noch einmal.",
+      "blocked": "Erlaube Benachrichtigungen, wenn dein Browser fragt, um sie einzuschalten.",
+      "sent": "Test gesendet. Er sollte gleich ankommen.",
+      "no-device": "Noch kein Gerät registriert. Schalte Benachrichtigungen aus und wieder ein.",
+      "test-failed": "Der Test konnte nicht gesendet werden. Bitte versuche es noch einmal."
+    },
+    "test": {
+      "title": "ECC: Benachrichtigungen sind an",
+      "body": "Du bekommst hier Erinnerungen zum Antworten, den Check-in und Neuigkeiten zur Aufstellung."
     }
   }
 }
