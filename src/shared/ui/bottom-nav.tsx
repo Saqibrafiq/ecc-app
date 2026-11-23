@@ -12,6 +12,8 @@ export type BottomNavItem = {
   icon: ReactNode
   /** Not built yet: shown, but not a link. */
   isComingSoon?: boolean
+  /** Further pages that belong to this item, e.g. the season beside the week. */
+  alsoCurrentOn?: readonly string[]
 }
 
 export type BottomNavProps = {
@@ -25,9 +27,13 @@ const ITEM_CLASS =
   'relative flex min-h-13 flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold'
 
 /** The week is current only on itself; any other item also on its sub-pages (e.g. a check-in). */
-function isCurrentPage(pathname: string, href: string): boolean {
+function isOnPage(pathname: string, href: string): boolean {
   if (href === '/') return pathname === '/'
   return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+function isCurrentPage(pathname: string, item: BottomNavItem): boolean {
+  return [item.href, ...(item.alsoCurrentOn ?? [])].some((href) => isOnPage(pathname, href))
 }
 
 /**
@@ -47,7 +53,7 @@ export function BottomNav({ label, items, comingSoonLabel }: BottomNavProps) {
         style={{ gridTemplateColumns: `repeat(${String(items.length)}, minmax(0, 1fr))` }}
       >
         {items.map((item) => {
-          const isCurrent = isCurrentPage(pathname, item.href)
+          const isCurrent = isCurrentPage(pathname, item)
           return (
             <li key={item.href}>
               {item.isComingSoon ? (

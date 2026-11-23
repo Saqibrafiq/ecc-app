@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { renderWithIntl } from '@/shared/testing/render-with-intl'
 
-const mocks = vi.hoisted(() => ({ isCaptain: true, isBoard: true }))
+const mocks = vi.hoisted(() => ({ isCaptain: true, isBoard: true, pathname: '/team' }))
 
 vi.mock('@/features/team', () => ({ isTeamCaptain: () => Promise.resolve(mocks.isCaptain) }))
 vi.mock('@/features/board', () => ({ isBoardMember: () => Promise.resolve(mocks.isBoard) }))
@@ -15,7 +15,7 @@ vi.mock('next-intl/server', async () => {
   }
 })
 vi.mock('@/i18n/navigation', () => ({
-  usePathname: () => '/team',
+  usePathname: () => mocks.pathname,
   Link: ({ href, children, ...props }: { href: string; children: React.ReactNode }) => (
     <a href={href} {...props}>
       {children}
@@ -41,5 +41,12 @@ describe('AppNav', () => {
 
     expect(screen.queryByRole('link', { name: 'Team' })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Board' })).not.toBeInTheDocument()
+  })
+
+  it('keeps the week current on the season, its second view', async () => {
+    mocks.pathname = '/season'
+    renderWithIntl(await AppNav())
+
+    expect(screen.getByRole('link', { name: 'Week' })).toHaveAttribute('aria-current', 'page')
   })
 })

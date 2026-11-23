@@ -54,4 +54,22 @@ describe('BottomNav', () => {
     expect(screen.getByRole('link', { name: 'Week' })).not.toHaveAttribute('aria-current')
     pathname.value = '/'
   })
+
+  it('keeps an item current on the further pages that belong to it', () => {
+    pathname.value = '/season'
+    renderWithIntl(
+      <BottomNav
+        label="Main"
+        comingSoonLabel="coming soon"
+        items={[
+          { href: '/', label: 'Week', icon: null, alsoCurrentOn: ['/season'] },
+          { href: '/profile', label: 'Profile', icon: null },
+        ]}
+      />,
+    )
+
+    expect(screen.getByRole('link', { name: 'Week' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Profile' })).not.toHaveAttribute('aria-current')
+    pathname.value = '/'
+  })
 })

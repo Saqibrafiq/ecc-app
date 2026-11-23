@@ -10,7 +10,8 @@
     "boardSquadTitle": "Kader prüfen",
     "attendanceTitle": "Deine Anwesenheit",
     "profileTitle": "Profil",
-    "matchDayTitle": "Spieltag"
+    "matchDayTitle": "Spieltag",
+    "seasonTitle": "Saisonplan"
   },
   "button": {
     "going": "Dabei",
@@ -494,6 +495,51 @@
         "unauthorized": "Das kann nur der Kapitän des Teams oder der Vorstand eintragen.",
         "error": "Das konnte nicht gespeichert werden. Bitte versuche es noch einmal."
       }
+    }
+  },
+  "schedule": {
+    "label": "Spielplan",
+    "week": "Diese Woche",
+    "season": "Saison"
+  },
+  "season": {
+    "preview": "Vorschau mit Beispieldaten",
+    "eyebrow": "Saison {year}",
+    "title": "Saisonplan",
+    "record": "{team}: {played} gespielt · {won} gewonnen · {lost} verloren",
+    "remaining": "{count, plural, =0 {Keine Spiele mehr} one {# Spiel steht noch aus} other {# Spiele stehen noch aus}}",
+    "next": "Als Nächstes",
+    "today": "Heute",
+    "versus": "gegen {opponent}",
+    "home": "Heim",
+    "away": "Auswärts",
+    "legs": "{count} Spiele",
+    "timeTbc": "Uhrzeit folgt",
+    "result": {
+      "wonByRuns": "Gewonnen mit {value, plural, one {# Run} other {# Runs}}",
+      "wonByWickets": "Gewonnen mit {value, plural, one {# Wicket} other {# Wickets}}",
+      "lostByRuns": "Verloren mit {value, plural, one {# Run} other {# Runs}}",
+      "lostByWickets": "Verloren mit {value, plural, one {# Wicket} other {# Wickets}}",
+      "won": "Gewonnen",
+      "lost": "Verloren",
+      "tied": "Unentschieden",
+      "no-result": "Ohne Ergebnis",
+      "abandoned": "Abgebrochen",
+      "cancelled": "Abgesagt",
+      "dls": "{result} (DLS)",
+      "walkoverWon": "Kampflos gewonnen",
+      "walkoverLost": "Kampflos verloren",
+      "forfeitWon": "Gewonnen: Gegner hat aufgegeben",
+      "forfeitLost": "Verloren durch Aufgabe"
+    },
+    "empty": {
+      "title": "Noch keine Spiele",
+      "text": "Die Spiele der Saison erscheinen hier, sobald der Vorstand sie eingetragen hat."
+    },
+    "loading": "Saison wird geladen",
+    "earlier": {
+      "show": "{count, plural, one {# früheres Spiel} other {# frühere Spiele}} anzeigen",
+      "hide": "Frühere Spiele ausblenden"
     }
   }
 }
