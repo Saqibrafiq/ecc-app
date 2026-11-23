@@ -3,6 +3,7 @@ import 'server-only'
 import { z } from 'zod'
 
 import {
+  addDays,
   type DeadlineDay,
   DEFAULT_DEADLINE_DAY,
   getCarryOvers,
@@ -16,11 +17,13 @@ import {
   fixtureDocSchema,
   getClubSchedule,
   getClubTeams,
+  getMatches,
   getTeamSeasonPractices,
   practiceDocSchema,
   toLocalDay,
   toMatchEvent,
   toPracticeEvent,
+  type ScheduledEvent,
 } from '@/features/week'
 import { type BackendAuth, BackendError, backendRequest } from '@/shared/backend/client'
 import { dayStart, toQuery } from '@/shared/backend/query'
@@ -31,6 +34,7 @@ import { buildCandidates, isFirstTeam } from '../domain/selection'
 import type { CheckIn, SquadSelection, SquadStatus, TeamCorrection, TeamWeek } from '../types'
 import { canManageTeam, type TeamActor } from './team-access'
 
+const DAYS_PER_WEEK = 7
 const NOT_FOUND = 404
 /** A season of a team's attendance: about 40 practices for up to 25 players. */
 const ATTENDANCE_LIMIT = '1000'
@@ -44,6 +48,7 @@ const squadDocSchema = z.object({
     .array(z.object({ player: relationIdSchema, role: z.enum(['playing', 'twelfth', 'reserve']) }))
     .nullish(),
   noShows: z.array(relationIdSchema).nullish(),
+  noShowsRecordedAt: z.string().nullish(),
   exceptions: z.array(relationIdSchema).nullish(),
   note: z.string().nullish(),
   deadlineDay: z.enum(['tuesday', 'wednesday', 'thursday']).nullish(),
@@ -235,14 +240,27 @@ async function getOpenCorrections(auth: BackendAuth, teamId: number): Promise<Te
     .sort((a, b) => a.practiceDate.localeCompare(b.practiceDate))
 }
 
-async function getSquadStatuses(auth: BackendAuth, fixtureIds: readonly number[]) {
-  if (fixtureIds.length === 0) return new Map<number, SquadStatus>()
+type SquadSummary = { status: SquadStatus; hasRecordedNoShows: boolean }
+
+async function getSquadSummaries(auth: BackendAuth, fixtureIds: readonly number[]) {
+  if (fixtureIds.length === 0) return new Map<number, SquadSummary>()
   const { docs } = await backendRequest({
     path: `/squads${toQuery({ 'where[fixture][in]': fixtureIds.join(','), depth: '0' })}`,
     auth,
-    schema: listOf(z.object({ fixture: relationIdSchema, status: squadStatusSchema })),
+    schema: listOf(
+      z.object({
+        fixture: relationIdSchema,
+        status: squadStatusSchema,
+        noShowsRecordedAt: z.string().nullish(),
+      }),
+    ),
   })
-  return new Map(docs.map((doc) => [doc.fixture, doc.status]))
+  return new Map(
+    docs.map((doc) => [
+      doc.fixture,
+      { status: doc.status, hasRecordedNoShows: Boolean(doc.noShowsRecordedAt) },
+    ]),
+  )
 }
 
 /**
@@ -257,7 +275,11 @@ export async function getBackendTeamWeek(
 ): Promise<TeamWeek> {
   const auth = authOf(actor)
   const today = getLocalDate(now)
-  const schedule = await getClubSchedule(auth, startOfWeek(today))
+  const monday = startOfWeek(today)
+  const [schedule, recent] = await Promise.all([
+    getClubSchedule(auth, monday),
+    getMatches(auth, addDays(monday, -DAYS_PER_WEEK), monday),
+  ])
   // ECC I, ECC II, ECC III: the order members name them in.
   const teams = [...schedule.teams.values()].sort((a, b) => a.name.localeCompare(b.name))
   const teamId =
@@ -266,14 +288,21 @@ export async function getBackendTeamWeek(
       ? requestedTeamId
       : Number(teams[0]?.id ?? 0))
   const team = schedule.teams.get(teamId) ?? unnamedTeam(teamId)
-  const matches = schedule.matches.filter((match) => match.team.id === team.id)
-  const [statuses, corrections] = await Promise.all([
-    getSquadStatuses(
+  const ours = (match: ScheduledEvent) => match.team.id === team.id
+  const candidates = [...recent.filter(ours), ...schedule.matches.filter(ours)]
+  const [summaries, corrections] = await Promise.all([
+    getSquadSummaries(
       auth,
-      matches.map((match) => fixtureNumber(match.id)),
+      candidates.map((match) => fixtureNumber(match.id)),
     ),
     getOpenCorrections(auth, teamId),
   ])
+  // Last week's matches stay listed while they were announced: the captain still has to record
+  // no-shows (UC-19) and send the signed sheet by the Tuesday after (UC-22, § 25 DCB-SPO).
+  const matches = candidates.filter(
+    (match) =>
+      match.date >= monday || summaries.get(fixtureNumber(match.id))?.status === 'approved',
+  )
 
   return {
     team,
@@ -291,7 +320,12 @@ export async function getBackendTeamWeek(
     matches: matches.map((match) => ({
       event: match,
       fixtureId: fixtureNumber(match.id),
-      squadStatus: statuses.get(fixtureNumber(match.id)) ?? 'open',
+      squadStatus: summaries.get(fixtureNumber(match.id))?.status ?? 'open',
+      // Only an announced match that has been played still needs its no-shows (UC-19).
+      needsNoShows:
+        summaries.get(fixtureNumber(match.id))?.status === 'approved' &&
+        match.date <= today &&
+        !summaries.get(fixtureNumber(match.id))?.hasRecordedNoShows,
     })),
     corrections,
   }
@@ -367,6 +401,9 @@ export type SelectionData = {
   squadId: number
   deadlineDay: DeadlineDay
   exceptionIds: string[]
+  /** Selected players the captain marked absent (UC-19), and when they confirmed. */
+  noShowIds: string[]
+  noShowsRecordedAt: string | null
   /** Names of every player the screen may show, picked players who changed their answer included. */
   names: Record<string, string>
 }
@@ -433,6 +470,8 @@ export async function loadSelection(
     squadId: squad.id,
     deadlineDay: squad.deadlineDay ?? DEFAULT_DEADLINE_DAY,
     exceptionIds,
+    noShowIds: ids(squad.noShows),
+    noShowsRecordedAt: squad.noShowsRecordedAt ?? null,
     names: Object.fromEntries(players.map((player) => [player.id, player.name])),
   }
 }

@@ -2,13 +2,14 @@ import 'server-only'
 
 import { z } from 'zod'
 
-import type { LocalDate } from '@/domain/club-rules'
+import { getLocalDate, type LocalDate } from '@/domain/club-rules'
 import { loadSelection, type TeamActor } from '@/features/team'
 import { toLocalDay } from '@/features/week'
 import { type BackendAuth, backendRequest } from '@/shared/backend/client'
 import { toQuery } from '@/shared/backend/query'
 import { listOf, relationIdSchema } from '@/shared/backend/schemas'
 
+import { canRecordNoShows } from '../domain/no-shows'
 import { buildSheetRows, type SheetPass } from '../domain/sheet-rows'
 import type { MatchDay } from '../types'
 import type { MatchSheet } from './render-sheet'
@@ -43,6 +44,8 @@ export type MatchDayData = {
   matchDay: MatchDay
   sheet: MatchSheet
   teamId: number
+  /** The squad to write no-shows to. */
+  squadId: number
   /** Card image file names by player. */
   cards: Map<string, string>
   signedSheet: { id: number; filename: string } | null
@@ -137,6 +140,9 @@ export async function loadMatchDay(
         }),
         missingPasses: missingPasses.map((player) => player.name),
         signedSheetAt: signedSheet?.updatedAt ?? null,
+        noShowIds: selection.noShowIds,
+        noShowsRecordedAt: selection.noShowsRecordedAt,
+        canRecordNoShows: canRecordNoShows(match.date, getLocalDate(now)),
       },
       sheet: {
         date: toSheetDate(match.date),
@@ -147,6 +153,7 @@ export async function loadMatchDay(
         rows,
       },
       teamId: Number(match.team.id),
+      squadId: selection.squadId,
       cards: new Map(
         [...passes].flatMap(([id, pass]) => (pass.card ? [[id, pass.card.filename]] : [])),
       ),

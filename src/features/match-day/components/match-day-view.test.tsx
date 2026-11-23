@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { toLocalDate as day } from '@/domain/club-rules'
 import { renderWithIntl } from '@/shared/testing/render-with-intl'
 
-import type { MatchDay, SignedSheetOutcome } from '../types'
+import type { MatchDay, NoShowsOutcome, SignedSheetOutcome } from '../types'
 import { MatchDayView } from './match-day-view'
 
 vi.mock('@/i18n/navigation', () => ({
@@ -58,20 +58,27 @@ const MATCH_DAY: MatchDay = {
   ],
   missingPasses: ['Omar Farooq'],
   signedSheetAt: null,
+  noShowIds: [],
+  noShowsRecordedAt: null,
+  canRecordNoShows: true,
 }
 
 function render(
   matchDay: Partial<MatchDay> = {},
   upload?: () => Promise<{ status: SignedSheetOutcome }>,
+  record?: () => Promise<{ status: NoShowsOutcome }>,
 ) {
   return renderWithIntl(
     <MatchDayView
       matchDay={{ ...MATCH_DAY, ...matchDay }}
       isPreview={false}
       uploadSignedSheet={upload}
+      recordNoShows={record}
     />,
   )
 }
+
+const noShows = () => within(screen.getByRole('region', { name: "Who didn't come?" }))
 
 const photo = () => new File(['photo'], 'sheet.jpg', { type: 'image/jpeg' })
 
@@ -155,5 +162,72 @@ describe('MatchDayView', () => {
 
     await userEvent.upload(screen.getByLabelText('Replace photo'), photo())
     expect(await screen.findByRole('status')).toHaveTextContent('Photo uploaded.')
+  })
+})
+
+describe('recording no-shows', () => {
+  it('starts with nobody marked and records who did not appear', async () => {
+    const record = vi.fn(() => Promise.resolve({ status: 'saved' as const }))
+    render({}, undefined, record)
+
+    expect(noShows().getByText('Everyone appeared')).toBeInTheDocument()
+    expect(noShows().queryAllByRole('button', { pressed: true })).toHaveLength(0)
+
+    await userEvent.click(noShows().getByRole('button', { name: 'Mark Bilal Mir as absent' }))
+
+    expect(noShows().getByText('1 did not appear')).toBeInTheDocument()
+    expect(noShows().getByText('Sits out the next match')).toBeInTheDocument()
+
+    await userEvent.click(noShows().getByRole('button', { name: 'Save' }))
+
+    expect(record).toHaveBeenCalledWith({ fixtureId: 60, noShowIds: ['2'] })
+    expect(await noShows().findByRole('status')).toHaveTextContent('They sit out the next match.')
+  })
+
+  it('records an empty list as everyone having appeared', async () => {
+    const record = vi.fn(() => Promise.resolve({ status: 'saved' as const }))
+    render({}, undefined, record)
+
+    await userEvent.click(noShows().getByRole('button', { name: 'Save' }))
+
+    expect(record).toHaveBeenCalledWith({ fixtureId: 60, noShowIds: [] })
+    expect(await noShows().findByRole('status')).toHaveTextContent(
+      'Everyone is available for the next match.',
+    )
+  })
+
+  it('un-marks a player on a second tap', async () => {
+    render()
+
+    await userEvent.click(noShows().getByRole('button', { name: 'Mark Ali Shaan as absent' }))
+    await userEvent.click(
+      noShows().getByRole('button', { name: 'Mark Ali Shaan as present again' }),
+    )
+
+    expect(noShows().getByText('Everyone appeared')).toBeInTheDocument()
+  })
+
+  it('shows who was already marked, and when it was recorded', () => {
+    render({ noShowIds: ['1'], noShowsRecordedAt: '2026-11-14T18:30:00.000Z' })
+
+    expect(
+      noShows().getByRole('button', { name: 'Mark Ali Shaan as present again' }),
+    ).toHaveAttribute('aria-pressed', 'true')
+    expect(noShows().getByText(/Recorded Sat, Nov 14/)).toBeInTheDocument()
+  })
+
+  it('stays closed before the match is played', () => {
+    render({ canRecordNoShows: false })
+
+    expect(noShows().getByText('You can record this from the match day onwards.')).toBeVisible()
+    expect(noShows().queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
+  })
+
+  it('says why recording failed', async () => {
+    render({}, undefined, () => Promise.resolve({ status: 'error' as const }))
+
+    await userEvent.click(noShows().getByRole('button', { name: 'Save' }))
+
+    expect(await noShows().findByRole('alert')).toHaveTextContent('That could not be saved.')
   })
 })

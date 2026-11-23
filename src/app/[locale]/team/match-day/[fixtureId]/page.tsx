@@ -3,7 +3,12 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { redirectToSignIn } from '@/features/auth'
-import { getMatchDay, MatchDayView, uploadSignedSheetAction } from '@/features/match-day'
+import {
+  getMatchDay,
+  MatchDayView,
+  recordNoShowsAction,
+  uploadSignedSheetAction,
+} from '@/features/match-day'
 import { TeamAccessState } from '@/features/team'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/shared/lib/cn'
@@ -35,6 +40,7 @@ export default async function MatchDayPage({
           matchDay={result.matchDay}
           isPreview={result.isPreview}
           uploadSignedSheet={result.isPreview ? undefined : uploadSignedSheetAction}
+          recordNoShows={result.isPreview ? undefined : recordNoShowsAction}
         />
       )}
       {result.kind === 'not-approved' && (

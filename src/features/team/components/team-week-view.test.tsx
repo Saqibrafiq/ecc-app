@@ -66,7 +66,7 @@ describe('TeamWeekView', () => {
             ],
             matches: [
               { ...match, fixtureId: 1, squadStatus: 'submitted' },
-              { ...match, fixtureId: 2, squadStatus: 'approved' },
+              { ...match, fixtureId: 2, squadStatus: 'approved', needsNoShows: true },
               { ...match, fixtureId: 3, squadStatus: 'returned' },
             ],
           }),
@@ -81,6 +81,7 @@ describe('TeamWeekView', () => {
     expect(screen.getAllByText('Check in')).toHaveLength(2)
     expect(screen.getByText('Waiting for approval')).toBeInTheDocument()
     expect(screen.getByText('Approved and announced')).toBeInTheDocument()
+    expect(screen.getByText('No-shows not recorded')).toBeInTheDocument()
     expect(screen.getByText('Returned by the Board')).toBeInTheDocument()
     expect(screen.getAllByRole('link', { name: 'View squad' })).toHaveLength(2)
     expect(screen.getByRole('link', { name: 'Match day' })).toHaveAttribute(

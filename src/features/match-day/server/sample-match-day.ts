@@ -55,5 +55,9 @@ export function getSampleMatchDay(realNow: Date): MatchDay {
     ),
     missingPasses: missingPasses.map((player) => player.name),
     signedSheetAt: null,
+    noShowIds: [],
+    noShowsRecordedAt: null,
+    // The preview stands on the match day itself, so the whole screen is shown.
+    canRecordNoShows: true,
   }
 }

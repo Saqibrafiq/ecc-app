@@ -26,8 +26,19 @@ export type MatchDay = {
   missingPasses: string[]
   /** When the signed sheet was uploaded, or `null` before. */
   signedSheetAt: string | null
+  /** Selected players who did not appear (UC-19); they sit out the next match (R-14). */
+  noShowIds: string[]
+  /** When the captain confirmed who appeared; `null` while nobody has checked. */
+  noShowsRecordedAt: string | null
+  /** Only from the match day onwards: nobody is absent from a match not yet played. */
+  canRecordNoShows: boolean
 }
 
 export type SignedSheetOutcome = 'uploaded' | 'invalid' | 'not-approved' | 'unauthorized' | 'error'
 /** Uploads the signed sheet's photo; the preview has none and keeps it in the page. */
 export type UploadSignedSheet = (form: FormData) => Promise<{ status: SignedSheetOutcome }>
+
+export type NoShowsInput = { fixtureId: number; noShowIds: string[] }
+export type NoShowsOutcome = 'saved' | 'invalid' | 'not-yet' | 'unauthorized' | 'error'
+/** Records who did not appear; the preview has none and keeps it in the page. */
+export type RecordNoShows = (input: NoShowsInput) => Promise<{ status: NoShowsOutcome }>

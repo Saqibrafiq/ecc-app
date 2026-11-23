@@ -158,7 +158,8 @@
         "approved": "Approved and announced",
         "returned": "Returned by the Board"
       },
-      "matchDay": "Match day"
+      "matchDay": "Match day",
+      "noShowsDue": "No-shows not recorded"
     },
     "quiet": {
       "title": "A quiet week",
@@ -472,6 +473,26 @@
         "not-approved": "The squad is no longer approved.",
         "unauthorized": "Only the team's captain or the Board can upload it.",
         "error": "The photo could not be uploaded. Please try again."
+      }
+    },
+    "noShows": {
+      "title": "Who didn't come?",
+      "text": "Tap anyone who was selected but did not appear. They sit out the team’s next match (motion 2023/10).",
+      "notYet": "You can record this from the match day onwards.",
+      "absent": "Did not appear",
+      "markAbsent": "Mark {name} as absent",
+      "markPresent": "Mark {name} as present again",
+      "sitsOut": "Sits out the next match",
+      "count": "{count, plural, =0 {Everyone appeared} one {# did not appear} other {# did not appear}}",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved. {count, plural, =0 {Everyone is available for the next match.} other {They sit out the next match.}}",
+      "recordedAt": "Recorded {date}",
+      "errors": {
+        "invalid": "That could not be saved. Reload the page and try again.",
+        "not-yet": "You can record this from the match day onwards.",
+        "unauthorized": "Only the team's captain or the Board can record this.",
+        "error": "That could not be saved. Please try again."
       }
     }
   }

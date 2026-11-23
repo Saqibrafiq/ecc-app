@@ -32,9 +32,15 @@ const PICKS = [
   { playerId: '12', role: 'twelfth' as const },
 ]
 
-function selection(status = 'approved') {
+type SelectionNoShows = { noShowIds: string[]; noShowsRecordedAt: string | null }
+
+function selection(status = 'approved', noShows: Partial<SelectionNoShows> = {}) {
   return {
     selection: { status, match: MATCH, picks: PICKS },
+    squadId: 9,
+    noShowIds: [],
+    noShowsRecordedAt: null,
+    ...noShows,
     names: Object.fromEntries(PICKS.map(({ playerId }) => [playerId, `Player ${playerId}`])),
   }
 }
@@ -179,5 +185,30 @@ describe('loadMatchDay', () => {
 
     mocks.selection.mockResolvedValueOnce(null)
     await expect(loadMatchDay(ACTOR, 61, NOW)).resolves.toBeNull()
+  })
+})
+
+describe('loadMatchDay: no-shows', () => {
+  it('carries the squad to write to, who was marked absent, and when', async () => {
+    mocks.selection.mockResolvedValue(
+      selection('approved', { noShowIds: ['3'], noShowsRecordedAt: '2026-11-14T18:00:00.000Z' }),
+    )
+
+    const load = await loadMatchDay(ACTOR, 60, NOW)
+
+    if (load?.kind !== 'ready') throw new Error('expected a match day')
+    expect(load.data.squadId).toBe(9)
+    expect(load.data.matchDay.noShowIds).toEqual(['3'])
+    expect(load.data.matchDay.noShowsRecordedAt).toBe('2026-11-14T18:00:00.000Z')
+  })
+
+  it('opens recording on the match day, not before', async () => {
+    mocks.selection.mockResolvedValue(selection())
+
+    const onTheDay = await loadMatchDay(ACTOR, 60, NOW)
+    expect(onTheDay?.kind === 'ready' && onTheDay.data.matchDay.canRecordNoShows).toBe(true)
+
+    const before = await loadMatchDay(ACTOR, 60, new Date('2026-11-12T08:00:00Z'))
+    expect(before?.kind === 'ready' && before.data.matchDay.canRecordNoShows).toBe(false)
   })
 })

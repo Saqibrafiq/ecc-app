@@ -4,6 +4,7 @@ export {
   type ClubSchedule,
   getClubSchedule,
   getClubTeams,
+  getMatches,
   getTeamSeasonPractices,
 } from './server/club-schedule'
 export {

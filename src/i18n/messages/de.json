@@ -158,7 +158,8 @@
         "approved": "Freigegeben und bekannt gegeben",
         "returned": "Vom Vorstand zurückgegeben"
       },
-      "matchDay": "Spieltag"
+      "matchDay": "Spieltag",
+      "noShowsDue": "Nicht Erschienene fehlen"
     },
     "quiet": {
       "title": "Eine ruhige Woche",
@@ -472,6 +473,26 @@
         "not-approved": "Der Kader ist nicht mehr freigegeben.",
         "unauthorized": "Nur der Kapitän des Teams oder der Vorstand kann es hochladen.",
         "error": "Das Foto konnte nicht hochgeladen werden. Bitte versuche es noch einmal."
+      }
+    },
+    "noShows": {
+      "title": "Wer war nicht da?",
+      "text": "Tippe alle an, die aufgestellt waren, aber nicht erschienen sind. Sie setzen beim nächsten Spiel aus (Antrag 2023/10).",
+      "notYet": "Das kannst du ab dem Spieltag eintragen.",
+      "absent": "Nicht erschienen",
+      "markAbsent": "{name} als nicht erschienen markieren",
+      "markPresent": "{name} wieder als anwesend markieren",
+      "sitsOut": "Setzt beim nächsten Spiel aus",
+      "count": "{count, plural, =0 {Alle waren da} one {# war nicht da} other {# waren nicht da}}",
+      "save": "Speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Gespeichert. {count, plural, =0 {Alle sind für das nächste Spiel verfügbar.} other {Sie setzen beim nächsten Spiel aus.}}",
+      "recordedAt": "Eingetragen am {date}",
+      "errors": {
+        "invalid": "Das konnte nicht gespeichert werden. Lade die Seite neu und versuche es noch einmal.",
+        "not-yet": "Das kannst du ab dem Spieltag eintragen.",
+        "unauthorized": "Das kann nur der Kapitän des Teams oder der Vorstand eintragen.",
+        "error": "Das konnte nicht gespeichert werden. Bitte versuche es noch einmal."
       }
     }
   }

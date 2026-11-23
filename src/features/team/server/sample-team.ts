@@ -105,7 +105,14 @@ export function getSampleTeamWeek(now: Date): TeamWeek {
         canCheckIn: true,
       },
     ],
-    matches: [{ event: match, fixtureId: SAMPLE_FIXTURE_ID, squadStatus: 'open' }],
+    matches: [
+      {
+        event: match,
+        fixtureId: SAMPLE_FIXTURE_ID,
+        squadStatus: 'open',
+        needsNoShows: false,
+      },
+    ],
     corrections: [
       {
         id: 1,
