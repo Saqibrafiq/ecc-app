@@ -28,6 +28,7 @@ export async function AppNav() {
     {
       href: '/',
       label: t('week'),
+      alsoCurrentOn: ['/season'],
       icon: <CalendarDays aria-hidden="true" className={ICON_CLASS} />,
     },
     ...(showTeam ? [team] : []),

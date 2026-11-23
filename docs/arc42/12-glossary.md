@@ -4,6 +4,8 @@
 | ------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | ECC I / ECC II     | ECC I / ECC II            | The club's first and second league teams.                                                                               |
 | Fixture            | Spiel / Begegnung         | A scheduled league match of an ECC team, maintained on the website.                                                     |
+| Double-header      | Doppelspieltag            | Two matches between the same two teams on one day, common in T20 leagues; the season shows one fixture, two results.    |
+| Season             | Saison                    | The calendar year's matches; the app counts the attendance rule and the season screen from 1 January.                   |
 | Practice           | Training                  | The weekly team training: Wednesday before a Saturday match, Thursday before a Sunday match.                            |
 | Availability       | Verfügbarkeit             | A member's answer for a match or practice: Going or Not going (with reason).                                            |
 | Going / Not going  | Dabei / Nicht dabei       | The two possible answers.                                                                                               |

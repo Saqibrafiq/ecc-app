@@ -6,6 +6,7 @@ import { answerAction, getMyWeek, WeekView } from '@/features/week'
 import { PageMain } from '@/shared/ui/page-main'
 
 import { AppNav } from './app-nav'
+import { ScheduleSwitch } from './schedule-switch'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata')
@@ -23,6 +24,7 @@ export default async function WeekPage() {
   return (
     <>
       <PageMain>
+        <ScheduleSwitch />
         <WeekView result={result} saveAnswer={isPreview ? undefined : answerAction} />
       </PageMain>
       <AppNav />

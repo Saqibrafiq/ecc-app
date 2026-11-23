@@ -10,7 +10,8 @@
     "boardSquadTitle": "Squad review",
     "attendanceTitle": "Your attendance",
     "profileTitle": "Profile",
-    "matchDayTitle": "Match day"
+    "matchDayTitle": "Match day",
+    "seasonTitle": "Season schedule"
   },
   "button": {
     "going": "Going",
@@ -494,6 +495,51 @@
         "unauthorized": "Only the team's captain or the Board can record this.",
         "error": "That could not be saved. Please try again."
       }
+    }
+  },
+  "schedule": {
+    "label": "Schedule",
+    "week": "This week",
+    "season": "Season"
+  },
+  "season": {
+    "preview": "Preview with sample data",
+    "eyebrow": "Season {year}",
+    "title": "Season schedule",
+    "record": "{team}: {played} played · {won} won · {lost} lost",
+    "remaining": "{count, plural, =0 {No matches to come} one {# match to come} other {# matches to come}}",
+    "next": "Next",
+    "today": "Today",
+    "versus": "vs {opponent}",
+    "home": "Home",
+    "away": "Away",
+    "legs": "{count} matches",
+    "timeTbc": "Time to be confirmed",
+    "result": {
+      "wonByRuns": "Won by {value, plural, one {# run} other {# runs}}",
+      "wonByWickets": "Won by {value, plural, one {# wicket} other {# wickets}}",
+      "lostByRuns": "Lost by {value, plural, one {# run} other {# runs}}",
+      "lostByWickets": "Lost by {value, plural, one {# wicket} other {# wickets}}",
+      "won": "Won",
+      "lost": "Lost",
+      "tied": "Tied",
+      "no-result": "No result",
+      "abandoned": "Abandoned",
+      "cancelled": "Cancelled",
+      "dls": "{result} (DLS)",
+      "walkoverWon": "Won by walkover",
+      "walkoverLost": "Lost by walkover",
+      "forfeitWon": "Won: the opponent forfeited",
+      "forfeitLost": "Lost by forfeit"
+    },
+    "empty": {
+      "title": "No fixtures yet",
+      "text": "The season's matches appear here once the Board has entered them."
+    },
+    "loading": "Loading the season",
+    "earlier": {
+      "show": "Show {count, plural, one {# earlier match} other {# earlier matches}}",
+      "hide": "Hide earlier matches"
     }
   }
 }
