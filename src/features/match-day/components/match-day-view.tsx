@@ -6,7 +6,8 @@ import { toDisplayDate } from '@/shared/lib/display-date'
 import { buttonVariants } from '@/shared/ui/button-variants'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 
-import type { MatchDay, UploadSignedSheet } from '../types'
+import type { MatchDay, RecordNoShows, UploadSignedSheet } from '../types'
+import { NoShowList } from './no-show-list'
 import { PassList } from './pass-list'
 import { SignedSheetUpload } from './signed-sheet-upload'
 
@@ -14,6 +15,7 @@ export type MatchDayViewProps = {
   matchDay: MatchDay
   isPreview: boolean
   uploadSignedSheet?: UploadSignedSheet
+  recordNoShows?: RecordNoShows
 }
 
 const SECTION_TITLE = 'font-display text-xl font-bold uppercase'
@@ -22,7 +24,12 @@ const SECTION_TITLE = 'font-display text-xl font-bold uppercase'
  * What the captain takes to an approved match (UC-13, UC-21, UC-22): the filled match report
  * sheet, every selected player's Spielerpass, and the signed sheet's photo afterwards.
  */
-export function MatchDayView({ matchDay, isPreview, uploadSignedSheet }: MatchDayViewProps) {
+export function MatchDayView({
+  matchDay,
+  isPreview,
+  uploadSignedSheet,
+  recordNoShows,
+}: MatchDayViewProps) {
   const t = useTranslations('matchDay')
   const format = useFormatter()
   const { match, fixtureId } = matchDay
@@ -72,6 +79,20 @@ export function MatchDayView({ matchDay, isPreview, uploadSignedSheet }: MatchDa
           {t('squad.title')}
         </h2>
         <PassList fixtureId={fixtureId} players={matchDay.players} />
+      </section>
+
+      <section aria-labelledby="match-day-no-shows" className="flex flex-col gap-3">
+        <h2 id="match-day-no-shows" className={SECTION_TITLE}>
+          {t('noShows.title')}
+        </h2>
+        <NoShowList
+          fixtureId={fixtureId}
+          players={matchDay.players}
+          noShowIds={matchDay.noShowIds}
+          recordedAt={matchDay.noShowsRecordedAt}
+          canRecord={matchDay.canRecordNoShows}
+          recordNoShows={recordNoShows}
+        />
       </section>
 
       <section aria-labelledby="match-day-signed" className="flex flex-col gap-3">

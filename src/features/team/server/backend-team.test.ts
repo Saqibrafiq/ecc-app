@@ -60,9 +60,18 @@ type Backend = {
   answers?: unknown[]
   createFails?: boolean
   corrections?: unknown[]
+  squadSummaries?: unknown[]
 }
 
 type Request = { path: string; method?: string; schema: { parse: (raw: unknown) => unknown } }
+
+/** The fixtures inside a query's date window, so a week and the week before differ. */
+function inWindow(path: string) {
+  const params = new URLSearchParams(path.slice(path.indexOf('?')))
+  const from = params.get('where[date][greater_than_equal]') ?? ''
+  const to = params.get('where[date][less_than]') ?? '9999'
+  return [FIXTURE].filter((fixture) => fixture.date >= from && fixture.date < to)
+}
 
 /** A fake backend that answers by path; repeated squad reads pop in order. */
 function backend({
@@ -75,6 +84,7 @@ function backend({
   answers = [],
   createFails = false,
   corrections = [],
+  squadSummaries = [{ fixture: 60, status: 'submitted' }],
 }: Backend = {}) {
   const squadReads = [...squads]
   request.mockImplementation(({ path, method = 'GET', schema }: Request) => {
@@ -90,7 +100,7 @@ function backend({
     if (path.startsWith('/fixtures') && path.includes('sort=-date')) {
       return respond({ docs: previousFixtures })
     }
-    if (path.startsWith('/fixtures')) return respond({ docs: [FIXTURE] })
+    if (path.startsWith('/fixtures')) return respond({ docs: inWindow(path) })
     if (path.startsWith('/teams')) {
       return respond({
         docs: [
@@ -115,7 +125,7 @@ function backend({
       })
     }
     if (path.startsWith('/squads') && path.includes('fixture%5D%5Bin')) {
-      return respond({ docs: [{ fixture: 60, status: 'submitted' }] })
+      return respond({ docs: squadSummaries })
     }
     if (path.startsWith('/squads') && path.includes('%5Bequals%5D=59')) {
       return respond({ docs: previousSquad ? [previousSquad] : [] })
@@ -414,5 +424,44 @@ describe('loadSelection', () => {
 
     backend({ fixture: 'missing' })
     await expect(loadSelection(CAPTAIN, 60, NOW)).resolves.toBeNull()
+  })
+})
+
+describe('getBackendTeamWeek: no-shows still to record', () => {
+  /** Monday 16 November: the week's match on the 14th has been played. */
+  const AFTER = new Date('2026-11-16T09:00:00Z')
+
+  it('flags an announced match that was played and never checked', async () => {
+    backend({ squadSummaries: [{ fixture: 60, status: 'approved' }] })
+
+    const week = await getBackendTeamWeek(CAPTAIN, null, AFTER)
+
+    expect(week.matches.map((match) => [match.fixtureId, match.needsNoShows])).toEqual([[60, true]])
+  })
+
+  it('does not flag a match still to be played, one already checked, or one not announced', async () => {
+    backend({ squadSummaries: [{ fixture: 60, status: 'approved' }] })
+    const beforeTheMatch = await getBackendTeamWeek(CAPTAIN, null, NOW)
+    expect(beforeTheMatch.matches[0]?.needsNoShows).toBe(false)
+
+    backend({
+      squadSummaries: [
+        { fixture: 60, status: 'approved', noShowsRecordedAt: '2026-11-14T18:00:00.000Z' },
+      ],
+    })
+    const checked = await getBackendTeamWeek(CAPTAIN, null, AFTER)
+    expect(checked.matches[0]?.needsNoShows).toBe(false)
+  })
+
+  it("keeps last week's announced match listed, so its match day stays reachable", async () => {
+    // The signed sheet is due the Tuesday after the match (UC-22, § 25 DCB-SPO).
+    backend({ squadSummaries: [{ fixture: 60, status: 'approved' }] })
+    const announced = await getBackendTeamWeek(CAPTAIN, null, AFTER)
+    expect(announced.matches.map((match) => match.fixtureId)).toEqual([60])
+
+    // One never announced has no match day to reach, so it drops off.
+    backend({ squadSummaries: [{ fixture: 60, status: 'submitted' }] })
+    const notAnnounced = await getBackendTeamWeek(CAPTAIN, null, AFTER)
+    expect(notAnnounced.matches).toEqual([])
   })
 })

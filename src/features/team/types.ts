@@ -17,6 +17,8 @@ export type TeamWeekMatch = {
   event: ScheduledEvent
   fixtureId: number
   squadStatus: SquadStatus
+  /** An announced match already played whose no-shows nobody has recorded (UC-19). */
+  needsNoShows: boolean
 }
 
 /** A player's open request to be marked present at a practice (UC-18). */

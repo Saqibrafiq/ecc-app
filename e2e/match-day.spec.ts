@@ -47,3 +47,22 @@ test.describe('match day', () => {
     }
   })
 })
+
+test.describe('no-shows', () => {
+  test('records who did not appear after the match', async ({ page }) => {
+    await page.goto('/team/match-day/201')
+    const noShows = page.getByRole('region', { name: "Who didn't come?" })
+
+    await expect(noShows.getByText('Everyone appeared')).toBeVisible()
+    await noShows
+      .getByRole('button', { name: /^Mark .* as absent$/ })
+      .first()
+      .click()
+    await expect(noShows.getByText('1 did not appear')).toBeVisible()
+    await expect(noShows.getByText('Sits out the next match')).toBeVisible()
+
+    await noShows.getByRole('button', { name: 'Save' }).click()
+
+    await expect(noShows.getByRole('status')).toHaveText(/They sit out the next match/)
+  })
+})

@@ -1,4 +1,4 @@
-import { CalendarOff, CheckCircle2 } from 'lucide-react'
+import { CalendarOff, CheckCircle2, TriangleAlert } from 'lucide-react'
 import { useFormatter, useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 
@@ -127,9 +127,17 @@ function MatchItem({ match }: { match: TeamWeekMatch }) {
       title={t('title', { opponent: event.opponent ?? '' })}
       subtitle={[event.startTime, place].filter(Boolean).join(' · ')}
       status={
-        <span className={cn('text-sm font-semibold', STATUS_CLASS[squadStatus])}>
-          {t(`status.${squadStatus}`)}
-        </span>
+        <>
+          <span className={cn('text-sm font-semibold', STATUS_CLASS[squadStatus])}>
+            {t(`status.${squadStatus}`)}
+          </span>
+          {match.needsNoShows && (
+            <span className="flex items-center gap-1 text-sm font-semibold text-status-missed-text">
+              <TriangleAlert aria-hidden="true" className="size-4 shrink-0" />
+              {t('noShowsDue')}
+            </span>
+          )}
+        </>
       }
     >
       <div className="flex flex-col gap-2.5">

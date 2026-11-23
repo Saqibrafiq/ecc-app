@@ -27,6 +27,8 @@ export function getSampleBoardSelection(now: Date): SelectionData {
     squadId: 1,
     deadlineDay: 'tuesday',
     exceptionIds: [],
+    noShowIds: [],
+    noShowsRecordedAt: null,
     names: Object.fromEntries(selection.candidates.map((c) => [c.id, c.name])),
   }
 }
