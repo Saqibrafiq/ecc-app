@@ -12,6 +12,7 @@
   "packageManager": "pnpm@10.29.1",
   "scripts": {
     "dev": "next dev",
+    "jobs:tick": "node --env-file-if-exists=.env.local scripts/jobs-tick.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next typegen && eslint .",

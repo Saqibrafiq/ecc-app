@@ -47,7 +47,30 @@ sequenceDiagram
 
 Every scheduled step is idempotent: a step records what it did, so a second tick in the same hour, or a delayed tick, does nothing twice (ADR-0004).
 
-## 6.2 Captain checks in a practice and selects the squad
+## 6.2 The hourly tick
+
+```mermaid
+sequenceDiagram
+  participant GHA as GitHub Actions
+  participant Route as /api/jobs/tick
+  participant CMS as Payload CMS
+  participant Push as Push services
+
+  GHA->>Route: POST, x-jobs-timestamp + HMAC signature
+  Route->>Route: Signature valid and less than 5 minutes old (real time)?
+  Route->>CMS: The week: fixtures, practices (created if missing), squads, members, answers
+  Route->>Route: plan-notifications(now): reminders, check-in, selection prompts
+  Route->>CMS: Devices of the recipients; keys already in notification-log
+  loop Each new notification
+    Route->>CMS: Claim its key in notification-log (unique)
+    Route->>Push: Send to each device, in the device's language
+  end
+  Route-->>GHA: Report (due, already sent, sent, deliveries)
+```
+
+A tick asks for everything due now, so a late or skipped tick catches up, and a second tick finds every key taken (QS-5, QS-6). A notification is claimed before it is sent: a failed push is not retried. Reminders repeat daily, and the app shows open tasks on its own screens, so nothing depends on one push arriving.
+
+## 6.3 Captain checks in a practice and selects the squad
 
 The captain works as themselves: the website's access rules check every write is for their own team, and a guard lets a captain only submit a squad, never approve or change it after submitting: only the Board reopens it (ADR-0024 in the website).
 
@@ -72,7 +95,7 @@ sequenceDiagram
   App->>CMS: Save the picks, status submitted: locked until the Board reopens it
 ```
 
-## 6.3 The Board reviews a squad
+## 6.4 The Board reviews a squad
 
 The Board approves or sends back; it never changes the captain's picks. Each decision is checked against the squad's current status on the server, so two admins working at once cannot approve a squad that was just sent back.
 
@@ -101,7 +124,7 @@ sequenceDiagram
   end
 ```
 
-## 6.4 A player asks for an attendance correction
+## 6.5 A player asks for an attendance correction
 
 ```mermaid
 sequenceDiagram
@@ -121,6 +144,6 @@ sequenceDiagram
   P->>App: Open Attendance: "Corrected by your captain"
 ```
 
-## 6.5 Further scenarios
+## 6.6 Further scenarios
 
 Added with their slices: first-run install guide; answering from a notification; selection notices after approval; captain records no-shows; captain opens Spielerpasses on match day.

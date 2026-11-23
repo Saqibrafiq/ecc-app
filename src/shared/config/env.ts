@@ -9,6 +9,8 @@ const optionalString = z
 
 /** The public key, the private key and the subject. */
 const VAPID_SETTINGS = 3
+/** A signing secret short enough to guess is refused at start-up. */
+const MIN_SECRET_LENGTH = 32
 
 const serverEnvSchema = z
   .object({
@@ -28,6 +30,8 @@ const serverEnvSchema = z
         .regex(/^(https:|mailto:)/)
         .optional(),
     ),
+    /** Shared with the scheduler (GitHub Actions) to sign its hourly ticks (ADR-0004). */
+    JOBS_SECRET: optionalString.pipe(z.string().min(MIN_SECRET_LENGTH).optional()),
   })
   .refine((env) => !env.BACKEND_URL || Boolean(env.BACKEND_SERVICE_API_KEY), {
     message: 'BACKEND_SERVICE_API_KEY is required when BACKEND_URL is set.',

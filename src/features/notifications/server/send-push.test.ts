@@ -27,6 +27,7 @@ const VAPID = {
 const device = (id: number) => ({
   id,
   userId: 4,
+  locale: 'en' as const,
   endpoint: `https://push.example/${String(id)}`,
   keys: { p256dh: 'BNc', auth: 'tBH' },
 })

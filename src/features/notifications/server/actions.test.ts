@@ -25,6 +25,7 @@ vi.mock('@/shared/lib/log', () => ({ logError: mocks.logError }))
 vi.mock('@/features/auth', () => ({ getCurrentMember: () => Promise.resolve(mocks.member) }))
 vi.mock('next-intl/server', () => ({
   getTranslations: () => Promise.resolve((key: string) => `test.${key}`),
+  getLocale: () => Promise.resolve('de'),
 }))
 vi.mock('./send-push', () => ({ getVapidDetails: () => mocks.vapid, sendPush: mocks.send }))
 vi.mock('./subscriptions', () => ({
@@ -54,7 +55,7 @@ beforeEach(() => {
 })
 
 describe('savePushSubscriptionAction', () => {
-  it('registers the device for the signed-in member, named by its kind only', async () => {
+  it('registers the device for the signed-in member, named by its kind, in its language', async () => {
     await expect(
       savePushSubscriptionAction({ subscription: SUBSCRIPTION, userAgent: IPHONE }),
     ).resolves.toEqual({ status: 'saved' })
@@ -62,6 +63,7 @@ describe('savePushSubscriptionAction', () => {
       4,
       { endpoint: SUBSCRIPTION.endpoint, keys: SUBSCRIPTION.keys },
       'iPhone · Safari',
+      'de',
     )
   })
 

@@ -6,6 +6,8 @@ import { backendRequest } from '@/shared/backend/client'
 import { toQuery } from '@/shared/backend/query'
 import { listOf, relationIdSchema } from '@/shared/backend/schemas'
 
+import type { Locale } from '@/i18n/routing'
+
 import type { DeviceSubscription } from '../types'
 
 const SERVICE = { as: 'service' } as const
@@ -16,15 +18,17 @@ const subscriptionDocSchema = z.object({
   endpoint: z.string(),
   p256dh: z.string(),
   auth: z.string(),
+  locale: z.enum(['en', 'de']).catch('en'),
 })
 
-/** A stored device, ready to send to. */
-export type StoredSubscription = { id: number; userId: number } & DeviceSubscription
+/** A stored device, ready to send to, in the language it was registered in. */
+export type StoredSubscription = { id: number; userId: number; locale: Locale } & DeviceSubscription
 
 function toStored(doc: z.infer<typeof subscriptionDocSchema>): StoredSubscription {
   return {
     id: doc.id,
     userId: doc.user,
+    locale: doc.locale,
     endpoint: doc.endpoint,
     keys: { p256dh: doc.p256dh, auth: doc.auth },
   }
@@ -48,9 +52,11 @@ export async function saveSubscription(
   userId: number,
   subscription: DeviceSubscription,
   device: string,
+  locale: Locale,
 ): Promise<void> {
   const body = {
     user: userId,
+    locale,
     endpoint: subscription.endpoint,
     p256dh: subscription.keys.p256dh,
     auth: subscription.keys.auth,

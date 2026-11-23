@@ -1,0 +1,34 @@
+name: Jobs tick
+
+# The app's scheduled jobs (ADR-0004): every hour, a signed request asks the app to send whatever
+# is due in Europe/Berlin time. Off the hour, where GitHub's scheduler is least congested.
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: jobs-tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    name: Send what is due
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Off until the app is deployed: set the APP_URL variable and the JOBS_SECRET secret.
+    if: vars.APP_URL != ''
+    steps:
+      - name: Call the tick endpoint
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+          JOBS_SECRET: ${{ secrets.JOBS_SECRET }}
+        run: |
+          timestamp="$(date +%s)"
+          signature="$(printf '%s' "$timestamp" | openssl dgst -sha256 -hmac "$JOBS_SECRET" -r | cut -d' ' -f1)"
+          curl --fail-with-body --silent --show-error --max-time 90 \
+            --request POST "$APP_URL/api/jobs/tick" \
+            --header "x-jobs-timestamp: $timestamp" \
+            --header "x-jobs-signature: $signature"

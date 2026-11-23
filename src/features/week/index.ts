@@ -1,4 +1,5 @@
 export { WeekView, type WeekViewProps } from './components/week-view'
+export { getEventDeadline } from './domain/build-week'
 export { answerAction, type AnswerResult } from './server/actions'
 export {
   type ClubSchedule,
@@ -8,6 +9,7 @@ export {
   getTeamSeasonPractices,
 } from './server/club-schedule'
 export {
+  answerDocSchema,
   fixtureDocSchema,
   type PracticeDoc,
   practiceDocSchema,

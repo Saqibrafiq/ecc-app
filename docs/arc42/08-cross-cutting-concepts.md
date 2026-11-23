@@ -11,7 +11,7 @@
 - Session: the member signs in with their club account; the app's server calls the website's login and keeps the Payload token in an HTTP-only, `Secure` (in production), same-site cookie (`ecc-session`) on the app's domain, expiring with the token; the browser never sees it. Every backend call runs as the member (`Authorization: JWT`), so the website's access rules apply; only system tasks (creating the week's practices) run as the service account (API key).
 - Server Actions have no route, so the locale comes from next-intl's cookie there (`i18n/request.ts`).
 - Roles: `player`, `captain` (of one team), `admin`. Checked in every server action and again by Payload access control.
-- Job endpoint: HMAC signature over a timestamp; requests older than five minutes are rejected (replay protection).
+- Job endpoint: HMAC-SHA256 signature over a timestamp, compared in constant time; requests more than five minutes off the server's real clock are rejected (replay protection), whatever the development clock (`APP_NOW`) says.
 
 ## 8.3 Privacy
 
