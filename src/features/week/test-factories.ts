@@ -58,6 +58,7 @@ export function makeWeekEvent(overrides: Partial<WeekEvent> = {}): WeekEvent {
     isOwnTeam: false,
     answer: null,
     reason: null,
+    announcement: null,
     ...overrides,
   }
 }

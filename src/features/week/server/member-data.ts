@@ -7,7 +7,7 @@ import { type BackendAuth, backendRequest } from '@/shared/backend/client'
 import { dayStart, toQuery } from '@/shared/backend/query'
 import { listOf, relationIdSchema } from '@/shared/backend/schemas'
 
-import type { ScheduledEvent } from '../types'
+import type { ScheduledEvent, SquadAnnouncement } from '../types'
 import { answerDocSchema, fixtureDocSchema, toAnswerMap, toMatchEvent } from './map-backend'
 
 /** A member whose own records (squad, answers, attendance) are read with their session. */
@@ -22,20 +22,43 @@ export async function getSquadTeamId(member: MemberRef): Promise<number | null> 
   return player.squadTeam ?? null
 }
 
-export async function getDeadlineDays(member: MemberRef, matches: readonly ScheduledEvent[]) {
+const matchSquadSchema = z.object({
+  fixture: relationIdSchema,
+  status: z.enum(['open', 'submitted', 'approved', 'returned']),
+  deadlineDay: z.enum(['tuesday', 'wednesday', 'thursday']),
+  // Members read the picks once the squad is announced (the website's field access).
+  picks: z
+    .array(z.object({ player: relationIdSchema, role: z.enum(['playing', 'twelfth', 'reserve']) }))
+    .nullish(),
+})
+
+/** What the member's screens need of a match's squad: its deadline, and its announcement. */
+export type MatchSquad = { deadlineDay: DeadlineDay; announcement: SquadAnnouncement | null }
+
+function toAnnouncement(doc: z.infer<typeof matchSquadSchema>, playerId: number) {
+  if (doc.status !== 'approved') return null
+  const pick = doc.picks?.find((item) => item.player === playerId)
+  return { role: pick?.role ?? null }
+}
+
+/** The squads of these matches, by event id, as the member sees them. */
+export async function getMatchSquads(
+  member: MemberRef,
+  matches: readonly ScheduledEvent[],
+): Promise<Map<string, MatchSquad>> {
   const ids = matches.map((match) => match.id.replace('fixture-', ''))
-  if (ids.length === 0) return new Map<string, DeadlineDay>()
+  if (ids.length === 0) return new Map()
   const { docs } = await backendRequest({
     path: `/squads${toQuery({ 'where[fixture][in]': ids.join(','), depth: '0' })}`,
     auth: { as: 'member', token: member.token },
-    schema: listOf(
-      z.object({
-        fixture: relationIdSchema,
-        deadlineDay: z.enum(['tuesday', 'wednesday', 'thursday']),
-      }),
-    ),
+    schema: listOf(matchSquadSchema),
   })
-  return new Map(docs.map((doc) => [`fixture-${String(doc.fixture)}`, doc.deadlineDay]))
+  return new Map(
+    docs.map((doc) => [
+      `fixture-${String(doc.fixture)}`,
+      { deadlineDay: doc.deadlineDay, announcement: toAnnouncement(doc, member.playerId) },
+    ]),
+  )
 }
 
 export async function getAnswers(member: MemberRef) {

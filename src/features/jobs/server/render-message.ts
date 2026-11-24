@@ -90,7 +90,7 @@ export function renderMessage(notification: DueNotification, tools: MessageTools
       return {
         title: tools.t('announcement.title', { day: values.day }),
         body: tools.t('announcement.body', { ...values, role: role ?? 'none' }),
-        url: '/',
+        url: `/squad/${fixtureNumber(match)}`,
         tag: `announcement-${match.id}`,
       }
     }

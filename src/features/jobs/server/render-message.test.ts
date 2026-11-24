@@ -138,7 +138,7 @@ describe('renderMessage', () => {
     expect(announce('playing')).toEqual({
       title: "Squad for Saturday's match",
       body: "You're in the XI vs NCC-I.",
-      url: '/',
+      url: '/squad/60',
       tag: 'announcement-fixture-60',
     })
     expect(announce('twelfth').body).toBe("You're 12th man vs NCC-I.")

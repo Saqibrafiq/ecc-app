@@ -29,7 +29,8 @@ vi.mock('@/features/week', async () => ({
     ]),
   getAttendedPracticeIds: () => Promise.resolve(new Set(['practice-3'])),
   getAnswers: () => Promise.resolve(mocks.answers),
-  getDeadlineDays: () => Promise.resolve(new Map([['fixture-61', 'thursday']])),
+  getMatchSquads: () =>
+    Promise.resolve(new Map([['fixture-61', { deadlineDay: 'thursday', announcement: null }]])),
 }))
 
 import type * as Week from '@/features/week'

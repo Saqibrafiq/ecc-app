@@ -1,4 +1,4 @@
-import type { SquadPick } from '@/domain/club-rules'
+import { orderSquad, type SquadPick } from '@/domain/club-rules'
 import type { Candidate, SquadStatus } from '@/features/team'
 
 /** The longest note the Board can send back with a squad (the website stores up to 500). */
@@ -50,15 +50,10 @@ export function toggleException(
   return isAllowed ? [...others, playerId] : others
 }
 
-const ROLE_ORDER = { playing: 0, twelfth: 1, reserve: 2 } as const
-
 /** The picks in squad order with names: XI as picked, then the 12th man, then reserves. */
 export function toSquadList(
   picks: readonly SquadPick[],
   names: Readonly<Record<string, string>>,
 ): (SquadPick & { name: string })[] {
-  return picks
-    .map((pick, index) => ({ pick, index }))
-    .sort((a, b) => ROLE_ORDER[a.pick.role] - ROLE_ORDER[b.pick.role] || a.index - b.index)
-    .map(({ pick }) => ({ ...pick, name: names[pick.playerId] ?? '' }))
+  return orderSquad(picks).map((pick) => ({ ...pick, name: names[pick.playerId] ?? '' }))
 }

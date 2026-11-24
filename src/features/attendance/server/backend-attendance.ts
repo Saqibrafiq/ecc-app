@@ -13,7 +13,7 @@ import {
   getAnswers,
   getAttendedPracticeIds,
   getClubTeams,
-  getDeadlineDays,
+  getMatchSquads,
   getSquadTeamId,
   getTeamSeasonPractices,
   type MemberRef,
@@ -101,7 +101,7 @@ export async function getBackendLedger(member: LedgerMember, now: Date): Promise
       getAnswers(member),
       getTargetsStartOn(auth),
     ])
-  const deadlineDays = await getDeadlineDays(member, matches)
+  const squads = await getMatchSquads(member, matches)
 
   return {
     kind: 'ledger',
@@ -116,7 +116,7 @@ export async function getBackendLedger(member: LedgerMember, now: Date): Promise
       matches: matches.map((match) => ({
         date: match.date,
         isHome: match.isHome === true,
-        closesAt: getAvailabilityDeadline(match.date, deadlineDays.get(match.id)),
+        closesAt: getAvailabilityDeadline(match.date, squads.get(match.id)?.deadlineDay),
         answer: answers[match.id]?.answer ?? null,
       })),
       isCaptain: member.isCaptain,

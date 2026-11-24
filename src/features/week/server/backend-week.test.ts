@@ -148,7 +148,7 @@ describe('getBackendWeek', () => {
     backend({
       weekPractices: [[practice(5, 1, '2026-11-11'), practice(6, 14, '2026-11-12')]],
       answers: [{ id: 1, fixture: 12, practice: null, response: 'going', reason: null }],
-      deadlines: [{ fixture: 12, deadlineDay: 'thursday' }],
+      deadlines: [{ fixture: 12, status: 'open', deadlineDay: 'thursday' }],
       nextMatch: [{ ...FIXTURES[0], id: 20, date: '2026-11-21T12:00:00.000Z' }],
     })
 
@@ -159,6 +159,37 @@ describe('getBackendWeek', () => {
     expect(match).toMatchObject({ answer: 'going', closesAt: '2026-11-12T22:59:59.999Z' })
     expect(result.week.attendance).toMatchObject({ attended: 2, standing: 'met' })
     expect(result.nextMatch).toMatchObject({ id: 'fixture-20', date: '2026-11-21' })
+    expect(match?.announcement).toBeNull()
+  })
+
+  it("marks an announced squad with the member's place in it, or none", async () => {
+    backend({
+      deadlines: [
+        {
+          fixture: 12,
+          status: 'approved',
+          deadlineDay: 'tuesday',
+          picks: [
+            { player: 7, role: 'playing' },
+            { player: 52, role: 'twelfth' },
+          ],
+        },
+        // The other team's squad, announced without the member; its picks may be hidden.
+        { fixture: 13, status: 'approved', deadlineDay: 'tuesday' },
+      ],
+    })
+
+    const result = await getBackendWeek(MEMBER, NOW)
+
+    if (result.kind !== 'week') throw new Error('expected a week')
+    expect(result.week.ownEvents.find((event) => event.id === 'fixture-12')?.announcement).toEqual({
+      role: 'twelfth',
+    })
+    expect(
+      result.week.otherEvents.find((event) => event.id === 'fixture-13')?.announcement,
+    ).toEqual({
+      role: null,
+    })
   })
 
   it('runs every member read as the member', async () => {

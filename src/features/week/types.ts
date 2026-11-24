@@ -5,6 +5,7 @@ import type {
   LocalDate,
   LocalTime,
   PracticeOutcome,
+  SquadRole,
 } from '@/domain/club-rules'
 
 export type Answer = 'going' | 'not-going'
@@ -39,6 +40,9 @@ export type MemberAnswer = {
   reason: string | null
 }
 
+/** A match whose squad is announced, with the member's place in it (`null`: not picked). */
+export type SquadAnnouncement = { role: SquadRole | null }
+
 /** An event as the member sees it this week. */
 export type WeekEvent = ScheduledEvent & {
   /** When answers close, as an ISO instant. */
@@ -47,6 +51,8 @@ export type WeekEvent = ScheduledEvent & {
   isOwnTeam: boolean
   answer: Answer | null
   reason: string | null
+  /** Matches only: set once the Board has announced the squad (UC-12). */
+  announcement: SquadAnnouncement | null
 }
 
 export type WeekDay = {

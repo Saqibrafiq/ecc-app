@@ -1,9 +1,10 @@
 'use client'
 
-import { Check, X } from 'lucide-react'
+import { Check, ChevronRight, Users, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useFormatter, useTranslations } from 'next-intl'
 
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { DateTile } from '@/shared/ui/date-tile'
@@ -25,6 +26,7 @@ export type EventCardProps = {
 
 const T20_OVERS = 20
 const POP = { type: 'spring', stiffness: 500, damping: 30 } as const
+const MotionLink = motion.create(Link)
 
 /** A match or practice of the member's own team, with its deadline and the Going / Not going answer. */
 export function EventCard({
@@ -164,6 +166,26 @@ export function EventCard({
           )}
         </AnimatePresence>
       </div>
+
+      {event.announcement && (
+        <MotionLink
+          href={`/squad/${event.id.replace('fixture-', '')}`}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.15 }}
+          className="flex min-h-14 items-center gap-3 border-t border-border-default bg-surface-raised px-4 py-3 transition-colors duration-150 hover:bg-surface-card"
+        >
+          <Users aria-hidden="true" className="size-5 shrink-0 text-accent-match" />
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="font-display text-sm font-bold tracking-wider uppercase">
+              {t('squad.announced')}
+            </span>
+            <span className="text-sm text-text-muted">
+              {t('squad.place', { role: event.announcement.role ?? 'none' })}
+            </span>
+          </span>
+          <ChevronRight aria-hidden="true" className="size-5 shrink-0 text-text-muted" />
+        </MotionLink>
+      )}
     </article>
   )
 }
