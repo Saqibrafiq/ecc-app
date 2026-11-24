@@ -79,6 +79,7 @@ export { getDueReminderDay, REMINDER_TIME, type ReminderInput } from './reminder
 export {
   checkSquad,
   getCarryOvers,
+  orderSquad,
   PLAYING_XI_SIZE,
   type SquadCheck,
   type SquadCheckInput,

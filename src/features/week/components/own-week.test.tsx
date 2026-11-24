@@ -1,11 +1,25 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { forwardRef, type ReactNode } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { toLocalDate as day, toLocalTime as time } from '@/domain/club-rules'
 import { renderWithIntl } from '@/shared/testing/render-with-intl'
 
 import type { WeekEvent } from '../types'
+
+vi.mock('@/i18n/navigation', () => ({
+  Link: forwardRef<HTMLAnchorElement, { href: string; children: ReactNode }>(function Link(
+    { href, children, ...props },
+    ref,
+  ) {
+    return (
+      <a ref={ref} href={href} {...props}>
+        {children}
+      </a>
+    )
+  }),
+}))
 import { OwnWeek } from './own-week'
 
 const ECC_I = { id: 'ecc-1', name: 'ECC I' }
@@ -22,6 +36,7 @@ const PRACTICE: WeekEvent = {
   isOwnTeam: true,
   answer: null,
   reason: null,
+  announcement: null,
 }
 const MATCH: WeekEvent = {
   ...PRACTICE,
@@ -42,6 +57,21 @@ function card(name: RegExp) {
 }
 
 describe('OwnWeek', () => {
+  it("leads to the announced team sheet with the member's place, and only once announced", () => {
+    const announced = { ...MATCH, id: 'fixture-60', announcement: { role: 'twelfth' as const } }
+    const { rerender } = renderWithIntl(<OwnWeek events={[PRACTICE, announced]} />)
+
+    expect(
+      within(card(/vs Nürnberg CC/i)).getByRole('link', { name: /Squad announced.*12th man/ }),
+    ).toHaveAttribute('href', '/squad/60')
+
+    rerender(<OwnWeek events={[{ ...announced, announcement: { role: null } }]} />)
+    expect(screen.getByRole('link', { name: /See the team sheet/ })).toBeInTheDocument()
+
+    rerender(<OwnWeek events={[MATCH]} />)
+    expect(screen.queryByRole('link', { name: /Squad announced/ })).not.toBeInTheDocument()
+  })
+
   it('shows what is still to answer, with each deadline in 24-hour time', () => {
     renderWithIntl(<OwnWeek events={[PRACTICE, MATCH]} />)
 

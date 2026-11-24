@@ -21,7 +21,7 @@ export {
 export {
   getAnswers,
   getAttendedPracticeIds,
-  getDeadlineDays,
+  getMatchSquads,
   getSquadTeamId,
   type MemberRef,
 } from './server/member-data'

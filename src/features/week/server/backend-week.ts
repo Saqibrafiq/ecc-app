@@ -10,7 +10,7 @@ import { toPracticeEvent } from './map-backend'
 import {
   getAnswers,
   getAttendedPracticeIds,
-  getDeadlineDays,
+  getMatchSquads,
   getNextMatch,
   getSquadTeamId,
   type MemberRef,
@@ -43,7 +43,7 @@ export async function getBackendWeek(member: MemberRef, now: Date): Promise<Back
     getNextMatch(auth, nextMonday, String(squadTeamId)),
   ])
   const { teams, matches, practices: practiceDocs } = schedule
-  const deadlineDays = await getDeadlineDays(member, matches)
+  const squads = await getMatchSquads(member, matches)
   const ownTeam = teams.get(squadTeamId) ?? { id: String(squadTeamId), name: '' }
 
   const practiceEvents = practiceDocs
@@ -53,7 +53,7 @@ export async function getBackendWeek(member: MemberRef, now: Date): Promise<Back
       return team ? [toPracticeEvent(doc, team)] : []
     })
   const events = [
-    ...matches.map((match) => ({ ...match, deadlineDay: deadlineDays.get(match.id) })),
+    ...matches.map((match) => ({ ...match, deadlineDay: squads.get(match.id)?.deadlineDay })),
     ...practiceEvents,
   ]
 
@@ -67,6 +67,11 @@ export async function getBackendWeek(member: MemberRef, now: Date): Promise<Back
       practices,
       attendedPracticeIds: attended,
       seasonStart,
+      announcements: new Map(
+        [...squads].flatMap(([eventId, squad]) =>
+          squad.announcement ? [[eventId, squad.announcement] as const] : [],
+        ),
+      ),
     }),
     nextMatch,
   }

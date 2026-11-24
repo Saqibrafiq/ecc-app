@@ -5,7 +5,7 @@
     "weekTitle": "Your week",
     "teamTitle": "Your team",
     "checkInTitle": "Practice check-in",
-    "squadTitle": "Squad selection",
+    "squadTitle": "Team sheet",
     "boardTitle": "Board",
     "boardSquadTitle": "Squad review",
     "attendanceTitle": "Your attendance",
@@ -59,7 +59,11 @@
         "overs": "{overs} overs"
       },
       "yourAnswer": "Your answer",
-      "change": "Change"
+      "change": "Change",
+      "squad": {
+        "announced": "Squad announced",
+        "place": "{role, select, playing {You're in the XI} twelfth {You're 12th man} reserve {You're a reserve} other {See the team sheet}}"
+      }
     },
     "reason": {
       "title": "Not going?",
@@ -598,6 +602,31 @@
       "title": "Practice attendance",
       "needs": "{of, plural, one {Attend the next practice} other {Attend {needed} of the next # practices}} to be selected for {day}'s match.",
       "out": "You can't be selected for {day}'s match: 2 of the last 4 practices are needed (motion 2023/01)."
+    }
+  },
+  "squad": {
+    "eyebrow": "{date} · {team}",
+    "title": "vs {opponent}",
+    "back": "Week",
+    "preview": "Preview: sample squad",
+    "home": "Home",
+    "away": "Away",
+    "yourPlace": "{role, select, playing {You're in the XI.} twelfth {You're 12th man.} other {You're a reserve.}}",
+    "xi": "Playing XI",
+    "twelfth": "12th man",
+    "reserves": "Reserves",
+    "you": "You",
+    "unnamed": "Unnamed player",
+    "loading": "Loading the team sheet",
+    "notAnnounced": {
+      "title": "Not announced yet",
+      "text": "The Board announces the squad by the end of Thursday. You'll get a notification.",
+      "back": "Back to your week"
+    },
+    "notFound": {
+      "title": "Match not found",
+      "text": "There is no ECC match at this address.",
+      "back": "Back to your week"
     }
   }
 }

@@ -17,6 +17,7 @@ import type {
   MemberAnswer,
   MyWeek,
   ScheduledEvent,
+  SquadAnnouncement,
   Team,
   WeekDay,
   WeekEvent,
@@ -37,6 +38,8 @@ export type WeekInput = {
   practices: readonly TeamPractice[]
   attendedPracticeIds: ReadonlySet<string>
   seasonStart: LocalDate
+  /** Announced squads by event id, with the member's place; none while nothing is announced. */
+  announcements?: ReadonlyMap<string, SquadAnnouncement>
 }
 
 /** When answers for an event close: the match deadline (R-5) or 12 hours before practice (Q-10). */
@@ -56,6 +59,7 @@ function toWeekEvent(event: ScheduledEvent, input: WeekInput): WeekEvent {
     isOwnTeam: event.team.id === input.ownTeam.id,
     answer: answer?.answer ?? null,
     reason: answer?.reason ?? null,
+    announcement: input.announcements?.get(event.id) ?? null,
   }
 }
 

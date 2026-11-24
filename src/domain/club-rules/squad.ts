@@ -39,6 +39,19 @@ export type SquadCheckInput = {
   notGoing: ReadonlySet<string>
 }
 
+const ROLE_ORDER: Record<SquadRole, number> = { playing: 0, twelfth: 1, reserve: 2 }
+
+/**
+ * A squad in sheet order (R-17): the playing XI as the captain picked it, then the 12th man, then
+ * the reserves in the order they were added.
+ */
+export function orderSquad<T extends { role: SquadRole }>(picks: readonly T[]): T[] {
+  return picks
+    .map((pick, index) => ({ pick, index }))
+    .sort((a, b) => ROLE_ORDER[a.pick.role] - ROLE_ORDER[b.pick.role] || a.index - b.index)
+    .map(({ pick }) => pick)
+}
+
 /**
  * The players who play the team's next match without any selection: last match's 12th man and
  * its reserves (R-13).

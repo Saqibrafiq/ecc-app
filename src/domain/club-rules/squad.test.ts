@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { checkSquad, getCarryOvers, type SquadPick } from './squad'
+import { checkSquad, getCarryOvers, orderSquad, type SquadPick } from './squad'
 
 function playing(...ids: string[]): SquadPick[] {
   return ids.map((playerId) => ({ playerId, role: 'playing' }))
@@ -80,5 +80,19 @@ describe('checkSquad', () => {
     const result = check([...ELEVEN, TWELFTH], ['x9'], ['x9'])
 
     expect(result).toEqual({ isValid: true, problems: [], forfeitedCarryOvers: ['x9'] })
+  })
+})
+
+describe('orderSquad', () => {
+  it('puts the XI first as picked, then the 12th man, then the reserves as added', () => {
+    const picks: SquadPick[] = [
+      { playerId: 'r1', role: 'reserve' },
+      { playerId: 'p2', role: 'playing' },
+      TWELFTH,
+      { playerId: 'p1', role: 'playing' },
+      { playerId: 'r2', role: 'reserve' },
+    ]
+
+    expect(orderSquad(picks).map((pick) => pick.playerId)).toEqual(['p2', 'p1', 'p12', 'r1', 'r2'])
   })
 })
