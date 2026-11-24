@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { addDays, getLocalDate, type LocalDate, startOfWeek } from '@/domain/club-rules'
+import { addDays, getLocalDate, getSeasonStart, startOfWeek } from '@/domain/club-rules'
 import type { BackendAuth } from '@/shared/backend/client'
 
 import { buildWeek } from '../domain/build-week'
@@ -33,7 +33,7 @@ export async function getBackendWeek(member: MemberRef, now: Date): Promise<Back
   const today = getLocalDate(now)
   const monday = startOfWeek(today)
   const nextMonday = addDays(monday, DAYS_PER_WEEK)
-  const seasonStart = `${today.slice(0, 4)}-01-01` as LocalDate
+  const seasonStart = getSeasonStart(today)
 
   const [schedule, answers, practices, attended, nextMatch] = await Promise.all([
     getClubSchedule(auth, monday),

@@ -36,3 +36,12 @@ Option 1.
 - Bad: up to about an hour's delay (GitHub schedules can lag); "21:00" means "in the 21:00 hour". Acceptable for the club; documented in section 10.
 - Bad: GitHub disables scheduled workflows in repos without activity for 60 days. Mitigation: the season keeps the repo active; a monthly keep-alive commit off-season if needed (risk R-3).
 - Neutral: admins can trigger a tick by hand (`workflow_dispatch`).
+
+## Amendment (2026-11-24): a change runs the tick at once
+
+Squad notices (handed in, sent back, announced) and attendance warnings follow a person's action, not the clock; waiting up to an hour for them helps nobody, least of all on a Thursday evening before the announcement deadline.
+
+- After a captain submits a squad or records a practice, and after every Board decision, the server action schedules the same tick with Next.js `after()`: it runs once the response has gone out, so the person acting never waits for it.
+- Nothing else changes: the tick plans everything due and the notification log keeps each notification to one send. The hourly tick stays the safety net for a run that fails; a failure is logged, never shown to the person acting.
+- A squad can go through the same status twice (submitted, returned, submitted again). The website stamps each change of status (`statusChangedAt`, set by the server only), and the notice keys carry the stamp, so each step is sent once.
+- Rejected: one send function per event (e.g. "notify the Board" inside the submit action). It would duplicate the planning, the claim and the per-language delivery, and a failure would have no catch-up.

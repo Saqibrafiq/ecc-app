@@ -59,7 +59,7 @@ sequenceDiagram
   GHA->>Route: POST, x-jobs-timestamp + HMAC signature
   Route->>Route: Signature valid and less than 5 minutes old (real time)?
   Route->>CMS: The week: fixtures, practices (created if missing), squads, members, answers
-  Route->>Route: plan-notifications(now): reminders, check-in, selection prompts
+  Route->>Route: plan-notifications(now): reminders, check-in and selection prompts, squad notices, attendance warnings
   Route->>CMS: Devices of the recipients; keys already in notification-log
   loop Each new notification
     Route->>CMS: Claim its key in notification-log (unique)
@@ -69,6 +69,8 @@ sequenceDiagram
 ```
 
 A tick asks for everything due now, so a late or skipped tick catches up, and a second tick finds every key taken (QS-5, QS-6). A notification is claimed before it is sent: a failed push is not retried. Reminders repeat daily, and the app shows open tasks on its own screens, so nothing depends on one push arriving.
+
+The same tick also runs straight after a change (ADR-0004, amendment): when a captain submits a squad or records a practice, and after each Board decision, the server action schedules it with `after()` once its response has gone out. The Board hears of a handed-in squad, the captain of a returned one, and every player who said Going whether they were picked, within seconds; players held back by the attendance rule hear what they still need as soon as the practice is recorded. Squad notices carry the website's status stamp in their key, so a squad submitted again after a return is announced again, exactly once.
 
 ## 6.3 Captain checks in a practice and selects the squad
 
