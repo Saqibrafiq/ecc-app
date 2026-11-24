@@ -4,13 +4,14 @@ import type { SquadStatus } from '@/features/team'
 
 import type { BoardAccess } from './board-access'
 
-type Mocks = { access: BoardAccess; selection: Mock; request: Mock; logError: Mock }
+type Mocks = { access: BoardAccess; selection: Mock; request: Mock; logError: Mock; notify: Mock }
 
 const mocks = vi.hoisted<Mocks>(() => ({
   access: { kind: 'board', actor: { token: 'jwt', teamId: null, isAdmin: true } },
   selection: vi.fn(),
   request: vi.fn(),
   logError: vi.fn(),
+  notify: vi.fn(),
 }))
 
 vi.mock('server-only', () => ({}))
@@ -26,6 +27,7 @@ vi.mock('@/shared/backend/client', async () => {
   }
 })
 vi.mock('@/features/team', () => ({ loadSelection: mocks.selection }))
+vi.mock('@/features/jobs', () => ({ sendDueNotificationsSoon: mocks.notify }))
 vi.mock('./board-access', () => ({ getBoardAccess: () => Promise.resolve(mocks.access) }))
 
 import type * as BackendClient from '@/shared/backend/client'
@@ -58,6 +60,8 @@ describe('approveSquadAction', () => {
       path: '/squads/9',
       body: { status: 'approved', approvedAt: '2026-11-12T18:00:00.000Z' },
     })
+    // The players hear whether they were picked (UC-12).
+    expect(mocks.notify).toHaveBeenCalledOnce()
   })
 
   it('approves nothing the captain has not handed in', async () => {
@@ -68,6 +72,7 @@ describe('approveSquadAction', () => {
       })
     }
     expect(mocks.request).not.toHaveBeenCalled()
+    expect(mocks.notify).not.toHaveBeenCalled()
   })
 })
 

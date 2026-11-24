@@ -581,6 +581,23 @@
     "selection": {
       "title": "Stell deinen Kader auf",
       "body": "Die Antworten für das Spiel am {day} gegen {opponent} sind geschlossen: {going, plural, one {# Zusage} other {# Zusagen}}."
+    },
+    "approval": {
+      "title": "Kader zur Freigabe",
+      "body": "Der Kader von {team} für das Spiel am {day} gegen {opponent} wartet auf deine Freigabe."
+    },
+    "returned": {
+      "title": "Kader zurückgegeben",
+      "body": "Der Vorstand hat deinen Kader für das Spiel am {day} gegen {opponent} zurückgegeben. Öffne ihn, um die Notiz zu lesen."
+    },
+    "announcement": {
+      "title": "Kader für das Spiel am {day}",
+      "body": "{role, select, playing {Du stehst in der XI gegen {opponent}.} twelfth {Du bist 12. Mann gegen {opponent}.} reserve {Du bist Reserve gegen {opponent}.} other {Du bist diesmal nicht im Kader gegen {opponent}.}}"
+    },
+    "attendance": {
+      "title": "Trainingsbesuch",
+      "needs": "{of, plural, one {Besuche das nächste Training} other {Besuche {needed} der nächsten # Trainings}}, um für das Spiel am {day} aufgestellt zu werden.",
+      "out": "Du kannst für das Spiel am {day} nicht aufgestellt werden: 2 der letzten 4 Trainings sind nötig (Antrag 2023/01)."
     }
   }
 }

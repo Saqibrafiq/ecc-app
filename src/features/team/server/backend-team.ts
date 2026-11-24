@@ -8,6 +8,7 @@ import {
   DEFAULT_DEADLINE_DAY,
   getCarryOvers,
   getLocalDate,
+  getSeasonStart,
   type LocalDate,
   type SquadPick,
   startOfWeek,
@@ -427,7 +428,7 @@ export async function loadSelection(
   if (!match || !canManageTeam(actor, teamId)) return null
 
   const today = getLocalDate(now)
-  const seasonStart = `${today.slice(0, 4)}-01-01` as LocalDate
+  const seasonStart = getSeasonStart(today)
   const [squad, previous, answers, practices, attendedByPlayer] = await Promise.all([
     ensureSquad(auth, fixtureId),
     getPreviousSquad(auth, teamId, match.date),

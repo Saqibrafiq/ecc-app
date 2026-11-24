@@ -2,7 +2,7 @@ import type { PushMessage } from '@/features/notifications'
 import type { ScheduledEvent } from '@/features/week'
 import { toDisplayDate } from '@/shared/lib/display-date'
 
-import type { DueNotification } from '../domain/plan-notifications'
+import type { DueNotification } from '../types'
 
 /** The parts of next-intl a message needs, for one locale. */
 export type MessageTools = {
@@ -19,9 +19,17 @@ function describeEvent(event: ScheduledEvent, tools: MessageTools): string {
     : tools.t('event.practice', { day })
 }
 
+/** The day and opponent of a match, as the match messages name it. */
+function matchValues(match: ScheduledEvent, tools: MessageTools) {
+  return { day: tools.weekday(toDisplayDate(match.date)), opponent: match.opponent ?? '' }
+}
+
+const fixtureNumber = (match: ScheduledEvent) => match.id.replace('fixture-', '')
+
 /**
  * A due notification in the recipient device's language: what to do and where a tap leads. It
- * names events and counts only, never who answered what (ADR-0003).
+ * names events and counts, and only the recipient's own standing or place in a squad: never who
+ * else answered or was picked (ADR-0003).
  */
 export function renderMessage(notification: DueNotification, tools: MessageTools): PushMessage {
   switch (notification.kind) {
@@ -52,13 +60,51 @@ export function renderMessage(notification: DueNotification, tools: MessageTools
       const { match, going } = notification
       return {
         title: tools.t('selection.title'),
-        body: tools.t('selection.body', {
-          day: tools.weekday(toDisplayDate(match.date)),
-          opponent: match.opponent ?? '',
-          going,
-        }),
-        url: `/team/squad/${match.id.replace('fixture-', '')}`,
+        body: tools.t('selection.body', { ...matchValues(match, tools), going }),
+        url: `/team/squad/${fixtureNumber(match)}`,
         tag: `selection-${match.id}`,
+      }
+    }
+    case 'approval': {
+      const { match } = notification
+      return {
+        title: tools.t('approval.title'),
+        body: tools.t('approval.body', { ...matchValues(match, tools), team: match.team.name }),
+        url: `/board/squad/${fixtureNumber(match)}`,
+        tag: `approval-${match.id}`,
+      }
+    }
+    case 'returned': {
+      const { match } = notification
+      return {
+        title: tools.t('returned.title'),
+        body: tools.t('returned.body', matchValues(match, tools)),
+        url: `/team/squad/${fixtureNumber(match)}`,
+        // Replaces the prompt to pick the squad: the captain picks again.
+        tag: `selection-${match.id}`,
+      }
+    }
+    case 'announcement': {
+      const { match, role } = notification
+      const values = matchValues(match, tools)
+      return {
+        title: tools.t('announcement.title', { day: values.day }),
+        body: tools.t('announcement.body', { ...values, role: role ?? 'none' }),
+        url: '/',
+        tag: `announcement-${match.id}`,
+      }
+    }
+    case 'attendance': {
+      const { match, countdown } = notification
+      const { day } = matchValues(match, tools)
+      return {
+        title: tools.t('attendance.title'),
+        body:
+          countdown.kind === 'needs'
+            ? tools.t('attendance.needs', { needed: countdown.needed, of: countdown.of, day })
+            : tools.t('attendance.out', { day }),
+        url: '/attendance',
+        tag: 'attendance',
       }
     }
   }

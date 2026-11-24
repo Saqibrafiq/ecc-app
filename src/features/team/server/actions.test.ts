@@ -9,6 +9,7 @@ type Mocks = {
   selection: Mock
   request: Mock
   logError: Mock
+  notify: Mock
 }
 
 const mocks = vi.hoisted<Mocks>(() => ({
@@ -17,6 +18,7 @@ const mocks = vi.hoisted<Mocks>(() => ({
   selection: vi.fn(),
   request: vi.fn(),
   logError: vi.fn(),
+  notify: vi.fn(),
 }))
 
 vi.mock('server-only', () => ({}))
@@ -35,6 +37,7 @@ vi.mock('./team-access', async () => ({
   ...(await vi.importActual<typeof TeamAccessModule>('./team-access')),
   getTeamAccess: () => Promise.resolve(mocks.access),
 }))
+vi.mock('@/features/jobs', () => ({ sendDueNotificationsSoon: mocks.notify }))
 vi.mock('./backend-team', () => ({ loadCheckIn: mocks.checkIn, loadSelection: mocks.selection }))
 
 import type * as BackendClient from '@/shared/backend/client'
@@ -103,6 +106,8 @@ describe('saveCheckInAction', () => {
     })
 
     expect(mocks.checkIn).toHaveBeenCalledWith(CAPTAIN, 6, new Date('2026-11-11T20:00:00Z'))
+    // Players hear what their attendance still needs (UC-8).
+    expect(mocks.notify).toHaveBeenCalledOnce()
     expect(mocks.request.mock.calls.map(([options]) => options as object)).toEqual([
       expect.objectContaining({
         method: 'POST',
@@ -201,6 +206,8 @@ describe('submitSquadAction', () => {
         },
       }),
     )
+    // The Board hears the squad is waiting for approval (UC-11).
+    expect(mocks.notify).toHaveBeenCalledOnce()
   })
 
   it('accepts a carried-over player the captain picked', async () => {
@@ -238,6 +245,7 @@ describe('submitSquadAction', () => {
       status: 'invalid',
     })
     expect(mocks.request).not.toHaveBeenCalled()
+    expect(mocks.notify).not.toHaveBeenCalled()
   })
 
   it('refuses bad input, unknown matches, and squads already submitted or announced', async () => {

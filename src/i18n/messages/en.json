@@ -581,6 +581,23 @@
     "selection": {
       "title": "Pick your squad",
       "body": "Answers for {day}'s match vs {opponent} have closed: {going, plural, one {# player} other {# players}} going."
+    },
+    "approval": {
+      "title": "Squad ready for approval",
+      "body": "{team}'s squad for {day}'s match vs {opponent} is waiting for your approval."
+    },
+    "returned": {
+      "title": "Squad sent back",
+      "body": "The Board sent back your squad for {day}'s match vs {opponent}. Open it to read their note."
+    },
+    "announcement": {
+      "title": "Squad for {day}'s match",
+      "body": "{role, select, playing {You're in the XI vs {opponent}.} twelfth {You're 12th man vs {opponent}.} reserve {You're a reserve vs {opponent}.} other {You're not in the squad vs {opponent} this time.}}"
+    },
+    "attendance": {
+      "title": "Practice attendance",
+      "needs": "{of, plural, one {Attend the next practice} other {Attend {needed} of the next # practices}} to be selected for {day}'s match.",
+      "out": "You can't be selected for {day}'s match: 2 of the last 4 practices are needed (motion 2023/01)."
     }
   }
 }

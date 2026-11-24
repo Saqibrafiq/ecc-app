@@ -13,6 +13,7 @@ export {
   type Countdown,
   getAttendanceStatus,
   getCountdown,
+  getSeasonStart,
   type PracticeOutcome,
   REQUIRED_PRACTICES,
   type TeamPractice,

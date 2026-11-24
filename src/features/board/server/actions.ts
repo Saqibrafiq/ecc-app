@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 
+import { sendDueNotificationsSoon } from '@/features/jobs'
 import { loadSelection, type SelectionData, type TeamActor } from '@/features/team'
 import { backendRequest, isAccessError } from '@/shared/backend/client'
 import { getNow } from '@/shared/lib/clock'
@@ -48,6 +49,8 @@ async function decide<T>(input: unknown, decision: Decision<T>): Promise<BoardAc
       body: decision.toChange(parsed.data, data),
       schema: z.unknown(),
     })
+    // A changed status or deadline can make a notice due: the captain, the players, the Board.
+    sendDueNotificationsSoon()
     return { status: 'saved' }
   } catch (error) {
     if (isAccessError(error)) return { status: 'unauthorized' }

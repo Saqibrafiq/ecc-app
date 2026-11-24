@@ -34,7 +34,7 @@ vi.mock('@/features/week', async () => ({
 
 import type * as Week from '@/features/week'
 
-const { getBackendLedger, getCorrections, getSeasonStart } = await import('./backend-attendance')
+const { getBackendLedger, getCorrections } = await import('./backend-attendance')
 
 const MEMBER = { playerId: 114, token: 'jwt', isCaptain: false }
 const NOW = new Date('2026-11-09T09:00:00Z')
@@ -76,12 +76,6 @@ beforeEach(() => {
       })
     }
     return Promise.reject(new Error(`unexpected ${path}`))
-  })
-})
-
-describe('getSeasonStart', () => {
-  it('starts the season on 1 January', () => {
-    expect(getSeasonStart(day('2026-11-09'))).toBe('2026-01-01')
   })
 })
 

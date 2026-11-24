@@ -37,3 +37,4 @@ mindmap
 | QS-8  | Privacy         | A captain of ECC II views ECC I's availability.                                    | Sees going / not going, but not ECC I players' reasons.                 |
 | QS-9  | Maintainability | The club changes the rule to "3 of the last 5".                                    | One constant and its tests change; nothing else.                        |
 | QS-10 | Performance     | A player opens the app on mobile data.                                             | The week is visible in under 2.5 s (LCP); cached week shown offline.    |
+| QS-11 | Usability       | The Board approves a squad on Thursday evening.                                    | Every player who said Going learns within a minute if they were picked. |

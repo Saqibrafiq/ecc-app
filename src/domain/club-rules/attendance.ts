@@ -4,6 +4,14 @@ import type { LocalDate } from './local-time'
 export const ATTENDANCE_WINDOW = 4
 export const REQUIRED_PRACTICES = 2
 
+/**
+ * The first day of the season `today` falls in: 1 January. Practices count from then on, pre-season
+ * ones included, so last season's never do (R-11).
+ */
+export function getSeasonStart(today: LocalDate): LocalDate {
+  return `${today.slice(0, 4)}-01-01` as LocalDate
+}
+
 export type TeamPractice = {
   id: string
   date: LocalDate

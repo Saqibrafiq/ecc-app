@@ -10,7 +10,8 @@ import {
 } from '@/features/notifications'
 import type { Locale } from '@/i18n/routing'
 
-import { type DueNotification, planNotifications } from '../domain/plan-notifications'
+import { planNotifications } from '../domain/plan-notifications'
+import type { DueNotification } from '../types'
 import { loadTickData } from './load-tick-data'
 import { claimNotification, findLoggedKeys } from './notification-log'
 import { type MessageTools, renderMessage } from './render-message'

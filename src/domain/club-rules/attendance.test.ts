@@ -4,6 +4,7 @@ import {
   type AttendanceInput,
   getAttendanceStatus,
   getCountdown,
+  getSeasonStart,
   type TeamPractice,
 } from './attendance'
 import { toLocalDate as day } from './local-time'
@@ -166,5 +167,12 @@ describe('getCountdown', () => {
 
   it('says when the rule can no longer be met for this match', () => {
     expect(getCountdown(status())).toEqual({ kind: 'out' })
+  })
+})
+
+describe('getSeasonStart', () => {
+  it('starts the season on 1 January of the current year', () => {
+    expect(getSeasonStart(day('2026-11-12'))).toBe('2026-01-01')
+    expect(getSeasonStart(day('2027-01-01'))).toBe('2027-01-01')
   })
 })

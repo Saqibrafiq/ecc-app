@@ -1,77 +1,24 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { toLocalDate as day, toLocalTime as time } from '@/domain/club-rules'
-import type { ScheduledEvent } from '@/features/week'
+import { toLocalDate as day } from '@/domain/club-rules'
+
+import {
+  at,
+  MATCH_I,
+  MATCH_II,
+  MEMBERS,
+  PRACTICE_I,
+  PRACTICE_II,
+  squad,
+  tickInput,
+} from '../test-factories'
+import type { TickInput } from '../types'
 
 vi.mock('server-only', () => ({}))
 
 const { planNotifications } = await import('./plan-notifications')
-type Input = Parameters<typeof planNotifications>[0]
 
-const ECC_I = { id: '1', name: 'ECC I' }
-const ECC_II = { id: '14', name: 'ECC II' }
-
-// The week of Monday 9 November 2026: ECC I plays Saturday and practises Wednesday, ECC II plays
-// Sunday and practises Thursday (R-1). Answers for both matches close at the end of Tuesday.
-const MATCH_I: ScheduledEvent = {
-  id: 'fixture-60',
-  kind: 'match',
-  team: ECC_I,
-  date: day('2026-11-14'),
-  startTime: time('11:00'),
-  ground: 'Nürnberg',
-  opponent: 'NCC-I',
-  isHome: false,
-}
-const PRACTICE_I: ScheduledEvent = {
-  id: 'practice-7',
-  kind: 'practice',
-  team: ECC_I,
-  date: day('2026-11-11'),
-  startTime: time('18:30'),
-  ground: 'Erlangen',
-}
-const MATCH_II: ScheduledEvent = {
-  ...MATCH_I,
-  id: 'fixture-61',
-  team: ECC_II,
-  date: day('2026-11-15'),
-  opponent: 'TSVGC',
-}
-const PRACTICE_II: ScheduledEvent = {
-  ...PRACTICE_I,
-  id: 'practice-8',
-  team: ECC_II,
-  date: day('2026-11-12'),
-}
-
-const MEMBERS = [
-  { userId: 1, playerId: 101, teamId: '1', captainOfTeamId: '1' },
-  { userId: 2, playerId: 102, teamId: '1', captainOfTeamId: null },
-  { userId: 3, playerId: 103, teamId: '14', captainOfTeamId: '14' },
-  // Not linked to a player yet, and linked but in no squad: nothing to answer.
-  { userId: 4, playerId: null, teamId: null, captainOfTeamId: null },
-  { userId: 5, playerId: 105, teamId: null, captainOfTeamId: null },
-]
-
-/** An instant in Erlangen (CET, UTC+1 in November). */
-const at = (localDateTime: string) => new Date(`${localDateTime}+01:00`)
-
-function plan(overrides: Partial<Input> = {}) {
-  return planNotifications({
-    now: at('2026-11-09T11:30'),
-    events: [MATCH_I, PRACTICE_I, MATCH_II, PRACTICE_II],
-    members: MEMBERS,
-    answers: new Map(),
-    going: new Map([
-      ['practice-7', 9],
-      ['fixture-60', 14],
-    ]),
-    recordedPracticeIds: new Set(),
-    decidedFixtureIds: new Set(),
-    ...overrides,
-  })
-}
+const plan = (overrides: Partial<TickInput> = {}) => planNotifications(tickInput(overrides))
 
 const summary = (notifications: ReturnType<typeof plan>) =>
   notifications.map((notification) => notification.key)
@@ -88,6 +35,7 @@ describe('planNotifications: reminders (UC-4, R-10)', () => {
       'reminder:2026-11-09:1',
       'reminder:2026-11-09:2',
       'reminder:2026-11-09:3',
+      'reminder:2026-11-09:7',
     ])
     const events = (userId: number) => {
       const found = due.find((item) => item.userId === userId)
@@ -100,7 +48,7 @@ describe('planNotifications: reminders (UC-4, R-10)', () => {
 
   it('reminds nobody who has answered everything', () => {
     const answered = new Set(['fixture-60', 'practice-7', 'fixture-61', 'practice-8'])
-    const answers = new Map([101, 102, 103].map((player) => [player, answered]))
+    const answers = new Map([101, 102, 103, 107].map((player) => [player, answered]))
 
     expect(summary(plan({ answers }))).toEqual([])
   })
@@ -111,6 +59,7 @@ describe('planNotifications: reminders (UC-4, R-10)', () => {
 
     expect(due).toEqual([
       expect.objectContaining({ key: 'reminder:2026-11-11:3', events: [PRACTICE_II] }),
+      expect.objectContaining({ key: 'reminder:2026-11-11:7', events: [PRACTICE_II] }),
       expect.objectContaining({ kind: 'selection' }),
       expect.objectContaining({ kind: 'selection' }),
     ])
@@ -118,7 +67,7 @@ describe('planNotifications: reminders (UC-4, R-10)', () => {
 })
 
 describe('planNotifications: check-in (UC-6)', () => {
-  const evening = (overrides: Partial<Input> = {}) =>
+  const evening = (overrides: Partial<TickInput> = {}) =>
     plan({ now: at('2026-11-11T21:30'), ...overrides }).filter((item) => item.kind === 'check-in')
 
   it('asks the captain to check in from 21:00 on practice day, with how many said Going', () => {
@@ -153,7 +102,7 @@ describe('planNotifications: check-in (UC-6)', () => {
 })
 
 describe('planNotifications: squad selection (UC-9)', () => {
-  const selections = (overrides: Partial<Input> = {}) =>
+  const selections = (overrides: Partial<TickInput> = {}) =>
     plan({ now: at('2026-11-11T12:00'), ...overrides }).filter((item) => item.kind === 'selection')
 
   it('asks the captain to pick the squad once answers have closed, with how many said Going', () => {
@@ -174,8 +123,39 @@ describe('planNotifications: squad selection (UC-9)', () => {
       summary(plan({ now: at('2026-11-10T23:59') })).some((key) => key.startsWith('sel')),
     ).toBe(false)
     expect(
-      summary(selections({ decidedFixtureIds: new Set(['fixture-60', 'fixture-61']) })),
+      summary(
+        selections({ squads: [squad('fixture-60', 'submitted'), squad('fixture-61', 'returned')] }),
+      ),
     ).toEqual([])
+    expect(summary(selections({ squads: [squad('fixture-60', 'open')] }))).toHaveLength(2)
     expect(summary(plan({ now: at('2026-11-16T12:00') }))).toEqual([])
+  })
+})
+
+describe('planNotifications', () => {
+  it("adds each squad's step and the attendance warnings to the scheduled prompts", () => {
+    const due = plan({
+      now: at('2026-11-11T12:00'),
+      squads: [squad('fixture-60', 'submitted')],
+      recordedPracticeIds: new Set(['practice-7']),
+      attendance: [
+        {
+          teamId: '1',
+          seasonStart: day('2026-01-01'),
+          practices: ['10-21', '10-28', '11-04', '11-11'].map((date, index) => ({
+            id: `practice-${String(index + 4)}`,
+            date: day(`2026-${date}`),
+            isCancelled: false,
+            isRecorded: true,
+          })),
+          attended: new Map(),
+          selectableAnyway: new Set(),
+        },
+      ],
+    })
+
+    expect(new Set(due.map((item) => item.kind))).toEqual(
+      new Set(['reminder', 'selection', 'approval', 'attendance']),
+    )
   })
 })

@@ -2,7 +2,12 @@ import 'server-only'
 
 import { z } from 'zod'
 
-import { getAvailabilityDeadline, getLocalDate, type LocalDate } from '@/domain/club-rules'
+import {
+  getAvailabilityDeadline,
+  getLocalDate,
+  getSeasonStart,
+  type LocalDate,
+} from '@/domain/club-rules'
 import {
   fixtureDocSchema,
   getAnswers,
@@ -31,11 +36,6 @@ const correctionSchema = z.object({
   practice: relationIdSchema,
   status: z.enum(['requested', 'accepted', 'declined']),
 })
-
-/** The season starts on 1 January (pre-season practices included, R-11). */
-export function getSeasonStart(today: LocalDate): LocalDate {
-  return `${today.slice(0, 4)}-01-01` as LocalDate
-}
 
 function nextSeasonStart(seasonStart: LocalDate): LocalDate {
   return `${String(Number(seasonStart.slice(0, 4)) + 1)}-01-01` as LocalDate

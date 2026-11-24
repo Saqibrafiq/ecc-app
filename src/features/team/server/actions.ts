@@ -3,6 +3,7 @@
 import { z } from 'zod'
 
 import { checkSquad } from '@/domain/club-rules'
+import { sendDueNotificationsSoon } from '@/features/jobs'
 import { backendRequest, isAccessError } from '@/shared/backend/client'
 import { relationIdSchema } from '@/shared/backend/schemas'
 import { getNow } from '@/shared/lib/clock'
@@ -102,6 +103,8 @@ export async function saveCheckInAction(input: unknown): Promise<{ status: Check
         schema: z.unknown(),
       })
     }
+    // A recorded practice is when players hear what their attendance still needs (UC-8).
+    sendDueNotificationsSoon()
     return { status: 'saved' }
   } catch (error) {
     return failure('Saving a check-in failed', error)
@@ -189,6 +192,8 @@ export async function submitSquadAction(input: unknown): Promise<{ status: Squad
       },
       schema: z.unknown(),
     })
+    // The Board hears a squad is waiting for approval (UC-11).
+    sendDueNotificationsSoon()
     return { status: 'submitted' }
   } catch (error) {
     return failure('Submitting a squad failed', error)
